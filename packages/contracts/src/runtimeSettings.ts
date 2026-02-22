@@ -7,7 +7,7 @@ export const setRuntimeSettingsSchema = z.object({
         .object({
             pollMs: positiveInt.optional(),
             batch: positiveInt.optional(),
-            autoResolvePersonByIin: z.boolean().optional(),
+            autoResolvePersonByIin: z.boolean().optional()
         })
         .optional(),
     outbox: z
@@ -16,7 +16,7 @@ export const setRuntimeSettingsSchema = z.object({
             batch: positiveInt.optional(),
             maxAttempts: positiveInt.optional(),
             leaseMs: positiveInt.optional(),
-            processingBy: z.string().min(1).optional(),
+            processingBy: z.string().min(1).optional()
         })
         .optional(),
     accessEvents: z
@@ -26,7 +26,7 @@ export const setRuntimeSettingsSchema = z.object({
             retryDelayMs: positiveInt.optional(),
             leaseMs: positiveInt.optional(),
             maxAttempts: positiveInt.optional(),
-            processingBy: z.string().min(1).optional(),
+            processingBy: z.string().min(1).optional()
         })
         .optional(),
     retention: z
@@ -34,63 +34,63 @@ export const setRuntimeSettingsSchema = z.object({
             pollMs: positiveInt.optional(),
             batch: positiveInt.optional(),
             accessEventsDays: positiveInt.optional(),
-            auditLogsDays: positiveInt.optional(),
+            auditLogsDays: positiveInt.optional()
         })
         .optional(),
     monitoring: z
         .object({
-            workerTtlMs: positiveInt.optional(),
+            workerTtlMs: positiveInt.optional()
         })
         .optional(),
     notifications: z
         .object({
             parentTemplate: z.string().min(1).optional(),
             parentMaxAgeMs: positiveInt.optional(),
-            alertMaxAgeMs: positiveInt.optional(),
+            alertMaxAgeMs: positiveInt.optional()
         })
-        .optional(),
+        .optional()
 });
 
 export type SetRuntimeSettingsDto = z.infer<typeof setRuntimeSettingsSchema>;
 
 const baseFieldSchema = {
     key: z.string().min(1),
-    updatedAt: z.string().datetime().optional(),
+    updatedAt: z.string().datetime().optional()
 };
 
 export const runtimeNumberFieldSchema = z.object({
     ...baseFieldSchema,
     env: z.number(),
     effective: z.number(),
-    db: z.number().optional(),
+    db: z.number().optional()
 });
 
 export const runtimeStringFieldSchema = z.object({
     ...baseFieldSchema,
     env: z.string(),
     effective: z.string(),
-    db: z.string().optional(),
+    db: z.string().optional()
 });
 
 export const runtimeBooleanFieldSchema = z.object({
     ...baseFieldSchema,
     env: z.boolean(),
     effective: z.boolean(),
-    db: z.boolean().optional(),
+    db: z.boolean().optional()
 });
 
 export const runtimeSettingsSnapshotSchema = z.object({
     worker: z.object({
         pollMs: runtimeNumberFieldSchema,
         batch: runtimeNumberFieldSchema,
-        autoResolvePersonByIin: runtimeBooleanFieldSchema,
+        autoResolvePersonByIin: runtimeBooleanFieldSchema
     }),
     outbox: z.object({
         pollMs: runtimeNumberFieldSchema,
         batch: runtimeNumberFieldSchema,
         maxAttempts: runtimeNumberFieldSchema,
         leaseMs: runtimeNumberFieldSchema,
-        processingBy: runtimeStringFieldSchema,
+        processingBy: runtimeStringFieldSchema
     }),
     accessEvents: z.object({
         pollMs: runtimeNumberFieldSchema,
@@ -98,22 +98,22 @@ export const runtimeSettingsSnapshotSchema = z.object({
         retryDelayMs: runtimeNumberFieldSchema,
         leaseMs: runtimeNumberFieldSchema,
         maxAttempts: runtimeNumberFieldSchema,
-        processingBy: runtimeStringFieldSchema,
+        processingBy: runtimeStringFieldSchema
     }),
     retention: z.object({
         pollMs: runtimeNumberFieldSchema,
         batch: runtimeNumberFieldSchema,
         accessEventsDays: runtimeNumberFieldSchema,
-        auditLogsDays: runtimeNumberFieldSchema,
+        auditLogsDays: runtimeNumberFieldSchema
     }),
     monitoring: z.object({
-        workerTtlMs: runtimeNumberFieldSchema,
+        workerTtlMs: runtimeNumberFieldSchema
     }),
     notifications: z.object({
         parentTemplate: runtimeStringFieldSchema,
         parentMaxAgeMs: runtimeNumberFieldSchema,
-        alertMaxAgeMs: runtimeNumberFieldSchema,
-    }),
+        alertMaxAgeMs: runtimeNumberFieldSchema
+    })
 });
 
 export type RuntimeSettingsSnapshotDto = z.infer<typeof runtimeSettingsSnapshotSchema>;

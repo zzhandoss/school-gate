@@ -17,7 +17,7 @@ function mapAdmin(row: typeof admins.$inferSelect): Admin {
         name: row.name ?? null,
         tgUserId: row.tgUserId ?? null,
         createdAt: toDate(row.createdAt),
-        updatedAt: toDate(row.updatedAt),
+        updatedAt: toDate(row.updatedAt)
     };
 }
 
@@ -36,7 +36,7 @@ export function createAdminsRepo(db: Db): AdminsRepo {
                 name: input.name ?? null,
                 tgUserId: input.tgUserId ?? null,
                 createdAt: input.createdAt,
-                updatedAt: input.updatedAt,
+                updatedAt: input.updatedAt
             });
         },
 
@@ -97,6 +97,6 @@ export function createAdminsRepo(db: Db): AdminsRepo {
         async setRole({ id, roleId, updatedAt }) {
             const res = db.update(admins).set({ roleId, updatedAt }).where(eq(admins.id, id)).run();
             return res.changes > 0;
-        },
+        }
     };
 }

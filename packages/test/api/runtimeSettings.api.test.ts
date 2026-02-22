@@ -9,7 +9,7 @@ import {
     createStubAlertsHandlers,
     createStubAdminsHandlers,
     createStubAuditLogsHandlers,
-    createStubSubscriptionsHandlers,
+    createStubSubscriptionsHandlers
 } from "../helpers/adminAuth.js";
 import { createTestDb } from "../helpers/testDb.js";
 import { createApiApp } from "../../../apps/api/src/app.js";
@@ -29,7 +29,7 @@ describe("API runtime settings routes", () => {
         RETENTION_BATCH: process.env.RETENTION_BATCH,
         RETENTION_ACCESS_EVENTS_DAYS: process.env.RETENTION_ACCESS_EVENTS_DAYS,
         RETENTION_AUDIT_LOGS_DAYS: process.env.RETENTION_AUDIT_LOGS_DAYS,
-        MONITORING_WORKER_TTL_MS: process.env.MONITORING_WORKER_TTL_MS,
+        MONITORING_WORKER_TTL_MS: process.env.MONITORING_WORKER_TTL_MS
     };
 
     beforeAll(() => {
@@ -51,7 +51,7 @@ describe("API runtime settings routes", () => {
         const runtimeSettingsService = createRuntimeSettingsService(db);
         const runtimeSettings = {
             list: () => JSON.parse(JSON.stringify(runtimeSettingsService.list())),
-            set: runtimeSettingsService.set,
+            set: runtimeSettingsService.set
         };
         const logger = createLogger({ name: "api-test", level: "silent" });
         app = createApiApp({
@@ -67,20 +67,20 @@ describe("API runtime settings routes", () => {
                         result: "duplicate",
                         status: "NEW",
                         personId: null,
-                        accessEventId: null,
-                    }),
-                },
+                        accessEventId: null
+                    })
+                }
             },
             accessEventsAdmin: {
                 listUnmatched: async () => [],
-                mapTerminalIdentity: async () => ({ status: "already_linked", updatedEvents: 0 }),
+                mapTerminalIdentity: async () => ({ status: "already_linked", updatedEvents: 0 })
             },
             persons: {
-                searchByIin: async () => [],
+                searchByIin: async () => []
             },
             subscriptionRequests: {
                 listPending: async () => ({ requests: [], page: { limit: 50, offset: 0, total: 0 } }),
-                review: async () => ({ requestId: "r1", status: "rejected", personId: null }),
+                review: async () => ({ requestId: "r1", status: "rejected", personId: null })
             },
             alerts: createStubAlertsHandlers(),
             subscriptions: createStubSubscriptionsHandlers(),
@@ -90,12 +90,12 @@ describe("API runtime settings routes", () => {
                     taskName: "school-gate-retention",
                     platform: process.platform,
                     pollMs: 300000,
-                    intervalMinutes: 5,
+                    intervalMinutes: 5
                 }),
                 removeSchedule: async () => ({
                     taskName: "school-gate-retention",
                     platform: process.platform,
-                    removed: true,
+                    removed: true
                 }),
                 runOnce: async () => ({
                     accessEventsDeleted: 0,
@@ -104,8 +104,8 @@ describe("API runtime settings routes", () => {
                     auditLogsCutoff: new Date("2026-01-01T00:00:00.000Z"),
                     batch: 500,
                     accessEventsDays: 30,
-                    auditLogsDays: 30,
-                }),
+                    auditLogsDays: 30
+                })
             },
             monitoring: {
                 getSnapshot: async () => ({
@@ -117,21 +117,21 @@ describe("API runtime settings routes", () => {
                             PROCESSED: 0,
                             FAILED_RETRY: 0,
                             UNMATCHED: 0,
-                            ERROR: 0,
+                            ERROR: 0
                         },
-                        oldestUnprocessedOccurredAt: null,
+                        oldestUnprocessedOccurredAt: null
                     },
                     outbox: {
                         counts: { new: 0, processing: 0, processed: 0, error: 0 },
-                        oldestNewCreatedAt: null,
+                        oldestNewCreatedAt: null
                     },
                     workers: [],
                     topErrors: { accessEvents: [], outbox: [] },
                     components: [],
-                    deviceService: null,
+                    deviceService: null
                 }),
-                listSnapshots: async () => [],
-            },
+                listSnapshots: async () => []
+            }
         });
     });
 
@@ -177,8 +177,8 @@ describe("API runtime settings routes", () => {
             method: "PATCH",
             headers: { "content-type": "application/json" },
             body: JSON.stringify({
-                worker: { pollMs: -1 },
-            }),
+                worker: { pollMs: -1 }
+            })
         });
 
         expect(res.status).toBe(400);
@@ -196,8 +196,8 @@ describe("API runtime settings routes", () => {
             body: JSON.stringify({
                 worker: { pollMs: 1111 },
                 outbox: { batch: 7 },
-                monitoring: { workerTtlMs: 240000 },
-            }),
+                monitoring: { workerTtlMs: 240000 }
+            })
         });
 
         expect(patchRes.status).toBe(200);
@@ -219,7 +219,7 @@ describe("API runtime settings routes", () => {
         await db.insert(settingsTable).values({
             key: runtimeSettingKeys.workerPollMs,
             value: "not-a-number",
-            updatedAt: new Date(),
+            updatedAt: new Date()
         });
 
         const res = await app.request("/api/runtime-settings");

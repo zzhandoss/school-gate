@@ -12,14 +12,14 @@ type AdapterDownConfig = ReturnType<typeof parseAdapterDownConfig>;
 
 export const evaluateAdapterDownRule: RuleEvaluator<"adapter_down", AdapterDownConfig> = ({
     rule,
-    context,
+    context
 }) => {
     if (!context.snapshot.deviceService) {
         return {
             condition: true,
             triggeredMessage: "device service monitoring unavailable",
             resolvedMessage: "device service monitoring restored",
-            details: { reason: "device_service_unavailable" },
+            details: { reason: "device_service_unavailable" }
         };
     }
     const cfg = rule.config;
@@ -41,7 +41,7 @@ export const evaluateAdapterDownRule: RuleEvaluator<"adapter_down", AdapterDownC
             adapterId: cfg.adapterId ?? null,
             vendorKey: cfg.vendorKey ?? null,
             missingTarget,
-            staleAdapters: stale.map((adapter) => adapter.adapterId),
-        },
+            staleAdapters: stale.map((adapter) => adapter.adapterId)
+        }
     };
 };

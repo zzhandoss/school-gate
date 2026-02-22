@@ -2,7 +2,7 @@ import { enqueueAuditRequested } from "../../../audit/events/auditRequested.js";
 import {
     PasswordResetExpiredError,
     PasswordResetNotFoundError,
-    PasswordResetUsedError,
+    PasswordResetUsedError
 } from "../../../utils/errors.js";
 import type { ConfirmPasswordResetDeps, ConfirmPasswordResetFlow } from "./confirmPasswordReset.types.js";
 
@@ -27,7 +27,7 @@ export function createConfirmPasswordResetFlow(deps: ConfirmPasswordResetDeps): 
         await deps.adminsService.setPassword({
             adminId: reset.adminId,
             passwordHash,
-            updatedAt: now,
+            updatedAt: now
         });
 
         await deps.passwordResetsService.markUsed({ tokenHash, usedAt: now });
@@ -40,7 +40,7 @@ export function createConfirmPasswordResetFlow(deps: ConfirmPasswordResetDeps): 
             entityType: "admin",
             entityId: reset.adminId,
             at: now,
-            meta: { tokenHash },
+            meta: { tokenHash }
         });
 
         return { adminId: reset.adminId };

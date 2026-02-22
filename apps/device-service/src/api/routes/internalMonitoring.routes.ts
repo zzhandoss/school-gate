@@ -37,7 +37,7 @@ export function createInternalMonitoringRoutes(input: {
     return createMonitoringRoutes({
         token: input.token,
         module: {
-            getSnapshot: () => input.handlers.getSnapshot(),
-        },
+            getSnapshot: () => input.handlers.getSnapshot()
+        }
     });
 }

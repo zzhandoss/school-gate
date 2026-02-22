@@ -3,7 +3,7 @@ import { parseEnv } from "./parseEnv.js";
 import type { MonitoringConfig } from "@school-gate/core";
 
 const monitoringSchema = z.object({
-    MONITORING_WORKER_TTL_MS: z.coerce.number().int().positive().default(120_000),
+    MONITORING_WORKER_TTL_MS: z.coerce.number().int().positive().default(120_000)
 });
 
 function applyOverrides<T extends Record<string, unknown>>(base: T, overrides?: Partial<T>): T {
@@ -20,7 +20,7 @@ function applyOverrides<T extends Record<string, unknown>>(base: T, overrides?: 
 export function getMonitoringConfig(overrides?: Partial<MonitoringConfig>): MonitoringConfig {
     const parsed = parseEnv(monitoringSchema, "monitoring");
     const base: MonitoringConfig = {
-        workerTtlMs: parsed.MONITORING_WORKER_TTL_MS,
+        workerTtlMs: parsed.MONITORING_WORKER_TTL_MS
     };
     return applyOverrides(base, overrides);
 }

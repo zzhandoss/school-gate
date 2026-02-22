@@ -9,7 +9,7 @@ import {
     createStubAdminsHandlers,
     createStubAuditLogsHandlers,
     createStubSubscriptionsHandlers,
-    createStubAlertsHandlers,
+    createStubAlertsHandlers
 } from "../helpers/adminAuth.js";
 import { createTestDb } from "../helpers/testDb.js";
 import { createApiApp } from "../../../apps/api/src/app.js";
@@ -37,11 +37,11 @@ describe("API alerts routes", () => {
         const createRule = createCreateAlertRuleUC({
             rulesRepo,
             idGen: { nextId: () => "rule-1" },
-            clock: { now: () => now },
+            clock: { now: () => now }
         });
         const updateRule = createUpdateAlertRuleUC({
             rulesRepo,
-            clock: { now: () => now },
+            clock: { now: () => now }
         });
 
         app = createApiApp({
@@ -57,20 +57,20 @@ describe("API alerts routes", () => {
                         result: "duplicate",
                         status: "NEW",
                         personId: null,
-                        accessEventId: null,
-                    }),
-                },
+                        accessEventId: null
+                    })
+                }
             },
             accessEventsAdmin: {
                 listUnmatched: async () => [],
-                mapTerminalIdentity: async () => ({ status: "already_linked", updatedEvents: 0 }),
+                mapTerminalIdentity: async () => ({ status: "already_linked", updatedEvents: 0 })
             },
             persons: {
-                searchByIin: async () => [],
+                searchByIin: async () => []
             },
             subscriptionRequests: {
                 listPending: async () => ({ requests: [], page: { limit: 50, offset: 0, total: 0 } }),
-                review: async () => ({ requestId: "r1", status: "rejected", personId: null }),
+                review: async () => ({ requestId: "r1", status: "rejected", personId: null })
             },
             alerts: {
                 listRules: (input) => listRules(input),
@@ -78,7 +78,7 @@ describe("API alerts routes", () => {
                 updateRule: (input) => updateRule(input),
                 listSubscriptions: createStubAlertsHandlers().listSubscriptions,
                 setSubscription: createStubAlertsHandlers().setSubscription,
-                listEvents: createStubAlertsHandlers().listEvents,
+                listEvents: createStubAlertsHandlers().listEvents
             },
             subscriptions: createStubSubscriptionsHandlers(),
             auditLogs: createStubAuditLogsHandlers(),
@@ -87,12 +87,12 @@ describe("API alerts routes", () => {
                     taskName: "school-gate-retention",
                     platform: process.platform,
                     pollMs: 300000,
-                    intervalMinutes: 5,
+                    intervalMinutes: 5
                 }),
                 removeSchedule: async () => ({
                     taskName: "school-gate-retention",
                     platform: process.platform,
-                    removed: true,
+                    removed: true
                 }),
                 runOnce: async () => ({
                     accessEventsDeleted: 0,
@@ -101,8 +101,8 @@ describe("API alerts routes", () => {
                     auditLogsCutoff: new Date("2026-01-01T00:00:00.000Z"),
                     batch: 500,
                     accessEventsDays: 30,
-                    auditLogsDays: 30,
-                }),
+                    auditLogsDays: 30
+                })
             },
             monitoring: {
                 getSnapshot: async () => ({
@@ -114,21 +114,21 @@ describe("API alerts routes", () => {
                             PROCESSED: 0,
                             FAILED_RETRY: 0,
                             UNMATCHED: 0,
-                            ERROR: 0,
+                            ERROR: 0
                         },
-                        oldestUnprocessedOccurredAt: null,
+                        oldestUnprocessedOccurredAt: null
                     },
                     outbox: {
                         counts: { new: 0, processing: 0, processed: 0, error: 0 },
-                        oldestNewCreatedAt: null,
+                        oldestNewCreatedAt: null
                     },
                     workers: [],
                     topErrors: { accessEvents: [], outbox: [] },
                     components: [],
-                    deviceService: null,
+                    deviceService: null
                 }),
-                listSnapshots: async () => [],
-            },
+                listSnapshots: async () => []
+            }
         });
     });
 
@@ -147,8 +147,8 @@ describe("API alerts routes", () => {
                 type: "outbox_backlog",
                 severity: "critical",
                 isEnabled: true,
-                config: { source: "core", maxNew: 1 },
-            }),
+                config: { source: "core", maxNew: 1 }
+            })
         });
 
         expect(res.status).toBe(200);

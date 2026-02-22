@@ -3,7 +3,8 @@ import { tmpdir } from "node:os";
 import { join, resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import Database from "better-sqlite3";
-import { createDb, Db } from "@school-gate/db/drizzle";
+import type { Db } from "@school-gate/db/drizzle";
+import { createDb } from "@school-gate/db/drizzle";
 
 export type TestDb = {
     db: Db;
@@ -61,7 +62,7 @@ export function createTestDb(): TestDb {
             }
 
             rmSync(dir, { recursive: true, force: true });
-        },
+        }
     };
 }
 

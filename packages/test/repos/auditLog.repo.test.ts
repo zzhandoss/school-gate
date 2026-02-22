@@ -31,7 +31,7 @@ describe("AuditLogsRepo", () => {
             entityType: "subscription_request",
             entityId: "r1",
             at,
-            meta: { iin: "030512550123", personId: "p1" },
+            meta: { iin: "030512550123", personId: "p1" }
         });
 
         const rows = await db.select().from(auditLogs);
@@ -56,7 +56,7 @@ describe("AuditLogsRepo", () => {
             action: "subscription_request_rejected",
             entityType: "subscription_request",
             entityId: "r2",
-            at: new Date(),
+            at: new Date()
         });
 
         const rows = await db.select().from(auditLogs);
@@ -73,7 +73,7 @@ describe("AuditLogsRepo", () => {
             action: "subscription_request_approved",
             entityType: "subscription_request",
             entityId: "r1",
-            at: new Date(),
+            at: new Date()
         });
 
         await repo.write({
@@ -83,7 +83,7 @@ describe("AuditLogsRepo", () => {
             action: "subscription_request_approved",
             entityType: "subscription_request",
             entityId: "r1",
-            at: new Date(),
+            at: new Date()
         });
 
         const rows = await db.select().from(auditLogs);
@@ -101,7 +101,7 @@ describe("AuditLogsRepo", () => {
             action: "alpha",
             entityType: "subscription_request",
             entityId: "r1",
-            at: new Date("2026-01-01T00:00:00.000Z"),
+            at: new Date("2026-01-01T00:00:00.000Z")
         });
         await repo.write({
             id: "a2",
@@ -109,7 +109,7 @@ describe("AuditLogsRepo", () => {
             action: "alpha",
             entityType: "subscription_request",
             entityId: "r2",
-            at: new Date("2026-01-02T00:00:00.000Z"),
+            at: new Date("2026-01-02T00:00:00.000Z")
         });
         await repo.write({
             id: "a3",
@@ -117,7 +117,7 @@ describe("AuditLogsRepo", () => {
             action: "beta",
             entityType: "subscription_request",
             entityId: "r3",
-            at: new Date("2026-01-03T00:00:00.000Z"),
+            at: new Date("2026-01-03T00:00:00.000Z")
         });
 
         const result = await repo.list({
@@ -126,7 +126,7 @@ describe("AuditLogsRepo", () => {
             actorId: "admin1",
             action: "alpha",
             from: new Date("2026-01-01T00:00:00.000Z"),
-            to: new Date("2026-01-02T23:59:59.999Z"),
+            to: new Date("2026-01-02T23:59:59.999Z")
         });
 
         expect(result.page.total).toBe(2);

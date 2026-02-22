@@ -17,7 +17,7 @@ const monitoringSchema = z.object({
             mode: z.enum(["active", "draining"]),
             lastSeenAt: z.string().min(1),
             status: z.enum(["ok", "stale"]),
-            ttlMs: z.number().int().positive(),
+            ttlMs: z.number().int().positive()
         })
     ),
     devices: z.array(
@@ -27,13 +27,13 @@ const monitoringSchema = z.object({
             adapterKey: z.string().min(1),
             lastEventAt: z.string().nullable(),
             status: z.enum(["ok", "stale"]),
-            ttlMs: z.number().int().positive(),
+            ttlMs: z.number().int().positive()
         })
     ),
     outbox: z.object({
         counts: z.record(z.string(), z.number()),
-        oldestNewCreatedAt: z.string().nullable(),
-    }),
+        oldestNewCreatedAt: z.string().nullable()
+    })
 });
 
 export function createInternalMonitoringRoutes(input: {
@@ -51,7 +51,7 @@ export function createInternalMonitoringRoutes(input: {
             middleware: [requireBearer(input.token), useResponse(monitoringSchema)],
             success: { schema: monitoringSchema },
             errors: [401, 500],
-            security: [{ internalBearerAuth: [] }],
+            security: [{ internalBearerAuth: [] }]
         }),
         handler(() => input.module.getSnapshot())
     );

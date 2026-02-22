@@ -33,16 +33,16 @@ export function createRuntime() {
     const isDev = process.env.NODE_ENV === "development" || process.env.NODE_ENV === "dev";
     const logger = isDev
         ? createLogger({
-              name: apiConfig.logName,
-              level: apiConfig.logLevel
-          })
+            name: apiConfig.logName,
+            level: apiConfig.logLevel
+        })
         : createFileLogger({
-              name: apiConfig.logName,
-              level: apiConfig.logLevel,
-              filePath: path.join(loggingConfig.dir, `${apiConfig.logName}.log`),
-              maxBytes: loggingConfig.maxBytes,
-              retentionDays: loggingConfig.retentionDays
-          });
+            name: apiConfig.logName,
+            level: apiConfig.logLevel,
+            filePath: path.join(loggingConfig.dir, `${apiConfig.logName}.log`),
+            maxBytes: loggingConfig.maxBytes,
+            retentionDays: loggingConfig.retentionDays
+        });
 
     const runtimeConfigProvider = createRuntimeConfigProvider();
     const clock = { now: () => new Date() };

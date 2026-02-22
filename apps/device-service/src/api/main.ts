@@ -40,7 +40,7 @@ const dbFile = getDeviceDbFile();
 const dbFilePath = path.resolve(envInfo.baseDir, dbFile);
 const dbClient = createDeviceDb(dbFilePath);
 const registry = new AdapterRegistry({
-    aliveTtlMs: config.heartbeatIntervalMs * 2,
+    aliveTtlMs: config.heartbeatIntervalMs * 2
 });
 const idGen = { nextId: () => crypto.randomUUID() };
 const clock = { now: () => new Date() };
@@ -52,12 +52,12 @@ const deviceCursorsRepo = createDeviceCursorsRepo(dbClient.db);
 
 const listAssignments = createListAdapterAssignmentsUC({
     devicesRepo,
-    deviceCursorsRepo,
+    deviceCursorsRepo
 });
 
 const tx = createDeviceUnitOfWork(dbClient.db, {
     deviceEventsRepo: createDeviceEventsRepo,
-    deviceOutboxRepo: createDeviceOutboxRepo,
+    deviceOutboxRepo: createDeviceOutboxRepo
 });
 
 const recordAccessEvent = createRecordDeviceAccessEventUC({ tx, idGen });
@@ -66,7 +66,7 @@ const getDeviceMonitoringSnapshot = createGetDeviceMonitoringSnapshotUC({
     deviceEventsRepo,
     deviceOutboxRepo,
     clock,
-    deviceTtlMs: config.deviceTtlMs,
+    deviceTtlMs: config.deviceTtlMs
 });
 
 const runBackfill = createAdapterBackfillRunner({
@@ -74,29 +74,29 @@ const runBackfill = createAdapterBackfillRunner({
     createBackfillForAdapter: (baseUrl) => {
         const adapterClient = createDeviceAdapterHttpClient({
             baseUrl,
-            token: config.token,
+            token: config.token
         });
         return createBackfillDeviceEventsUC({
             adapterClient,
             deviceCursorsRepo,
-            recordAccessEvent,
+            recordAccessEvent
         });
     },
     now: () => new Date(),
     minIntervalMs: config.heartbeatIntervalMs,
-    limit: config.batchLimit,
+    limit: config.batchLimit
 });
 
 const adaptersIngress = createAdapterIngressModule({
     config: {
         heartbeatIntervalMs: config.heartbeatIntervalMs,
-        batchLimit: config.batchLimit,
+        batchLimit: config.batchLimit
     },
     logger,
     registry,
     listAssignments,
     recordAccessEvent,
-    runBackfill,
+    runBackfill
 });
 
 const listDevices = createListDevicesUC({ devicesRepo });
@@ -116,7 +116,7 @@ const devices = createDevicesModule({
         if (adapter?.deviceSettingsSchema) {
             ensureDeviceSettingsMatchSchema({
                 schema: adapter.deviceSettingsSchema,
-                settingsJson: input.settingsJson ?? null,
+                settingsJson: input.settingsJson ?? null
             });
         }
 
@@ -126,7 +126,7 @@ const devices = createDevicesModule({
             direction: input.direction,
             adapterKey: input.adapterKey,
             settingsJson: input.settingsJson ?? null,
-            enabled: input.enabled,
+            enabled: input.enabled
         });
     },
     update: (id, input) => {
@@ -144,7 +144,7 @@ const devices = createDevicesModule({
             if (adapter?.deviceSettingsSchema) {
                 ensureDeviceSettingsMatchSchema({
                     schema: adapter.deviceSettingsSchema,
-                    settingsJson: effectiveSettingsJson,
+                    settingsJson: effectiveSettingsJson
                 });
             }
         }
@@ -155,18 +155,18 @@ const devices = createDevicesModule({
             direction: input.direction,
             adapterKey: input.adapterKey,
             settingsJson: input.settingsJson,
-            enabled: input.enabled,
+            enabled: input.enabled
         }).updated;
     },
     setEnabled: (input) => setDeviceEnabled({ id: input.deviceId, enabled: input.enabled }).updated,
-    delete: (id) => deleteDevice(id).deleted,
+    delete: (id) => deleteDevice(id).deleted
 });
 
 const monitoring = createMonitoringModule({
     registry,
     getDeviceMonitoringSnapshot,
     adapterTtlMs: config.heartbeatIntervalMs * 2,
-    now: () => clock.now(),
+    now: () => clock.now()
 });
 
 const resolveIdentity = createIdentityFindResolver({
@@ -176,28 +176,28 @@ const resolveIdentity = createIdentityFindResolver({
             deviceId: device.id,
             adapterKey: device.adapterKey,
             enabled: device.enabled,
-            settingsJson: device.settingsJson,
+            settingsJson: device.settingsJson
         }));
     },
     listAdapters: () =>
         registry.list().map((session) => ({
             adapterKey: session.vendorKey,
             baseUrl: session.baseUrl,
-            mode: session.mode,
+            mode: session.mode
         })),
     createAdapterClient: (baseUrl) =>
         createDeviceAdapterHttpClient({
             baseUrl,
-            token: config.token,
-        }),
+            token: config.token
+        })
 });
 const identity = createIdentityModule({
     find: (payload) =>
         resolveIdentity({
             identityKey: payload.identityKey,
             identityValue: payload.identityValue,
-            ...(payload.limit !== undefined ? { limit: payload.limit } : {}),
-        }),
+            ...(payload.limit !== undefined ? { limit: payload.limit } : {})
+        })
 });
 
 const app = createHttpApp({
@@ -210,13 +210,13 @@ const app = createHttpApp({
     devices,
     adapters: createAdaptersAdminModule({ registry }),
     monitoring,
-    identity,
+    identity
 });
 
 const server = serve(
     {
         fetch: app.fetch,
-        port: config.port,
+        port: config.port
     },
     (info) => {
         logger.info({ port: info.port }, "device-service api started");

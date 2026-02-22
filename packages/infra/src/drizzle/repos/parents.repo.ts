@@ -15,7 +15,7 @@ export function createParentsRepo(db: Db): ParentsRepo {
                 .values({ tgUserId, chatId })
                 .onConflictDoUpdate({
                     target: parents.tgUserId,
-                    set: { chatId },
+                    set: { chatId }
                 });
         },
 
@@ -27,12 +27,12 @@ export function createParentsRepo(db: Db): ParentsRepo {
             return {
                 tgUserId: row.tgUserId,
                 chatId: row.chatId,
-                createdAt: toDate(row.createdAt),
+                createdAt: toDate(row.createdAt)
             } satisfies Parent;
         },
         withTx(tx) {
             return createParentsRepo(tx as Db);
-        },
+        }
 
     };
 }

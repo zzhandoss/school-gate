@@ -3,13 +3,13 @@ import {
     RefreshTokenAlreadyUsedError,
     RefreshTokenExpiredError,
     RefreshTokenInvalidError,
-    RefreshTokenRevokedError,
+    RefreshTokenRevokedError
 } from "../../utils/errors.js";
 import type {
     RefreshTokensService,
     RefreshTokensServiceDeps,
     RefreshTokenIssueResult,
-    RefreshTokenRotateResult,
+    RefreshTokenRotateResult
 } from "./refreshTokens.types.js";
 
 const TOKEN_DELIMITER = ".";
@@ -20,7 +20,7 @@ function parseToken(token: string): { id: string; secret: string } {
         throw new RefreshTokenInvalidError();
     }
     return {
- id: parts[0], secret: parts[1] };
+        id: parts[0], secret: parts[1] };
 }
 
 function normalizeMeta(meta: { deviceId?: string | null | undefined; ip?: string | null | undefined; userAgent?: string | null | undefined } | undefined) {
@@ -28,7 +28,7 @@ function normalizeMeta(meta: { deviceId?: string | null | undefined; ip?: string
 
         deviceId: meta?.deviceId ?? null,
         ip: meta?.ip ?? null,
-        userAgent: meta?.userAgent ?? null,
+        userAgent: meta?.userAgent ?? null
     };
 }
 
@@ -37,7 +37,7 @@ export function createRefreshTokensService(deps: RefreshTokensServiceDeps): Refr
         withTx(tx: unknown) {
             return createRefreshTokensService({
                 ...deps,
-                refreshTokensRepo: deps.refreshTokensRepo.withTx(tx),
+                refreshTokensRepo: deps.refreshTokensRepo.withTx(tx)
             });
         },
 
@@ -58,7 +58,7 @@ export function createRefreshTokensService(deps: RefreshTokensServiceDeps): Refr
                 expiresAt: input.expiresAt,
                 deviceId: meta.deviceId,
                 ip: meta.ip,
-                userAgent: meta.userAgent,
+                userAgent: meta.userAgent
             });
 
             if (deps.outbox) {
@@ -70,7 +70,7 @@ export function createRefreshTokensService(deps: RefreshTokensServiceDeps): Refr
                     entityType: "refresh_token",
                     entityId: tokenId,
                     at: createdAt,
-                    meta: { adminId: input.adminId, expiresAt: input.expiresAt.toISOString() },
+                    meta: { adminId: input.adminId, expiresAt: input.expiresAt.toISOString() }
                 });
             }
 
@@ -78,7 +78,7 @@ export function createRefreshTokensService(deps: RefreshTokensServiceDeps): Refr
 
                 refreshToken: `${tokenId}${TOKEN_DELIMITER}${secret}`,
                 refreshTokenId: tokenId,
-                expiresAt: input.expiresAt,
+                expiresAt: input.expiresAt
             };
         },
         async rotate(input): Promise<RefreshTokenRotateResult> {
@@ -119,13 +119,13 @@ export function createRefreshTokensService(deps: RefreshTokensServiceDeps): Refr
                 expiresAt: input.expiresAt,
                 deviceId: meta.deviceId,
                 ip: meta.ip,
-                userAgent: meta.userAgent,
+                userAgent: meta.userAgent
             });
 
             await deps.refreshTokensRepo.markRotated({
                 id: record.id,
                 rotatedAt: createdAt,
-                replacedBy: tokenId,
+                replacedBy: tokenId
             });
 
             if (deps.outbox) {
@@ -137,7 +137,7 @@ export function createRefreshTokensService(deps: RefreshTokensServiceDeps): Refr
                     entityType: "refresh_token",
                     entityId: record.id,
                     at: createdAt,
-                    meta: { replacedBy: tokenId, adminId: record.adminId },
+                    meta: { replacedBy: tokenId, adminId: record.adminId }
                 });
             }
 
@@ -146,7 +146,7 @@ export function createRefreshTokensService(deps: RefreshTokensServiceDeps): Refr
                 refreshToken: `${tokenId}${TOKEN_DELIMITER}${newSecret}`,
                 refreshTokenId: tokenId,
                 expiresAt: input.expiresAt,
-                adminId: record.adminId,
+                adminId: record.adminId
             };
         },
         async revoke(input): Promise<void> {
@@ -176,9 +176,9 @@ export function createRefreshTokensService(deps: RefreshTokensServiceDeps): Refr
                     entityType: "refresh_token",
                     entityId: record.id,
                     at: revokedAt,
-                    meta: { adminId: record.adminId },
+                    meta: { adminId: record.adminId }
                 });
             }
-        },
+        }
     };
 }

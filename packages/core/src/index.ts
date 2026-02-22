@@ -11,4 +11,4 @@ export * from "./retention/index.js";
 export * from "./settings/index.js";
 export * from "./subscriptions/index.js";
 export * from "./utils/index.js";
-export * from "./usecases/index.js"
+export * from "./usecases/index.js";

@@ -84,9 +84,9 @@ function toOpenApiRequest(input: DocumentedRouteInput["request"]) {
         request.body = {
             content: {
                 "application/json": {
-                    schema: ensureOpenApiDeep(input.body),
-                },
-            },
+                    schema: ensureOpenApiDeep(input.body)
+                }
+            }
         };
     }
 
@@ -112,10 +112,10 @@ function toOpenApiResponses(input: DocumentedRouteInput) {
             description: input.success.description ?? "Successful response",
             content: {
                 "application/json": {
-                    schema: ensureOpenApiMethod(apiSuccessSchema(ensureOpenApiMethod(input.success.schema))),
-                },
-            },
-        },
+                    schema: ensureOpenApiMethod(apiSuccessSchema(ensureOpenApiMethod(input.success.schema)))
+                }
+            }
+        }
     };
 
     const errors = input.errors ?? [...defaultErrorStatuses];
@@ -124,9 +124,9 @@ function toOpenApiResponses(input: DocumentedRouteInput) {
             description: "Error response",
             content: {
                 "application/json": {
-                    schema: ensureOpenApiMethod(apiFailureSchema),
-                },
-            },
+                    schema: ensureOpenApiMethod(apiFailureSchema)
+                }
+            }
         };
     }
 
@@ -144,6 +144,6 @@ export function defineRoute(input: DocumentedRouteInput) {
         ...(input.summary ? { summary: input.summary } : {}),
         ...(input.middleware ? { middleware: input.middleware } : {}),
         ...(request ? { request } : {}),
-        ...(input.security ? { security: input.security } : {}),
+        ...(input.security ? { security: input.security } : {})
     });
 }

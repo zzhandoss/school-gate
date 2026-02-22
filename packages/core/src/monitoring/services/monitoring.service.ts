@@ -14,7 +14,7 @@ export function createMonitoringService(deps: MonitoringServiceDeps): Monitoring
         withTx(tx: unknown) {
             return createMonitoringService({
                 ...deps,
-                monitoringRepo: deps.monitoringRepo.withTx(tx),
+                monitoringRepo: deps.monitoringRepo.withTx(tx)
             });
         },
 
@@ -28,9 +28,9 @@ export function createMonitoringService(deps: MonitoringServiceDeps): Monitoring
                 componentsProvider: deps.componentsProvider,
                 workerTtlMs: deps.workerTtlMs,
                 workerStatusResolver,
-                collectors: snapshotCollectors,
+                collectors: snapshotCollectors
             });
-        },
+        }
     };
 }
 

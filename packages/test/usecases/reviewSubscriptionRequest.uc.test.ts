@@ -4,7 +4,7 @@ import { createReviewSubscriptionRequestUC } from "@school-gate/core/usecases/re
 import {
     SubscriptionRequestNotFoundError,
     SubscriptionRequestNotPendingError,
-    SubscriptionRequestNotReadyError,
+    SubscriptionRequestNotReadyError
 } from "@school-gate/core/utils/errors";
 import { DomainEvents } from "@school-gate/core/events/domain";
 import { outboxEvents, persons, subscriptionRequests, subscriptions } from "@school-gate/db/schema/index";
@@ -43,13 +43,13 @@ describe("ReviewSubscriptionRequestUC", () => {
         await subscriptionRequestsRepo.markReadyForReview({
             id: "r1",
             personId: "p1",
-            resolvedAt: new Date(),
+            resolvedAt: new Date()
         });
 
         const tx = createUnitOfWork(db, {
             subscriptionRequestsRepo: createSubscriptionRequestsRepo,
             subscriptionsRepo: createSubscriptionsRepo,
-            outbox: createOutboxRepo,
+            outbox: createOutboxRepo
         });
 
         const ids = ["sub-1", "outbox-1", "outbox-2", "alert-event-1"];
@@ -57,7 +57,7 @@ describe("ReviewSubscriptionRequestUC", () => {
             tx,
             idGen: { nextId: () => ids.shift()! },
             clock: { now: () => new Date("2020-01-01T00:00:00.000Z") },
-            subscriptionRequestsRepo: subscriptionRequestsRepo,
+            subscriptionRequestsRepo: subscriptionRequestsRepo
         });
 
         const res = await uc({ requestId: "r1", adminTgUserId: "admin1", decision: "approve" });
@@ -101,14 +101,14 @@ describe("ReviewSubscriptionRequestUC", () => {
         const tx = createUnitOfWork(db, {
             subscriptionRequestsRepo: createSubscriptionRequestsRepo,
             subscriptionsRepo: createSubscriptionsRepo,
-            outbox: createOutboxRepo,
+            outbox: createOutboxRepo
         });
 
         const uc = createReviewSubscriptionRequestUC({
             tx,
             idGen: { nextId: () => "x" },
             clock: { now: () => new Date() },
-            subscriptionRequestsRepo: subscriptionRequestsRepo,
+            subscriptionRequestsRepo: subscriptionRequestsRepo
         });
 
         await expect(
@@ -125,7 +125,7 @@ describe("ReviewSubscriptionRequestUC", () => {
         const tx = createUnitOfWork(db, {
             subscriptionRequestsRepo: createSubscriptionRequestsRepo,
             subscriptionsRepo: createSubscriptionsRepo,
-            outbox: createOutboxRepo,
+            outbox: createOutboxRepo
         });
 
         const ids = ["outbox-1", "outbox-2", "alert-event-1"];
@@ -163,7 +163,7 @@ describe("ReviewSubscriptionRequestUC", () => {
         const tx = createUnitOfWork(db, {
             subscriptionRequestsRepo: createSubscriptionRequestsRepo,
             subscriptionsRepo: createSubscriptionsRepo,
-            outbox: createOutboxRepo,
+            outbox: createOutboxRepo
         });
 
         const uc = createReviewSubscriptionRequestUC({
@@ -187,13 +187,13 @@ describe("ReviewSubscriptionRequestUC", () => {
             id: "r1",
             status: "approved",
             reviewedAt: new Date(),
-            reviewedBy: "admin1",
+            reviewedBy: "admin1"
         });
 
         const tx = createUnitOfWork(db, {
             subscriptionRequestsRepo: createSubscriptionRequestsRepo,
             subscriptionsRepo: createSubscriptionsRepo,
-            outbox: createOutboxRepo,
+            outbox: createOutboxRepo
         });
 
         const uc = createReviewSubscriptionRequestUC({

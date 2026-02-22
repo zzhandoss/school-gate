@@ -1,5 +1,5 @@
 import type { Role } from "../entities/role.js";
-import { Permission } from "../constants/permissions.js";
+import type { Permission } from "../constants/permissions.js";
 
 export interface RolesRepo {
     upsert(input: { id: string; name: string; createdAt: Date; updatedAt: Date }): Promise<void>;

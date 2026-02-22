@@ -42,7 +42,7 @@ export function createMonitoringModule(input: {
                     mode: session.mode,
                     lastSeenAt: session.lastSeenAt.toISOString(),
                     status: ageMs <= input.adapterTtlMs ? ("ok" as const) : ("stale" as const),
-                    ttlMs: input.adapterTtlMs,
+                    ttlMs: input.adapterTtlMs
                 };
             });
 
@@ -55,13 +55,13 @@ export function createMonitoringModule(input: {
                     adapterKey: device.adapterKey,
                     lastEventAt: toIso(device.lastEventAt),
                     status: device.status,
-                    ttlMs: device.ttlMs,
+                    ttlMs: device.ttlMs
                 })),
                 outbox: {
                     counts: snapshot.outbox.counts,
-                    oldestNewCreatedAt: toIso(snapshot.outbox.oldestNewCreatedAt),
-                },
+                    oldestNewCreatedAt: toIso(snapshot.outbox.oldestNewCreatedAt)
+                }
             };
-        },
+        }
     };
 }

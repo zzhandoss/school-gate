@@ -20,7 +20,7 @@ function calcAgeMs(now: Date, since: Date): number {
 
 export const evaluateOutboxBacklogRule: RuleEvaluator<"outbox_backlog", OutboxBacklogConfig> = ({
     rule,
-    context,
+    context
 }) => {
     const cfg = rule.config;
     const source = cfg.source;
@@ -31,7 +31,7 @@ export const evaluateOutboxBacklogRule: RuleEvaluator<"outbox_backlog", OutboxBa
             condition: true,
             triggeredMessage: "device service monitoring unavailable",
             resolvedMessage: "device service monitoring restored",
-            details: { source, reason: "device_service_unavailable" },
+            details: { source, reason: "device_service_unavailable" }
         };
     }
     const countNew = outbox.counts.new ?? 0;
@@ -46,12 +46,12 @@ export const evaluateOutboxBacklogRule: RuleEvaluator<"outbox_backlog", OutboxBa
         maxNew: cfg.maxNew ?? null,
         oldestNewCreatedAt: oldest ? oldest.toISOString() : null,
         oldestAgeMs: ageMs,
-        maxOldestAgeMs: cfg.maxOldestAgeMs ?? null,
+        maxOldestAgeMs: cfg.maxOldestAgeMs ?? null
     };
     return {
         condition,
         triggeredMessage: `outbox backlog (${source}) new=${countNew} oldestAgeMs=${ageMs ?? "n/a"}`,
         resolvedMessage: `outbox backlog cleared (${source})`,
-        details,
+        details
     };
 };

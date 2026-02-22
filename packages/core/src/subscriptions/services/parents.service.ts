@@ -6,7 +6,7 @@ export function createParentsService(deps: ParentsServiceDeps): ParentsService {
         withTx(tx: unknown) {
             return createParentsService({
                 ...deps,
-                parentsRepo: deps.parentsRepo.withTx(tx),
+                parentsRepo: deps.parentsRepo.withTx(tx)
             });
         },
 
@@ -17,7 +17,7 @@ export function createParentsService(deps: ParentsServiceDeps): ParentsService {
         },
         getByTgUserId(tgUserId) {
             return deps.parentsRepo.getByTgUserId(tgUserId);
-        },
+        }
     };
 }
 

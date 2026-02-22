@@ -21,15 +21,15 @@ export function createWorkerHeartbeatsRepo(db: Db): WorkerHeartbeatsRepo {
                     workerId,
                     updatedAt: at,
                     lastStartedAt: at,
-                    metaJson,
+                    metaJson
                 })
                 .onConflictDoUpdate({
                     target: workerHeartbeats.workerId,
                     set: {
                         updatedAt: at,
                         lastStartedAt: at,
-                        metaJson,
-                    },
+                        metaJson
+                    }
                 })
                 .run();
         },
@@ -44,7 +44,7 @@ export function createWorkerHeartbeatsRepo(db: Db): WorkerHeartbeatsRepo {
                     lastSuccessAt: at,
                     lastErrorAt: null,
                     lastError: null,
-                    metaJson,
+                    metaJson
                 })
                 .onConflictDoUpdate({
                     target: workerHeartbeats.workerId,
@@ -53,8 +53,8 @@ export function createWorkerHeartbeatsRepo(db: Db): WorkerHeartbeatsRepo {
                         lastSuccessAt: at,
                         lastErrorAt: null,
                         lastError: null,
-                        metaJson,
-                    },
+                        metaJson
+                    }
                 })
                 .run();
         },
@@ -68,7 +68,7 @@ export function createWorkerHeartbeatsRepo(db: Db): WorkerHeartbeatsRepo {
                     updatedAt: at,
                     lastErrorAt: at,
                     lastError: error,
-                    metaJson,
+                    metaJson
                 })
                 .onConflictDoUpdate({
                     target: workerHeartbeats.workerId,
@@ -76,11 +76,11 @@ export function createWorkerHeartbeatsRepo(db: Db): WorkerHeartbeatsRepo {
                         updatedAt: at,
                         lastErrorAt: at,
                         lastError: error,
-                        metaJson,
-                    },
+                        metaJson
+                    }
                 })
                 .run();
-        },
+        }
     };
 }
 

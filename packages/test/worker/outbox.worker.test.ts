@@ -151,10 +151,10 @@ describe("Outbox worker", () => {
                 direction: "IN",
                 occurredAt: "2020-01-01T00:00:00.000Z",
                 personId: "p1",
-                tgUserId: "tg1",
+                tgUserId: "tg1"
             }),
             status: "new",
-            attempts: 0,
+            attempts: 0
         });
 
         const first = await processOutboxBatch(db, {
@@ -166,17 +166,17 @@ describe("Outbox worker", () => {
             newId: () => "audit-from-stale",
             handlers: {
                 [DomainEvents.AUDIT_REQUESTED]: auditRequestedHandler,
-                [DomainEvents.PARENT_NOTIFICATION_REQUESTED]: parentNotificationRequestedHandler,
+                [DomainEvents.PARENT_NOTIFICATION_REQUESTED]: parentNotificationRequestedHandler
             },
             notificationSender: {
                 sendAccessEvent: async () => {
                     throw new Error("stale notification should not be sent");
                 },
-                sendAlert: async () => {},
+                sendAlert: async () => {}
             },
             notificationFreshness: {
-                parentMaxAgeMs: 600_000,
-            },
+                parentMaxAgeMs: 600_000
+            }
         });
 
         expect(first.claimed).toBe(1);
@@ -197,7 +197,7 @@ describe("Outbox worker", () => {
             processingBy: "worker-1",
             now: () => new Date("2026-01-02T00:00:01.000Z"),
             newId: () => "audit-id-2",
-            handlers: { [DomainEvents.AUDIT_REQUESTED]: auditRequestedHandler },
+            handlers: { [DomainEvents.AUDIT_REQUESTED]: auditRequestedHandler }
         });
 
         expect(second.claimed).toBe(1);

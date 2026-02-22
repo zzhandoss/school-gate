@@ -5,7 +5,7 @@ export function createAccessEventsService(deps: AccessEventsServiceDeps): Access
         withTx(tx: unknown) {
             return createAccessEventsService({
                 ...deps,
-                accessEventsRepo: deps.accessEventsRepo.withTx(tx),
+                accessEventsRepo: deps.accessEventsRepo.withTx(tx)
             });
         },
 
@@ -46,7 +46,7 @@ export function createAccessEventsService(deps: AccessEventsServiceDeps): Access
         },
         deleteOlderThan(input) {
             return deps.accessEventsRepo.deleteOlderThan(input);
-        },
+        }
     };
 }
 

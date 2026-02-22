@@ -8,7 +8,7 @@ export const auditLogSchema = z.object({
     entityType: z.string().min(1),
     entityId: z.string().min(1),
     meta: z.record(z.string(), z.any()).nullable(),
-    at: z.iso.datetime(),
+    at: z.iso.datetime()
 });
 
 export const listAuditLogsQuerySchema = z.object({
@@ -19,7 +19,7 @@ export const listAuditLogsQuerySchema = z.object({
     entityId: z.string().min(1).optional(),
     action: z.string().min(1).optional(),
     from: z.iso.datetime().optional(),
-    to: z.iso.datetime().optional(),
+    to: z.iso.datetime().optional()
 });
 
 export const listAuditLogsResultSchema = z.object({
@@ -27,8 +27,8 @@ export const listAuditLogsResultSchema = z.object({
     page: z.object({
         limit: z.number().int().positive(),
         offset: z.number().int().nonnegative(),
-        total: z.number().int().nonnegative(),
-    }),
+        total: z.number().int().nonnegative()
+    })
 });
 
 export type AuditLogDto = z.infer<typeof auditLogSchema>;

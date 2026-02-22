@@ -9,7 +9,7 @@ export function mapErrorToFailure(err: unknown): ApiError | undefined {
             status: err.status,
             code: err.code,
             message: err.message,
-            data: err.data,
+            data: err.data
         };
     }
 
@@ -18,7 +18,7 @@ export function mapErrorToFailure(err: unknown): ApiError | undefined {
             status: 400,
             code: "validation_error",
             message: "Request validation failed",
-            data: { issues: err.issues },
+            data: { issues: err.issues }
         };
     }
 

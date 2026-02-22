@@ -8,7 +8,7 @@ export function createAdminsService(deps: AdminsServiceDeps): AdminsService {
         withTx(tx: unknown) {
             return createAdminsService({
                 ...deps,
-                adminsRepo: deps.adminsRepo.withTx(tx),
+                adminsRepo: deps.adminsRepo.withTx(tx)
             });
         },
 
@@ -23,7 +23,7 @@ export function createAdminsService(deps: AdminsServiceDeps): AdminsService {
                 name: input.name ?? null,
                 tgUserId: input.tgUserId ?? null,
                 createdAt: input.createdAt,
-                updatedAt: input.updatedAt,
+                updatedAt: input.updatedAt
             });
         },
         getById(id) {
@@ -42,7 +42,7 @@ export function createAdminsService(deps: AdminsServiceDeps): AdminsService {
             const updated = await deps.adminsRepo.setStatus({
                 id: input.adminId,
                 status: input.status,
-                updatedAt: input.updatedAt,
+                updatedAt: input.updatedAt
             });
             if (!updated) {
                 throw new AdminNotFoundError();
@@ -56,7 +56,7 @@ export function createAdminsService(deps: AdminsServiceDeps): AdminsService {
                     entityType: "admin",
                     entityId: input.adminId,
                     at: input.updatedAt,
-                    meta: { status: input.status },
+                    meta: { status: input.status }
                 });
             }
         },
@@ -64,7 +64,7 @@ export function createAdminsService(deps: AdminsServiceDeps): AdminsService {
             const updated = await deps.adminsRepo.setRole({
                 id: input.adminId,
                 roleId: input.roleId,
-                updatedAt: input.updatedAt,
+                updatedAt: input.updatedAt
             });
             if (!updated) {
                 throw new AdminNotFoundError();
@@ -78,7 +78,7 @@ export function createAdminsService(deps: AdminsServiceDeps): AdminsService {
                     entityType: "admin",
                     entityId: input.adminId,
                     at: input.updatedAt,
-                    meta: { roleId: input.roleId },
+                    meta: { roleId: input.roleId }
                 });
             }
         },
@@ -86,7 +86,7 @@ export function createAdminsService(deps: AdminsServiceDeps): AdminsService {
             const updated = await deps.adminsRepo.setPassword({
                 id: input.adminId,
                 passwordHash: input.passwordHash,
-                updatedAt: input.updatedAt,
+                updatedAt: input.updatedAt
             });
             if (!updated) {
                 throw new AdminNotFoundError();
@@ -99,7 +99,7 @@ export function createAdminsService(deps: AdminsServiceDeps): AdminsService {
                     action: "admin_password_set",
                     entityType: "admin",
                     entityId: input.adminId,
-                    at: input.updatedAt,
+                    at: input.updatedAt
                 });
             }
         },
@@ -113,7 +113,7 @@ export function createAdminsService(deps: AdminsServiceDeps): AdminsService {
                 id: input.adminId,
                 email,
                 name: input.name,
-                updatedAt: input.updatedAt,
+                updatedAt: input.updatedAt
             });
             if (!updated) {
                 throw new AdminNotFoundError();
@@ -127,7 +127,7 @@ export function createAdminsService(deps: AdminsServiceDeps): AdminsService {
                     entityType: "admin",
                     entityId: input.adminId,
                     at: input.updatedAt,
-                    meta: { email, hasName: input.name !== null },
+                    meta: { email, hasName: input.name !== null }
                 });
             }
         },
@@ -135,7 +135,7 @@ export function createAdminsService(deps: AdminsServiceDeps): AdminsService {
             const updated = await deps.adminsRepo.setTgUserId({
                 id: input.adminId,
                 tgUserId: input.tgUserId,
-                updatedAt: input.updatedAt,
+                updatedAt: input.updatedAt
             });
             if (!updated) {
                 throw new AdminNotFoundError();
@@ -149,7 +149,7 @@ export function createAdminsService(deps: AdminsServiceDeps): AdminsService {
                     entityType: "admin",
                     entityId: input.adminId,
                     at: input.updatedAt,
-                    meta: { tgUserId: input.tgUserId },
+                    meta: { tgUserId: input.tgUserId }
                 });
             }
         },
@@ -172,6 +172,6 @@ export function createAdminsService(deps: AdminsServiceDeps): AdminsService {
             }
 
             return { admin };
-        },
+        }
     };
 }

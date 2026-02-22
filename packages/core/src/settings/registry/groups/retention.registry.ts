@@ -25,7 +25,7 @@ export const retentionRegistry = defineGroupRegistry({
                 overrides.pollMs = value;
             },
             parseInput: (input) => positiveInt.optional().parse(input),
-            serialize: (value) => value.toString(),
+            serialize: (value) => value.toString()
         }),
         defineSettingEntry({
             key: runtimeSettingKeys.retentionBatch,
@@ -36,7 +36,7 @@ export const retentionRegistry = defineGroupRegistry({
                 overrides.batch = value;
             },
             parseInput: (input) => positiveInt.optional().parse(input),
-            serialize: (value) => value.toString(),
+            serialize: (value) => value.toString()
         }),
         defineSettingEntry({
             key: runtimeSettingKeys.retentionAccessEventsDays,
@@ -47,7 +47,7 @@ export const retentionRegistry = defineGroupRegistry({
                 overrides.accessEventsDays = value;
             },
             parseInput: (input) => positiveInt.optional().parse(input),
-            serialize: (value) => value.toString(),
+            serialize: (value) => value.toString()
         }),
         defineSettingEntry({
             key: runtimeSettingKeys.retentionAuditLogsDays,
@@ -58,7 +58,7 @@ export const retentionRegistry = defineGroupRegistry({
                 overrides.auditLogsDays = value;
             },
             parseInput: (input) => positiveInt.optional().parse(input),
-            serialize: (value) => value.toString(),
-        }),
-    ],
+            serialize: (value) => value.toString()
+        })
+    ]
 });

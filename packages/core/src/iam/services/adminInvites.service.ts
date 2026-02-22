@@ -6,7 +6,7 @@ export function createAdminInvitesService(deps: AdminInvitesServiceDeps): AdminI
         withTx(tx: unknown) {
             return createAdminInvitesService({
                 ...deps,
-                adminInvitesRepo: deps.adminInvitesRepo.withTx(tx),
+                adminInvitesRepo: deps.adminInvitesRepo.withTx(tx)
             });
         },
 
@@ -20,12 +20,12 @@ export function createAdminInvitesService(deps: AdminInvitesServiceDeps): AdminI
         async markUsed(input) {
             const updated = await deps.adminInvitesRepo.markUsed({
                 tokenHash: input.tokenHash,
-                usedAt: input.usedAt,
+                usedAt: input.usedAt
             });
             if (!updated) {
                 throw new AdminInviteNotFoundError();
             }
-        },
+        }
     };
 }
 

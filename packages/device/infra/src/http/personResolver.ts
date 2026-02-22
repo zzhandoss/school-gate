@@ -51,14 +51,14 @@ export function createDeviceServicePersonResolver(config: DeviceServicePersonRes
                         method: "POST",
                         headers: {
                             "content-type": "application/json",
-                            authorization: `Bearer ${config.token}`,
+                            authorization: `Bearer ${config.token}`
                         },
                         body: JSON.stringify({
                             identityKey: "iin",
                             identityValue: input.iin,
-                            limit: 1,
+                            limit: 1
                         }),
-                        signal,
+                        signal
                     });
                 });
                 const json = (await response.json()) as unknown;
@@ -79,14 +79,14 @@ export function createDeviceServicePersonResolver(config: DeviceServicePersonRes
                 if (!data) {
                     return {
                         kind: "error" as const,
-                        message: "Device-service person lookup returned invalid payload",
+                        message: "Device-service person lookup returned invalid payload"
                     };
                 }
 
                 if (!data || !Array.isArray(data.matches)) {
                     return {
                         kind: "error" as const,
-                        message: "Device-service person lookup returned invalid payload",
+                        message: "Device-service person lookup returned invalid payload"
                     };
                 }
 
@@ -98,15 +98,15 @@ export function createDeviceServicePersonResolver(config: DeviceServicePersonRes
                     kind: "found" as const,
                     mappings: data.matches.map((match: IdentityFindMatch) => ({
                         deviceId: match.deviceId,
-                        terminalPersonId: match.terminalPersonId,
-                    })),
+                        terminalPersonId: match.terminalPersonId
+                    }))
                 };
             } catch (error) {
                 return {
                     kind: "error" as const,
-                    message: error instanceof Error ? error.message : String(error),
+                    message: error instanceof Error ? error.message : String(error)
                 };
             }
-        },
+        }
     };
 }

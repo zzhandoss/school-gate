@@ -11,10 +11,10 @@ export const roles = sqliteTable(
             .default(sql`(unixepoch())`),
         updatedAt: integer("updated_at", { mode: "timestamp" })
             .notNull()
-            .default(sql`(unixepoch())`),
+            .default(sql`(unixepoch())`)
     },
     (t) => ({
-        nameUnique: uniqueIndex("roles_name_unique").on(t.name),
+        nameUnique: uniqueIndex("roles_name_unique").on(t.name)
     })
 );
 
@@ -24,11 +24,11 @@ export const rolePermissions = sqliteTable(
         roleId: text("role_id")
             .notNull()
             .references(() => roles.id, { onDelete: "cascade" }),
-        permission: text("permission").notNull(),
+        permission: text("permission").notNull()
     },
     (t) => ({
         pk: primaryKey({ columns: [t.roleId, t.permission] }),
-        roleIdx: index("role_permissions_role_id_idx").on(t.roleId),
+        roleIdx: index("role_permissions_role_id_idx").on(t.roleId)
     })
 );
 
@@ -51,12 +51,12 @@ export const admins = sqliteTable(
             .default(sql`(unixepoch())`),
         updatedAt: integer("updated_at", { mode: "timestamp" })
             .notNull()
-            .default(sql`(unixepoch())`),
+            .default(sql`(unixepoch())`)
     },
     (t) => ({
         emailUnique: uniqueIndex("admins_email_unique").on(t.email),
         tgUserIdUnique: uniqueIndex("admins_tg_user_id_unique").on(t.tgUserId),
-        roleIdx: index("admins_role_id_idx").on(t.roleId),
+        roleIdx: index("admins_role_id_idx").on(t.roleId)
     })
 );
 
@@ -75,12 +75,12 @@ export const adminInvites = sqliteTable(
         usedAt: integer("used_at", { mode: "timestamp" }),
         createdAt: integer("created_at", { mode: "timestamp" })
             .notNull()
-            .default(sql`(unixepoch())`),
+            .default(sql`(unixepoch())`)
     },
     (t) => ({
         roleIdx: index("admin_invites_role_id_idx").on(t.roleId),
         createdByIdx: index("admin_invites_created_by_idx").on(t.createdBy),
-        emailIdx: index("admin_invites_email_idx").on(t.email),
+        emailIdx: index("admin_invites_email_idx").on(t.email)
     })
 );
 
@@ -95,10 +95,10 @@ export const passwordResets = sqliteTable(
         usedAt: integer("used_at", { mode: "timestamp" }),
         createdAt: integer("created_at", { mode: "timestamp" })
             .notNull()
-            .default(sql`(unixepoch())`),
+            .default(sql`(unixepoch())`)
     },
     (t) => ({
-        adminIdx: index("password_resets_admin_id_idx").on(t.adminId),
+        adminIdx: index("password_resets_admin_id_idx").on(t.adminId)
     })
 );
 
@@ -116,10 +116,10 @@ export const adminTgCodes = sqliteTable(
         usedAt: integer("used_at", { mode: "timestamp" }),
         createdAt: integer("created_at", { mode: "timestamp" })
             .notNull()
-            .default(sql`(unixepoch())`),
+            .default(sql`(unixepoch())`)
     },
     (t) => ({
-        adminIdx: index("admin_tg_codes_admin_id_idx").on(t.adminId),
+        adminIdx: index("admin_tg_codes_admin_id_idx").on(t.adminId)
     })
 );
 export const refreshTokens = sqliteTable(
@@ -139,10 +139,10 @@ export const refreshTokens = sqliteTable(
         replacedBy: text("replaced_by"),
         deviceId: text("device_id"),
         ip: text("ip"),
-        userAgent: text("user_agent"),
+        userAgent: text("user_agent")
     },
     (t) => ({
         adminIdx: index("refresh_tokens_admin_id_idx").on(t.adminId),
-        expiresIdx: index("refresh_tokens_expires_at_idx").on(t.expiresAt),
+        expiresIdx: index("refresh_tokens_expires_at_idx").on(t.expiresAt)
     })
 );

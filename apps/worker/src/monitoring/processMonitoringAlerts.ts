@@ -24,8 +24,8 @@ export function processMonitoringAlerts(db: Db, idGen: IdGenerator, clock: Clock
 
     const tx: AlertEventsTx = createUnitOfWork(db, {
         alertEventsService: (db) => eventsService.withTx(db),
-        outbox: createOutbox,
-    })
+        outbox: createOutbox
+    });
 
     return createProcessMonitoringAlertsFlow({
         rulesService: rulesService,
@@ -34,5 +34,5 @@ export function processMonitoringAlerts(db: Db, idGen: IdGenerator, clock: Clock
         tx: tx,
         idGen: idGen,
         clock: clock
-    })
+    });
 }

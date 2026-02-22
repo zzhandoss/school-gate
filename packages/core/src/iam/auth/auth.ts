@@ -36,7 +36,7 @@ async function signAccessToken(
     const accessToken = await deps.jwtSigner.signAdminAccessToken({
         payload: { adminId, roleId, permissions },
         issuedAt: now,
-        expiresAt: accessExpiresAt,
+        expiresAt: accessExpiresAt
     });
 
     return { accessToken, accessExpiresAt };
@@ -55,7 +55,7 @@ async function issueTokens(
     const refresh = await deps.refreshTokensService.issue({
         adminId,
         expiresAt: refreshExpiresAt,
-        meta,
+        meta
     });
 
     return {
@@ -65,7 +65,7 @@ async function issueTokens(
         refreshExpiresAt: refresh.expiresAt,
         adminId,
         roleId,
-        permissions,
+        permissions
     };
 }
 
@@ -84,7 +84,7 @@ export function createAuthService(deps: AuthServiceDeps): AuthService {
             const refresh = await deps.refreshTokensService.rotate({
                 token: input.refreshToken,
                 expiresAt: new Date(deps.clock.now().getTime() + deps.refreshTtlMs),
-                meta: input.meta,
+                meta: input.meta
             });
 
             const access = await loadAccess(deps, refresh.adminId);
@@ -102,8 +102,8 @@ export function createAuthService(deps: AuthServiceDeps): AuthService {
                 refreshExpiresAt: refresh.expiresAt,
                 adminId: access.admin.id,
                 roleId: access.admin.roleId,
-                permissions: access.permissions,
+                permissions: access.permissions
             };
-        },
+        }
     };
 }

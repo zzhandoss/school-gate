@@ -13,7 +13,7 @@ function mapReset(row: typeof passwordResets.$inferSelect): PasswordReset {
         adminId: row.adminId,
         expiresAt: toDate(row.expiresAt),
         usedAt: row.usedAt ? toDate(row.usedAt) : null,
-        createdAt: toDate(row.createdAt),
+        createdAt: toDate(row.createdAt)
     };
 }
 
@@ -28,7 +28,7 @@ export function createPasswordResetsRepo(db: Db): PasswordResetsRepo {
                 adminId: input.adminId,
                 expiresAt: input.expiresAt,
                 usedAt: input.usedAt ?? null,
-                createdAt: input.createdAt,
+                createdAt: input.createdAt
             });
         },
 
@@ -50,6 +50,6 @@ export function createPasswordResetsRepo(db: Db): PasswordResetsRepo {
                 .where(eq(passwordResets.tokenHash, tokenHash))
                 .run();
             return res.changes > 0;
-        },
+        }
     };
 }

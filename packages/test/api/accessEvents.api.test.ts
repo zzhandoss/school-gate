@@ -14,7 +14,7 @@ import {
     createStubAlertsHandlers,
     createStubAdminsHandlers,
     createStubAuditLogsHandlers,
-    createStubSubscriptionsHandlers,
+    createStubSubscriptionsHandlers
 } from "../helpers/adminAuth.js";
 import { createTestDb } from "../helpers/testDb.js";
 import { createApiApp } from "../../../apps/api/src/app.js";
@@ -45,14 +45,14 @@ describe("API access events ingestion routes", () => {
             accessEventsRepo: createAccessEventsRepo(db),
             personsRepo: createPersonsRepo(db),
             personTerminalIdentitiesRepo: createPersonTerminalIdentitiesRepo(db),
-            idGen: { nextId: () => crypto.randomUUID() },
+            idGen: { nextId: () => crypto.randomUUID() }
         });
 
         const ingestAuth = verifyIngestAuth({
             token,
             hmacSecret,
             windowMs,
-            now: () => Date.now(),
+            now: () => Date.now()
         });
 
         app = createApiApp({
@@ -67,20 +67,20 @@ describe("API access events ingestion routes", () => {
                     ingest: (input) =>
                         ingestAccessEvent({
                             ...input,
-                            occurredAt: new Date(input.occurredAt),
-                        }),
-                },
+                            occurredAt: new Date(input.occurredAt)
+                        })
+                }
             },
             accessEventsAdmin: {
                 listUnmatched: async () => [],
-                mapTerminalIdentity: async () => ({ status: "already_linked", updatedEvents: 0 }),
+                mapTerminalIdentity: async () => ({ status: "already_linked", updatedEvents: 0 })
             },
             persons: {
-                searchByIin: async () => [],
+                searchByIin: async () => []
             },
             subscriptionRequests: {
                 listPending: async () => ({ requests: [], page: { limit: 50, offset: 0, total: 0 } }),
-                review: async () => ({ requestId: "r1", status: "rejected", personId: null }),
+                review: async () => ({ requestId: "r1", status: "rejected", personId: null })
             },
             alerts: createStubAlertsHandlers(),
             subscriptions: createStubSubscriptionsHandlers(),
@@ -90,12 +90,12 @@ describe("API access events ingestion routes", () => {
                     taskName: "school-gate-retention",
                     platform: process.platform,
                     pollMs: 300000,
-                    intervalMinutes: 5,
+                    intervalMinutes: 5
                 }),
                 removeSchedule: async () => ({
                     taskName: "school-gate-retention",
                     platform: process.platform,
-                    removed: true,
+                    removed: true
                 }),
                 runOnce: async () => ({
                     accessEventsDeleted: 0,
@@ -104,8 +104,8 @@ describe("API access events ingestion routes", () => {
                     auditLogsCutoff: new Date("2026-01-01T00:00:00.000Z"),
                     batch: 500,
                     accessEventsDays: 30,
-                    auditLogsDays: 30,
-                }),
+                    auditLogsDays: 30
+                })
             },
             monitoring: {
                 getSnapshot: async () => ({
@@ -117,21 +117,21 @@ describe("API access events ingestion routes", () => {
                             PROCESSED: 0,
                             FAILED_RETRY: 0,
                             UNMATCHED: 0,
-                            ERROR: 0,
+                            ERROR: 0
                         },
-                        oldestUnprocessedOccurredAt: null,
+                        oldestUnprocessedOccurredAt: null
                     },
                     outbox: {
                         counts: { new: 0, processing: 0, processed: 0, error: 0 },
-                        oldestNewCreatedAt: null,
+                        oldestNewCreatedAt: null
                     },
                     workers: [],
                     topErrors: { accessEvents: [], outbox: [] },
                     components: [],
-                    deviceService: null,
+                    deviceService: null
                 }),
-                listSnapshots: async () => [],
-            },
+                listSnapshots: async () => []
+            }
         });
     });
 
@@ -148,13 +148,13 @@ describe("API access events ingestion routes", () => {
             eventId: "e1",
             deviceId: "d1",
             direction: "IN",
-            occurredAt: Date.now(),
+            occurredAt: Date.now()
         });
 
         const res = await app.request("/api/events", {
             method: "POST",
             headers: { "content-type": "application/json" },
-            body,
+            body
         });
 
         expect(res.status).toBe(401);
@@ -168,7 +168,7 @@ describe("API access events ingestion routes", () => {
             eventId: "e1",
             deviceId: "d1",
             direction: "IN" as const,
-            occurredAt: Date.now(),
+            occurredAt: Date.now()
         };
         const rawBody = JSON.stringify(payload);
         const timestamp = Date.now();
@@ -179,9 +179,9 @@ describe("API access events ingestion routes", () => {
                 "content-type": "application/json",
                 authorization: `Bearer ${token}`,
                 "x-timestamp": String(timestamp),
-                "x-signature": "deadbeef",
+                "x-signature": "deadbeef"
             },
-            body: rawBody,
+            body: rawBody
         });
 
         expect(res.status).toBe(401);
@@ -195,7 +195,7 @@ describe("API access events ingestion routes", () => {
             eventId: "e-expired",
             deviceId: "d1",
             direction: "IN" as const,
-            occurredAt: Date.now(),
+            occurredAt: Date.now()
         };
         const rawBody = JSON.stringify(payload);
         const timestamp = Date.now() - windowMs - 1_000;
@@ -207,9 +207,9 @@ describe("API access events ingestion routes", () => {
                 "content-type": "application/json",
                 authorization: `Bearer ${token}`,
                 "x-timestamp": String(timestamp),
-                "x-signature": signature,
+                "x-signature": signature
             },
-            body: rawBody,
+            body: rawBody
         });
 
         expect(res.status).toBe(401);
@@ -224,7 +224,7 @@ describe("API access events ingestion routes", () => {
             deviceId: "d1",
             direction: "IN" as const,
             occurredAt: Date.now(),
-            iin: "030512550123",
+            iin: "030512550123"
         };
         const rawBody = JSON.stringify(payload);
         const timestamp = Date.now();
@@ -236,9 +236,9 @@ describe("API access events ingestion routes", () => {
                 "content-type": "application/json",
                 authorization: `Bearer ${token}`,
                 "x-timestamp": String(timestamp),
-                "x-signature": signature,
+                "x-signature": signature
             },
-            body: rawBody,
+            body: rawBody
         });
 
         expect(first.status).toBe(200);
@@ -253,9 +253,9 @@ describe("API access events ingestion routes", () => {
                 "content-type": "application/json",
                 authorization: `Bearer ${token}`,
                 "x-timestamp": String(timestamp),
-                "x-signature": signature,
+                "x-signature": signature
             },
-            body: rawBody,
+            body: rawBody
         });
 
         expect(second.status).toBe(200);
@@ -278,16 +278,16 @@ describe("API access events ingestion routes", () => {
                     deviceId: "d1",
                     direction: "IN" as const,
                     occurredAt: Date.now(),
-                    iin: "030512550123",
+                    iin: "030512550123"
                 },
                 {
                     eventId: "b2",
                     deviceId: "d1",
                     direction: "OUT" as const,
                     occurredAt: Date.now(),
-                    iin: "030512550123",
-                },
-            ],
+                    iin: "030512550123"
+                }
+            ]
         };
         const rawBody = JSON.stringify(payload);
         const timestamp = Date.now();
@@ -299,9 +299,9 @@ describe("API access events ingestion routes", () => {
                 "content-type": "application/json",
                 authorization: `Bearer ${token}`,
                 "x-timestamp": String(timestamp),
-                "x-signature": signature,
+                "x-signature": signature
             },
-            body: rawBody,
+            body: rawBody
         });
 
         expect(res.status).toBe(200);

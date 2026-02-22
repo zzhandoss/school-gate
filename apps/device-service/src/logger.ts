@@ -9,7 +9,7 @@ export function createDeviceServiceLogger(name: string) {
     if (nodeEnv === "development" || nodeEnv === "dev") {
         return createLogger({
             name,
-            level: loggingConfig.level,
+            level: loggingConfig.level
         });
     }
 
@@ -18,6 +18,6 @@ export function createDeviceServiceLogger(name: string) {
         level: loggingConfig.level,
         filePath: path.join(loggingConfig.dir, `${name}.log`),
         maxBytes: loggingConfig.maxBytes,
-        retentionDays: loggingConfig.retentionDays,
+        retentionDays: loggingConfig.retentionDays
     });
 }

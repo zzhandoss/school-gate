@@ -20,9 +20,9 @@ describe("alertNotificationRequestedHandler", () => {
                     status: "triggered",
                     message: "Outbox backlog detected",
                     createdAt: "2026-01-01T00:00:00.000Z",
-                    tgUserId: "tg1",
+                    tgUserId: "tg1"
                 }),
-                attempts: 0,
+                attempts: 0
             },
             {
                 db: undefined,
@@ -32,8 +32,8 @@ describe("alertNotificationRequestedHandler", () => {
                     sendAccessEvent: async () => {},
                     sendAlert: async (input) => {
                         sent.push(input);
-                    },
-                },
+                    }
+                }
             }
         );
 
@@ -48,12 +48,12 @@ describe("alertNotificationRequestedHandler", () => {
                     id: "e1",
                     type: "alert.notification.requested",
                     payloadJson: "{}",
-                    attempts: 0,
+                    attempts: 0
                 },
                 {
                     db: undefined,
                     now: () => new Date(),
-                    newId: () => "x",
+                    newId: () => "x"
                 }
             )
         ).rejects.toThrow("Notification sender not configured");
@@ -76,9 +76,9 @@ describe("alertNotificationRequestedHandler", () => {
                     status: "triggered",
                     message: "Outbox backlog detected",
                     createdAt: "2020-01-01T00:00:00.000Z",
-                    tgUserId: "tg1",
+                    tgUserId: "tg1"
                 }),
-                attempts: 0,
+                attempts: 0
             },
             {
                 db,
@@ -89,8 +89,8 @@ describe("alertNotificationRequestedHandler", () => {
                     sendAccessEvent: async () => {},
                     sendAlert: async (input) => {
                         sent.push(input);
-                    },
-                },
+                    }
+                }
             }
         );
 

@@ -5,7 +5,7 @@ import {
     getOutboxWorkerConfig,
     getRetentionWorkerConfig,
     getWorkerConfig,
-    loadEnv,
+    loadEnv
 } from "@school-gate/config";
 import type { RuntimeConfigProvider } from "@school-gate/core";
 
@@ -23,6 +23,6 @@ export function createRuntimeConfigProvider(): RuntimeConfigProvider {
         applyAccessEventsOverrides: (overrides) => getAccessEventsWorkerConfig(overrides),
         applyRetentionOverrides: (overrides) => getRetentionWorkerConfig(overrides),
         applyMonitoringOverrides: (overrides) => getMonitoringConfig(overrides),
-        applyNotificationsOverrides: (overrides) => getNotificationsConfig(overrides),
+        applyNotificationsOverrides: (overrides) => getNotificationsConfig(overrides)
     };
 }

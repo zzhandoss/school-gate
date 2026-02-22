@@ -2,7 +2,7 @@ import type { AdapterRegistry, AdapterSession } from "./adapterRegistry.js";
 import type { AdapterAssignment } from "@school-gate/device/core/usecases/listAdapterAssignments";
 import type {
     RecordDeviceAccessEventInput,
-    RecordDeviceAccessEventResult,
+    RecordDeviceAccessEventResult
 } from "@school-gate/device/core/usecases/recordAccessEvent";
 import type { AppLogger } from "@school-gate/infra";
 import type { BackfillRunnerResult } from "./backfillRunner.js";
@@ -51,7 +51,7 @@ export function createDeviceServiceApp(input: DeviceServiceAppInput) {
             if (adapter?.deviceSettingsSchema) {
                 ensureDeviceSettingsMatchSchema({
                     schema: adapter.deviceSettingsSchema,
-                    settingsJson: payload.settingsJson ?? null,
+                    settingsJson: payload.settingsJson ?? null
                 });
             }
 
@@ -73,13 +73,13 @@ export function createDeviceServiceApp(input: DeviceServiceAppInput) {
                 if (adapter?.deviceSettingsSchema) {
                     ensureDeviceSettingsMatchSchema({
                         schema: adapter.deviceSettingsSchema,
-                        settingsJson: effectiveSettingsJson,
+                        settingsJson: effectiveSettingsJson
                     });
                 }
             }
 
             return input.devices.update(id, payload);
-        },
+        }
     });
 
     const resolveIdentity = createIdentityFindResolver({
@@ -89,28 +89,28 @@ export function createDeviceServiceApp(input: DeviceServiceAppInput) {
                 deviceId: device.id,
                 adapterKey: device.adapterKey,
                 enabled: device.enabled,
-                settingsJson: device.settingsJson,
+                settingsJson: device.settingsJson
             }));
         },
         listAdapters: () =>
             input.registry.list().map((session) => ({
                 adapterKey: session.vendorKey,
                 baseUrl: session.baseUrl,
-                mode: session.mode,
+                mode: session.mode
             })),
         createAdapterClient: (baseUrl) =>
             createDeviceAdapterHttpClient({
                 baseUrl,
-                token: input.config.token,
-            }),
+                token: input.config.token
+            })
     });
     const identity = createIdentityModule({
         find: (payload) =>
             resolveIdentity({
                 identityKey: payload.identityKey,
                 identityValue: payload.identityValue,
-                ...(payload.limit !== undefined ? { limit: payload.limit } : {}),
-            }),
+                ...(payload.limit !== undefined ? { limit: payload.limit } : {})
+            })
     });
 
     return createHttpApp({
@@ -124,19 +124,19 @@ export function createDeviceServiceApp(input: DeviceServiceAppInput) {
         adaptersIngress: createAdapterIngressModule({
             config: {
                 heartbeatIntervalMs: input.config.heartbeatIntervalMs,
-                batchLimit: input.config.batchLimit,
+                batchLimit: input.config.batchLimit
             },
             logger: input.logger,
             registry: input.registry,
             listAssignments: input.listAssignments,
             recordAccessEvent: input.recordAccessEvent,
-            runBackfill: input.runBackfill,
+            runBackfill: input.runBackfill
         }),
         devices,
         adapters: {
-            list: () => createAdaptersAdminModule({ registry: input.registry }).list(),
+            list: () => createAdaptersAdminModule({ registry: input.registry }).list()
         },
         monitoring: input.monitoring,
-        identity,
+        identity
     });
 }

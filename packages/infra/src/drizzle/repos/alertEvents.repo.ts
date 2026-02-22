@@ -21,7 +21,7 @@ function mapEvent(row: typeof alertEvents.$inferSelect): AlertEvent {
         severity: row.severity as AlertEvent["severity"],
         message: row.message,
         details: parseDetails(row.detailsJson ?? null),
-        createdAt: toDate(row.createdAt),
+        createdAt: toDate(row.createdAt)
     };
 }
 
@@ -37,7 +37,7 @@ export function createAlertEventsRepo(db: Db): AlertEventsRepo {
                     severity: input.severity,
                     message: input.message,
                     detailsJson: input.details ? JSON.stringify(input.details) : null,
-                    createdAt: input.createdAt,
+                    createdAt: input.createdAt
                 })
                 .run();
         },
@@ -81,7 +81,7 @@ export function createAlertEventsRepo(db: Db): AlertEventsRepo {
         },
         withTx(tx) {
             return createAlertEventsRepo(tx as Db);
-        },
+        }
 
     };
 }

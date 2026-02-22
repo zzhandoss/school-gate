@@ -23,11 +23,11 @@ export const outboxEvents = sqliteTable(
         processingAt: integer("processing_at", { mode: "timestamp" }),
         processingBy: text("processing_by"),
 
-        processedAt: integer("processed_at", { mode: "timestamp" }),
+        processedAt: integer("processed_at", { mode: "timestamp" })
     },
     (t) => ({
         idxStatusCreated: index("outbox_events_status_created_idx").on(t.status, t.createdAt),
         idxStatusProcessing: index("outbox_events_status_processing_idx").on(t.status, t.processingAt),
-        idxType: index("outbox_events_type_idx").on(t.type),
+        idxType: index("outbox_events_type_idx").on(t.type)
     })
 );

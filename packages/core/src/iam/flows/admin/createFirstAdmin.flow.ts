@@ -54,7 +54,7 @@ export function createCreateFirstAdminFlow(deps: CreateFirstAdminDeps): CreateFi
             entityType: "admin",
             entityId: adminId,
             at: now,
-            meta: { roleId, email },
+            meta: { roleId, email }
         });
 
         return { adminId, roleId };

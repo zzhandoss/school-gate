@@ -10,7 +10,7 @@ export function createRolesService(deps: RolesServiceDeps): RolesService {
                 ...deps,
                 rolesRepo: deps.rolesRepo.withTx(tx),
                 outbox: deps.outbox,
-                idGen: deps.idGen,
+                idGen: deps.idGen
             });
         },
 
@@ -22,11 +22,11 @@ export function createRolesService(deps: RolesServiceDeps): RolesService {
                 id: input.id,
                 name: input.name,
                 createdAt: now,
-                updatedAt: now,
+                updatedAt: now
             });
             await deps.rolesRepo.replacePermissions({
                 roleId: input.id,
-                permissions: input.permissions,
+                permissions: input.permissions
             });
             if (deps.outbox && deps.idGen) {
                 enqueueAuditRequested({
@@ -37,7 +37,7 @@ export function createRolesService(deps: RolesServiceDeps): RolesService {
                     entityType: "role",
                     entityId: input.id,
                     at: now,
-                    meta: { name: input.name, permissions: input.permissions },
+                    meta: { name: input.name, permissions: input.permissions }
                 });
             }
         },
@@ -51,7 +51,7 @@ export function createRolesService(deps: RolesServiceDeps): RolesService {
             const updatedAt = deps.clock.now();
             await deps.rolesRepo.replacePermissions({
                 roleId: input.roleId,
-                permissions: input.permissions,
+                permissions: input.permissions
             });
             if (deps.outbox && deps.idGen) {
                 enqueueAuditRequested({
@@ -62,7 +62,7 @@ export function createRolesService(deps: RolesServiceDeps): RolesService {
                     entityType: "role",
                     entityId: input.roleId,
                     at: updatedAt,
-                    meta: { permissions: input.permissions },
+                    meta: { permissions: input.permissions }
                 });
             }
         },
@@ -85,6 +85,6 @@ export function createRolesService(deps: RolesServiceDeps): RolesService {
 
         getByName(name) {
             return deps.rolesRepo.getByName(name);
-        },
+        }
     };
 }

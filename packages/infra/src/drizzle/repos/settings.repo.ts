@@ -1,7 +1,7 @@
 ﻿import { inArray } from "drizzle-orm";
 import type { Db } from "@school-gate/db/drizzle";
 import { settings as settingsTable } from "@school-gate/db/schema";
-import { SettingRow, SettingsRepo, SettingWrite } from "@school-gate/core";
+import type { SettingRow, SettingsRepo, SettingWrite } from "@school-gate/core";
 
 function toDate(value: unknown): Date {
     return value instanceof Date ? value : new Date(String(value));
@@ -11,7 +11,7 @@ function mapRow(row: any): SettingRow {
     return {
         key: row.key,
         value: row.value,
-        updatedAt: toDate(row.updatedAt),
+        updatedAt: toDate(row.updatedAt)
     };
 }
 
@@ -49,14 +49,14 @@ export function createSettingsRepo(db: Db): SettingsRepo {
                         .values({
                             key: entry.key,
                             value: entry.value,
-                            updatedAt: entry.updatedAt,
+                            updatedAt: entry.updatedAt
                         })
                         .onConflictDoUpdate({
                             target: settingsTable.key,
                             set: {
                                 value: entry.value,
-                                updatedAt: entry.updatedAt,
-                            },
+                                updatedAt: entry.updatedAt
+                            }
                         })
                         .run();
                 }
@@ -65,7 +65,7 @@ export function createSettingsRepo(db: Db): SettingsRepo {
 
         withTx(tx) {
             return createSettingsRepo(tx as Db);
-        },
+        }
 
     };
 }

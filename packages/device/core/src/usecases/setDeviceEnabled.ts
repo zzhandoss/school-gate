@@ -16,7 +16,7 @@ export function createSetDeviceEnabledUC(deps: { devicesRepo: DevicesRepo; clock
         const updated = deps.devicesRepo.setEnabled({
             id: input.id,
             enabled: input.enabled,
-            updatedAt: deps.clock.now(),
+            updatedAt: deps.clock.now()
         });
         return { updated };
     };

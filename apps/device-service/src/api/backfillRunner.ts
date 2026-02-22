@@ -43,7 +43,7 @@ export function createAdapterBackfillRunner(deps: BackfillRunnerDeps) {
         for (const device of assignments) {
             const result = await backfillDeviceEvents({
                 deviceId: device.deviceId,
-                limit: deps.limit,
+                limit: deps.limit
             });
             totalFetched += result.fetched;
         }

@@ -14,7 +14,7 @@ import {
     DEVICE_OUTBOX_MAX_ATTEMPTS,
     DEVICE_OUTBOX_POLL_MS,
     DEVICE_OUTBOX_PROCESSING_BY,
-    DEVICE_OUTBOX_TIMEOUT_MS,
+    DEVICE_OUTBOX_TIMEOUT_MS
 } from "./config.js";
 
 function sleep(ms: number) {
@@ -30,13 +30,13 @@ async function main() {
         baseUrl: CORE_BASE_URL,
         token: CORE_TOKEN,
         hmacSecret: CORE_HMAC_SECRET,
-        timeoutMs: DEVICE_OUTBOX_TIMEOUT_MS,
+        timeoutMs: DEVICE_OUTBOX_TIMEOUT_MS
     });
 
     const processBatch = createProcessDeviceOutboxBatchUC({
         deviceOutboxRepo,
         coreIngestClient,
-        deviceCursorsRepo: createDeviceCursorsRepo(client.db),
+        deviceCursorsRepo: createDeviceCursorsRepo(client.db)
     });
 
     let stopped = false;
@@ -51,18 +51,18 @@ async function main() {
                 maxAttempts: DEVICE_OUTBOX_MAX_ATTEMPTS,
                 leaseMs: DEVICE_OUTBOX_LEASE_MS,
                 processingBy: DEVICE_OUTBOX_PROCESSING_BY,
-                now: () => new Date(),
+                now: () => new Date()
             });
 
             if (res.claimed > 0) {
-            logger.info(
-                {
-                    claimed: res.claimed,
-                    processed: res.processed,
-                    failed: res.failed,
-                },
-                "device-service outbox batch processed"
-            );
+                logger.info(
+                    {
+                        claimed: res.claimed,
+                        processed: res.processed,
+                        failed: res.failed
+                    },
+                    "device-service outbox batch processed"
+                );
             }
         } catch (e) {
             logger.error({ err: e }, "device-service outbox loop error");

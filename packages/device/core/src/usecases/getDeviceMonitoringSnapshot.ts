@@ -41,13 +41,13 @@ export function createGetDeviceMonitoringSnapshotUC(deps: {
                     adapterKey: device.adapterKey,
                     lastEventAt,
                     status,
-                    ttlMs: deps.deviceTtlMs,
+                    ttlMs: deps.deviceTtlMs
                 };
             }),
             outbox: {
                 counts: deps.deviceOutboxRepo.getStatusCounts(),
-                oldestNewCreatedAt: deps.deviceOutboxRepo.getOldestCreatedAt(["new"]),
-            },
+                oldestNewCreatedAt: deps.deviceOutboxRepo.getOldestCreatedAt(["new"])
+            }
         };
     };
 }

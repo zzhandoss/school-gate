@@ -10,7 +10,7 @@ import type {
     RetentionRuntimeOverrides,
     RetentionWorkerConfig,
     WorkerConfig,
-    WorkerRuntimeOverrides,
+    WorkerRuntimeOverrides
 } from "../config/runtimeConfig.js";
 
 export type RuntimeConfigProvider = {

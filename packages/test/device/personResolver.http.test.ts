@@ -16,13 +16,13 @@ describe("DeviceServicePersonResolver HTTP", () => {
                             matches: [
                                 {
                                     deviceId: "dev-1",
-                                    terminalPersonId: "T-1",
-                                },
-                            ],
-                        },
+                                    terminalPersonId: "T-1"
+                                }
+                            ]
+                        }
                     }),
                     { status: 200 }
-                ),
+                )
         });
 
         const result = await resolver.resolveByIin({ iin: "900101000001" });
@@ -31,9 +31,9 @@ describe("DeviceServicePersonResolver HTTP", () => {
             mappings: [
                 {
                     deviceId: "dev-1",
-                    terminalPersonId: "T-1",
-                },
-            ],
+                    terminalPersonId: "T-1"
+                }
+            ]
         });
     });
 
@@ -48,11 +48,11 @@ describe("DeviceServicePersonResolver HTTP", () => {
                         data: {
                             identityKey: "iin",
                             identityValue: "900101000001",
-                            matches: [],
-                        },
+                            matches: []
+                        }
                     }),
                     { status: 200 }
-                ),
+                )
         });
 
         const result = await resolver.resolveByIin({ iin: "900101000001" });

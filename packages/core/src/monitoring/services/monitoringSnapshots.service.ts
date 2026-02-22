@@ -1,6 +1,6 @@
 ﻿import type {
     MonitoringSnapshotsService,
-    MonitoringSnapshotsServiceDeps,
+    MonitoringSnapshotsServiceDeps
 } from "./monitoringSnapshots.types.js";
 
 export function createMonitoringSnapshotsService(
@@ -10,7 +10,7 @@ export function createMonitoringSnapshotsService(
         withTx(tx: unknown) {
             return createMonitoringSnapshotsService({
                 ...deps,
-                snapshotsRepo: deps.snapshotsRepo.withTx(tx),
+                snapshotsRepo: deps.snapshotsRepo.withTx(tx)
             });
         },
 

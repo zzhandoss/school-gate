@@ -30,7 +30,7 @@ export const persons = sqliteTable(
             .default(sql`(unixepoch())`)
     },
     (t) => ({
-        iinUnique: uniqueIndex("persons_iin_unique").on(t.iin),
+        iinUnique: uniqueIndex("persons_iin_unique").on(t.iin)
     })
 );
 
@@ -45,12 +45,12 @@ export const workerHeartbeats = sqliteTable(
         lastSuccessAt: integer("last_success_at", { mode: "timestamp" }),
         lastErrorAt: integer("last_error_at", { mode: "timestamp" }),
         lastError: text("last_error"),
-        metaJson: text("meta_json"),
+        metaJson: text("meta_json")
     },
     (t) => ({
         idxUpdatedAt: index("worker_heartbeats_updated_at_idx").on(t.updatedAt),
         idxLastSuccessAt: index("worker_heartbeats_last_success_at_idx").on(t.lastSuccessAt),
-        idxLastErrorAt: index("worker_heartbeats_last_error_at_idx").on(t.lastErrorAt),
+        idxLastErrorAt: index("worker_heartbeats_last_error_at_idx").on(t.lastErrorAt)
     })
 );
 
@@ -62,7 +62,7 @@ export const subscriptionRequests = sqliteTable(
         iin: text("iin").notNull(),
         status: text("status", { enum: ["pending", "approved", "rejected"] }).notNull(),
         resolutionStatus: text("resolution_status", {
-            enum: ["new", "ready_for_review", "needs_person"],
+            enum: ["new", "ready_for_review", "needs_person"]
         })
             .notNull()
             .default("new"),

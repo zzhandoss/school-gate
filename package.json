@@ -5,9 +5,9 @@
   "main": "index.js",
   "scripts": {
     "dev": "pnpm exec concurrently -n api,device-service,bot,workers,admin-ui -c blue,green,magenta,yellow,cyan \"pnpm --filter @school-gate/api dev\" \"pnpm dev:device-service\" \"pnpm --filter @school-gate/bot dev\" \"pnpm dev:workers\" \"pnpm --filter admin-ui dev\"",
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
-    "typecheck": "tsc -p tsconfig.base.json --noEmit",
+    "lint": "eslint \"apps/**/*.ts\" \"packages/**/*.ts\" --ignore-pattern \"**/dist/**\" --ignore-pattern \"**/.output/**\" --ignore-pattern \"**/node_modules/**\" --ignore-pattern \"data/**\"",
+    "lint:fix": "eslint \"apps/**/*.ts\" \"packages/**/*.ts\" --fix --ignore-pattern \"**/dist/**\" --ignore-pattern \"**/.output/**\" --ignore-pattern \"**/node_modules/**\" --ignore-pattern \"data/**\"",
+    "typecheck": "pnpm -r --if-present --filter ./packages/** --filter ./apps/** run typecheck",
     "test": "vitest",
     "test:local": "vitest",
     "build": "pnpm run build:packages && pnpm run build:apps",

@@ -16,7 +16,7 @@ import {
     createStubAlertsHandlers,
     createStubAdminsHandlers,
     createStubAuditLogsHandlers,
-    createStubSubscriptionsHandlers,
+    createStubSubscriptionsHandlers
 } from "../helpers/adminAuth.js";
 import { createTestDb } from "../helpers/testDb.js";
 import { createApiApp } from "../../../apps/api/src/app.js";
@@ -42,7 +42,7 @@ describe("API subscription requests routes", () => {
         RETENTION_POLL_MS: process.env.RETENTION_POLL_MS,
         RETENTION_BATCH: process.env.RETENTION_BATCH,
         RETENTION_ACCESS_EVENTS_DAYS: process.env.RETENTION_ACCESS_EVENTS_DAYS,
-        RETENTION_AUDIT_LOGS_DAYS: process.env.RETENTION_AUDIT_LOGS_DAYS,
+        RETENTION_AUDIT_LOGS_DAYS: process.env.RETENTION_AUDIT_LOGS_DAYS
     };
 
     beforeAll(() => {
@@ -72,17 +72,17 @@ describe("API subscription requests routes", () => {
         const reviewTx = createUnitOfWork(db, {
             subscriptionRequestsRepo: createSubscriptionRequestsRepo,
             subscriptionsRepo: createSubscriptionsRepo,
-            outbox: createOutboxRepo,
+            outbox: createOutboxRepo
         });
 
         const listPending = createListPendingSubscriptionRequestsUC({
-            subscriptionRequestsRepo,
+            subscriptionRequestsRepo
         });
         const review = createReviewSubscriptionRequestUC({
             tx: reviewTx,
             idGen: { nextId: () => crypto.randomUUID() },
             clock: { now: () => new Date() },
-            subscriptionRequestsRepo,
+            subscriptionRequestsRepo
         });
 
         const runtimeSettings = createRuntimeSettingsService(db);
@@ -101,20 +101,20 @@ describe("API subscription requests routes", () => {
                         result: "duplicate",
                         status: "NEW",
                         personId: null,
-                        accessEventId: null,
-                    }),
-                },
+                        accessEventId: null
+                    })
+                }
             },
             accessEventsAdmin: {
                 listUnmatched: async () => [],
-                mapTerminalIdentity: async () => ({ status: "already_linked", updatedEvents: 0 }),
+                mapTerminalIdentity: async () => ({ status: "already_linked", updatedEvents: 0 })
             },
             persons: {
-                searchByIin: async () => [],
+                searchByIin: async () => []
             },
             subscriptionRequests: {
                 listPending: (input) => listPending(input),
-                review: (input) => review(input),
+                review: (input) => review(input)
             },
             alerts: createStubAlertsHandlers(),
             subscriptions: createStubSubscriptionsHandlers(),
@@ -124,12 +124,12 @@ describe("API subscription requests routes", () => {
                     taskName: "school-gate-retention",
                     platform: process.platform,
                     pollMs: 300000,
-                    intervalMinutes: 5,
+                    intervalMinutes: 5
                 }),
                 removeSchedule: async () => ({
                     taskName: "school-gate-retention",
                     platform: process.platform,
-                    removed: true,
+                    removed: true
                 }),
                 runOnce: async () => ({
                     accessEventsDeleted: 0,
@@ -138,8 +138,8 @@ describe("API subscription requests routes", () => {
                     auditLogsCutoff: new Date("2026-01-01T00:00:00.000Z"),
                     batch: 500,
                     accessEventsDays: 30,
-                    auditLogsDays: 30,
-                }),
+                    auditLogsDays: 30
+                })
             },
             monitoring: {
                 getSnapshot: async () => ({
@@ -151,21 +151,21 @@ describe("API subscription requests routes", () => {
                             PROCESSED: 0,
                             FAILED_RETRY: 0,
                             UNMATCHED: 0,
-                            ERROR: 0,
+                            ERROR: 0
                         },
-                        oldestUnprocessedOccurredAt: null,
+                        oldestUnprocessedOccurredAt: null
                     },
                     outbox: {
                         counts: { new: 0, processing: 0, processed: 0, error: 0 },
-                        oldestNewCreatedAt: null,
+                        oldestNewCreatedAt: null
                     },
                     workers: [],
                     topErrors: { accessEvents: [], outbox: [] },
                     components: [],
-                    deviceService: null,
+                    deviceService: null
                 }),
-                listSnapshots: async () => [],
-            },
+                listSnapshots: async () => []
+            }
         });
     });
 
@@ -206,7 +206,7 @@ describe("API subscription requests routes", () => {
         await requestsRepo.markReadyForReview({
             id: "r-ready",
             personId: "p-ready",
-            resolvedAt: new Date(),
+            resolvedAt: new Date()
         });
 
         const res = await app.request(
@@ -221,7 +221,7 @@ describe("API subscription requests routes", () => {
         expect(json.data.requests[0]).toMatchObject({
             id: "r-ready",
             resolutionStatus: "ready_for_review",
-            personId: "p-ready",
+            personId: "p-ready"
         });
         expect(typeof json.data.requests[0].createdAt).toBe("string");
     });
@@ -261,13 +261,13 @@ describe("API subscription requests routes", () => {
         await requestsRepo.markReadyForReview({
             id: "r-approve",
             personId: "p-1",
-            resolvedAt: new Date(),
+            resolvedAt: new Date()
         });
 
         const res = await app.request("/api/subscription-requests/r-approve/review", {
             method: "POST",
             headers: { "content-type": "application/json" },
-            body: JSON.stringify({ decision: "approve", adminTgUserId: "admin-1" }),
+            body: JSON.stringify({ decision: "approve", adminTgUserId: "admin-1" })
         });
         expect(res.status).toBe(200);
         const json = (await res.json()) as any;
@@ -275,7 +275,7 @@ describe("API subscription requests routes", () => {
         expect(json.data).toMatchObject({
             requestId: "r-approve",
             status: "approved",
-            personId: "p-1",
+            personId: "p-1"
         });
 
         const subs = await subsRepo.listActiveByPersonId("p-1");
@@ -291,7 +291,7 @@ describe("API subscription requests routes", () => {
         const res = await app.request("/api/subscription-requests/r-reject/review", {
             method: "POST",
             headers: { "content-type": "application/json" },
-            body: JSON.stringify({ decision: "reject", adminTgUserId: "admin-2" }),
+            body: JSON.stringify({ decision: "reject", adminTgUserId: "admin-2" })
         });
         expect(res.status).toBe(200);
         const json = (await res.json()) as any;
@@ -306,7 +306,7 @@ describe("API subscription requests routes", () => {
         const res = await app.request("/api/subscription-requests/r-not-ready/review", {
             method: "POST",
             headers: { "content-type": "application/json" },
-            body: JSON.stringify({ decision: "approve", adminTgUserId: "admin-3" }),
+            body: JSON.stringify({ decision: "approve", adminTgUserId: "admin-3" })
         });
 
         expect(res.status).toBe(409);
@@ -319,7 +319,7 @@ describe("API subscription requests routes", () => {
         const res = await app.request("/api/subscription-requests/missing/review", {
             method: "POST",
             headers: { "content-type": "application/json" },
-            body: JSON.stringify({ decision: "reject", adminTgUserId: "admin-4" }),
+            body: JSON.stringify({ decision: "reject", adminTgUserId: "admin-4" })
         });
 
         expect(res.status).toBe(404);

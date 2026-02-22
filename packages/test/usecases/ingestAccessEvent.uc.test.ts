@@ -38,7 +38,7 @@ describe("IngestAccessEventUC", () => {
             personsRepo,
             personTerminalIdentitiesRepo: ptiRepo,
             idGen,
-            inlineQueue,
+            inlineQueue
         });
 
         const now = new Date();
@@ -48,7 +48,7 @@ describe("IngestAccessEventUC", () => {
             direction: "IN",
             occurredAt: now,
             terminalPersonId: "T-1",
-            iin: "030512550123",
+            iin: "030512550123"
         });
 
         expect(res.result).toBe("inserted");
@@ -61,7 +61,7 @@ describe("IngestAccessEventUC", () => {
 
         const mapping = await ptiRepo.getByDeviceAndTerminalPersonId({
             deviceId: "dev-1",
-            terminalPersonId: "T-1",
+            terminalPersonId: "T-1"
         });
         expect(mapping).not.toBeNull();
         expect(mapping!.personId).toBe(person!.id);
@@ -79,7 +79,7 @@ describe("IngestAccessEventUC", () => {
             accessEventsRepo,
             personsRepo,
             personTerminalIdentitiesRepo: ptiRepo,
-            idGen: { nextId: () => "id-1" },
+            idGen: { nextId: () => "id-1" }
         });
 
         const res = await uc({
@@ -87,7 +87,7 @@ describe("IngestAccessEventUC", () => {
             deviceId: "dev-1",
             direction: "OUT",
             occurredAt: new Date(),
-            terminalPersonId: "T-404",
+            terminalPersonId: "T-404"
         });
 
         expect(res.status).toBe("UNMATCHED");
@@ -110,7 +110,7 @@ describe("IngestAccessEventUC", () => {
             accessEventsRepo,
             personsRepo,
             personTerminalIdentitiesRepo: ptiRepo,
-            idGen: { nextId: () => "id-1" },
+            idGen: { nextId: () => "id-1" }
         });
 
         const res = await uc({
@@ -118,7 +118,7 @@ describe("IngestAccessEventUC", () => {
             deviceId: "dev-1",
             direction: "IN",
             occurredAt: new Date(),
-            terminalPersonId: "T-1",
+            terminalPersonId: "T-1"
         });
 
         expect(res.status).toBe("NEW");

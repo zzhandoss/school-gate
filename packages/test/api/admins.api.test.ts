@@ -3,7 +3,7 @@ import {
     admins as adminsTable,
     passwordResets as passwordResetsTable,
     rolePermissions as rolePermissionsTable,
-    roles as rolesTable,
+    roles as rolesTable
 } from "@school-gate/db/schema";
 import { createAdminsRepo } from "@school-gate/infra/drizzle/repos/admins.repo";
 import { createPasswordResetsRepo } from "@school-gate/infra/drizzle/repos/passwordResets.repo";
@@ -23,7 +23,7 @@ import {
     createStubAdminAuthHandlers,
     createStubAlertsHandlers,
     createStubAuditLogsHandlers,
-    createStubSubscriptionsHandlers,
+    createStubSubscriptionsHandlers
 } from "../helpers/adminAuth.js";
 
 describe("API admins routes", () => {
@@ -55,7 +55,7 @@ describe("API admins routes", () => {
             passwordResetsService,
             tokenHasher,
             idGen,
-            clock,
+            clock
         });
 
         const runtimeSettings = createRuntimeSettingsService(db);
@@ -69,7 +69,7 @@ describe("API admins routes", () => {
                 list: (input) => listAdmins(input),
                 setStatus: (input) => setAdminStatus(input),
                 setRole: (input) => setAdminRole(input),
-                createPasswordReset: (input) => createPasswordReset(input),
+                createPasswordReset: (input) => createPasswordReset(input)
             },
             runtimeSettings,
             accessEvents: {
@@ -79,20 +79,20 @@ describe("API admins routes", () => {
                         result: "duplicate",
                         status: "NEW",
                         personId: null,
-                        accessEventId: null,
-                    }),
-                },
+                        accessEventId: null
+                    })
+                }
             },
             accessEventsAdmin: {
                 listUnmatched: async () => [],
-                mapTerminalIdentity: async () => ({ status: "already_linked", updatedEvents: 0 }),
+                mapTerminalIdentity: async () => ({ status: "already_linked", updatedEvents: 0 })
             },
             persons: {
-                searchByIin: async () => [],
+                searchByIin: async () => []
             },
             subscriptionRequests: {
                 listPending: async () => ({ requests: [], page: { limit: 50, offset: 0, total: 0 } }),
-                review: async () => ({ requestId: "r1", status: "rejected", personId: null }),
+                review: async () => ({ requestId: "r1", status: "rejected", personId: null })
             },
             alerts: createStubAlertsHandlers(),
             subscriptions: createStubSubscriptionsHandlers(),
@@ -102,12 +102,12 @@ describe("API admins routes", () => {
                     taskName: "school-gate-retention",
                     platform: process.platform,
                     pollMs: 300000,
-                    intervalMinutes: 5,
+                    intervalMinutes: 5
                 }),
                 removeSchedule: async () => ({
                     taskName: "school-gate-retention",
                     platform: process.platform,
-                    removed: true,
+                    removed: true
                 }),
                 runOnce: async () => ({
                     accessEventsDeleted: 0,
@@ -116,8 +116,8 @@ describe("API admins routes", () => {
                     auditLogsCutoff: new Date("2026-01-01T00:00:00.000Z"),
                     batch: 500,
                     accessEventsDays: 30,
-                    auditLogsDays: 30,
-                }),
+                    auditLogsDays: 30
+                })
             },
             monitoring: {
                 getSnapshot: async () => ({
@@ -129,21 +129,21 @@ describe("API admins routes", () => {
                             PROCESSED: 0,
                             FAILED_RETRY: 0,
                             UNMATCHED: 0,
-                            ERROR: 0,
+                            ERROR: 0
                         },
-                        oldestUnprocessedOccurredAt: null,
+                        oldestUnprocessedOccurredAt: null
                     },
                     outbox: {
                         counts: { new: 0, processing: 0, processed: 0, error: 0 },
-                        oldestNewCreatedAt: null,
+                        oldestNewCreatedAt: null
                     },
                     workers: [],
                     topErrors: { accessEvents: [], outbox: [] },
                     components: [],
-                    deviceService: null,
+                    deviceService: null
                 }),
-                listSnapshots: async () => [],
-            },
+                listSnapshots: async () => []
+            }
         });
     });
 
@@ -160,7 +160,7 @@ describe("API admins routes", () => {
             id: "role-1",
             name: "manager",
             createdAt: now,
-            updatedAt: now,
+            updatedAt: now
         });
 
         await db.insert(adminsTable).values({
@@ -172,14 +172,14 @@ describe("API admins routes", () => {
             name: "Admin",
             tgUserId: null,
             createdAt: now,
-            updatedAt: now,
+            updatedAt: now
         });
 
         await db.insert(rolesTable).values({
             id: "role-2",
             name: "viewer",
             createdAt: now,
-            updatedAt: now,
+            updatedAt: now
         });
     });
 
@@ -193,7 +193,7 @@ describe("API admins routes", () => {
             id: "admin-1",
             email: "admin@example.com",
             roleId: "role-1",
-            status: "active",
+            status: "active"
         });
     });
 
@@ -201,7 +201,7 @@ describe("API admins routes", () => {
         const res = await app.request("/api/admins/admin-1/status", {
             method: "PATCH",
             headers: { "content-type": "application/json" },
-            body: JSON.stringify({ status: "disabled" }),
+            body: JSON.stringify({ status: "disabled" })
         });
         expect(res.status).toBe(200);
 
@@ -214,7 +214,7 @@ describe("API admins routes", () => {
         const res = await app.request("/api/admins/admin-1/role", {
             method: "PATCH",
             headers: { "content-type": "application/json" },
-            body: JSON.stringify({ roleId: "role-2" }),
+            body: JSON.stringify({ roleId: "role-2" })
         });
         expect(res.status).toBe(200);
 
@@ -227,7 +227,7 @@ describe("API admins routes", () => {
         const res = await app.request("/api/admins/admin-1/password-reset", {
             method: "POST",
             headers: { "content-type": "application/json" },
-            body: JSON.stringify({ expiresInMs: 60_000 }),
+            body: JSON.stringify({ expiresInMs: 60_000 })
         });
         expect(res.status).toBe(200);
         const json = (await res.json()) as any;

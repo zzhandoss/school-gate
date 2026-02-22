@@ -27,7 +27,7 @@ import {
     type PreviewPersonAutoIdentitiesResultDto,
     type PreviewPersonAutoIdentitiesByIinDto,
     type PreviewPersonAutoIdentitiesByIinResultDto,
-    type ListPersonIdentitiesResultDto,
+    type ListPersonIdentitiesResultDto
 } from "@school-gate/contracts";
 import type { ApiEnv } from "../context.js";
 import type { AdminAuth } from "../middleware/adminAuth.js";
@@ -38,12 +38,12 @@ import { handler } from "../routing/route.js";
 import { defineRoute, okSchema } from "../openapi/defineRoute.js";
 
 const personParamsSchema = z.object({
-    personId: z.string().min(1),
+    personId: z.string().min(1)
 });
 
 const identityParamsSchema = z.object({
     personId: z.string().min(1),
-    identityId: z.string().min(1),
+    identityId: z.string().min(1)
 });
 
 export type PersonsModule = {
@@ -282,7 +282,7 @@ export function createPersonsRoutes(input: { module: PersonsModule; auth: AdminA
                 return input.module.previewAutoIdentities!({
                     personId: params.personId,
                     ...(adminId ? { adminId } : {}),
-                    ...(authorizationHeader ? { authorizationHeader } : {}),
+                    ...(authorizationHeader ? { authorizationHeader } : {})
                 });
             })
         );
@@ -306,7 +306,7 @@ export function createPersonsRoutes(input: { module: PersonsModule; auth: AdminA
                 return input.module.previewAutoIdentitiesByIin!({
                     body: body as PreviewPersonAutoIdentitiesByIinDto,
                     ...(adminId ? { adminId } : {}),
-                    ...(authorizationHeader ? { authorizationHeader } : {}),
+                    ...(authorizationHeader ? { authorizationHeader } : {})
                 });
             })
         );
@@ -331,7 +331,7 @@ export function createPersonsRoutes(input: { module: PersonsModule; auth: AdminA
                     personId: params.personId,
                     body: body as ApplyPersonAutoIdentitiesDto,
                     ...(adminId ? { adminId } : {}),
-                    ...(authorizationHeader ? { authorizationHeader } : {}),
+                    ...(authorizationHeader ? { authorizationHeader } : {})
                 });
             })
         );

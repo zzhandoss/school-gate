@@ -8,7 +8,7 @@ export function createSetSubscriptionStatusFlow(
         const updated = deps.tx.run(({ subscriptionsRepo, outbox }) => {
             const ok = subscriptionsRepo.setActiveByIdSync({
                 id: input.subscriptionId,
-                isActive: input.isActive,
+                isActive: input.isActive
             });
             if (!ok) return false;
 
@@ -22,9 +22,9 @@ export function createSetSubscriptionStatusFlow(
                         entityType: "subscription",
                         entityId: input.subscriptionId,
                         at: deps.clock.now().toISOString(),
-                        meta: { isActive: input.isActive },
-                    },
-                },
+                        meta: { isActive: input.isActive }
+                    }
+                }
             });
 
             return true;

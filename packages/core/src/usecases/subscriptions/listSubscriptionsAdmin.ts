@@ -1,6 +1,6 @@
 import type {
     ListSubscriptionsAdminDeps,
-    ListSubscriptionsAdminUC,
+    ListSubscriptionsAdminUC
 } from "./listSubscriptionsAdmin.types.js";
 
 export function createListSubscriptionsAdminUC(

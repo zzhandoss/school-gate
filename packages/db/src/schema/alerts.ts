@@ -17,11 +17,11 @@ export const alertRules = sqliteTable(
             .default(sql`(unixepoch())`),
         updatedAt: integer("updated_at", { mode: "timestamp" })
             .notNull()
-            .default(sql`(unixepoch())`),
+            .default(sql`(unixepoch())`)
     },
     (t) => ({
         typeIdx: index("alert_rules_type_idx").on(t.type),
-        enabledIdx: index("alert_rules_enabled_idx").on(t.isEnabled),
+        enabledIdx: index("alert_rules_enabled_idx").on(t.isEnabled)
     })
 );
 
@@ -40,13 +40,13 @@ export const alertSubscriptions = sqliteTable(
             .default(sql`(unixepoch())`),
         updatedAt: integer("updated_at", { mode: "timestamp" })
             .notNull()
-            .default(sql`(unixepoch())`),
+            .default(sql`(unixepoch())`)
     },
     (t) => ({
         pk: primaryKey({ columns: [t.adminId, t.ruleId] }),
         adminIdx: index("alert_subscriptions_admin_id_idx").on(t.adminId),
         ruleIdx: index("alert_subscriptions_rule_id_idx").on(t.ruleId),
-        enabledIdx: index("alert_subscriptions_enabled_idx").on(t.isEnabled),
+        enabledIdx: index("alert_subscriptions_enabled_idx").on(t.isEnabled)
     })
 );
 
@@ -64,11 +64,11 @@ export const alertEvents = sqliteTable(
         detailsJson: text("details_json"),
         createdAt: integer("created_at", { mode: "timestamp" })
             .notNull()
-            .default(sql`(unixepoch())`),
+            .default(sql`(unixepoch())`)
     },
     (t) => ({
         ruleIdx: index("alert_events_rule_id_idx").on(t.ruleId),
         statusIdx: index("alert_events_status_idx").on(t.status),
-        createdIdx: index("alert_events_created_at_idx").on(t.createdAt),
+        createdIdx: index("alert_events_created_at_idx").on(t.createdAt)
     })
 );

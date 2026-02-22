@@ -7,7 +7,7 @@ export function parseDeviceServiceDownConfig(_raw: unknown) {
 type DeviceServiceDownConfig = ReturnType<typeof parseDeviceServiceDownConfig>;
 
 export const evaluateDeviceServiceDownRule: RuleEvaluator<"device_service_down", DeviceServiceDownConfig> = ({
-    context,
+    context
 }) => {
     const component =
         context.snapshot.components.find((item) => item.componentId === "device-service") ?? null;
@@ -19,7 +19,7 @@ export const evaluateDeviceServiceDownRule: RuleEvaluator<"device_service_down",
         details: {
             componentStatus: component?.status ?? "down",
             error: component?.error ?? null,
-            deviceServicePresent: context.snapshot.deviceService !== null,
-        },
+            deviceServicePresent: context.snapshot.deviceService !== null
+        }
     };
 };

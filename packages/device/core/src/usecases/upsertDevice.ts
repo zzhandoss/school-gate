@@ -22,7 +22,7 @@ export function createUpsertDeviceUC(deps: { devicesRepo: DevicesRepo; clock: Cl
             settingsJson: input.settingsJson ?? null,
             enabled: input.enabled ?? true,
             createdAt: now,
-            updatedAt: now,
+            updatedAt: now
         });
     };
 }

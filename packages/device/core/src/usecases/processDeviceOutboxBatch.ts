@@ -54,7 +54,7 @@ export function createProcessDeviceOutboxBatchUC(deps: {
             limit: input.limit,
             now: input.now(),
             leaseMs: input.leaseMs,
-            processingBy: input.processingBy,
+            processingBy: input.processingBy
         });
 
         let processed = 0;
@@ -65,7 +65,7 @@ export function createProcessDeviceOutboxBatchUC(deps: {
                 deps.deviceOutboxRepo.markFailed({
                     id: record.id,
                     error: `Unknown device outbox event type: ${record.type}`,
-                    maxAttempts: input.maxAttempts,
+                    maxAttempts: input.maxAttempts
                 });
                 failed++;
                 continue;
@@ -81,7 +81,7 @@ export function createProcessDeviceOutboxBatchUC(deps: {
                         deviceId: payload.deviceId,
                         eventId: payload.eventId,
                         occurredAt: new Date(payload.occurredAt),
-                        updatedAt: processedAt,
+                        updatedAt: processedAt
                     });
                 }
                 processed++;
@@ -90,7 +90,7 @@ export function createProcessDeviceOutboxBatchUC(deps: {
                 deps.deviceOutboxRepo.markFailed({
                     id: record.id,
                     error: String(error?.message ?? error),
-                    maxAttempts: effectiveMaxAttempts(error, input.maxAttempts),
+                    maxAttempts: effectiveMaxAttempts(error, input.maxAttempts)
                 });
                 failed++;
             }
@@ -99,7 +99,7 @@ export function createProcessDeviceOutboxBatchUC(deps: {
         return {
             claimed: claimed.length,
             processed,
-            failed,
+            failed
         };
     };
 }

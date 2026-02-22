@@ -9,12 +9,12 @@ export function createEmailPasswordStrategy(deps: {
         async authenticate(input: EmailPasswordAuthInput) {
             const result = await deps.adminsService.login({
                 email: input.email,
-                password: input.password,
+                password: input.password
             });
             if (!result) {
                 return null;
             }
             return { admin: result.admin };
-        },
+        }
     };
 }

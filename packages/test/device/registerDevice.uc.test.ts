@@ -28,7 +28,7 @@ describe("registerDevice", () => {
             direction: "IN",
             adapterKey: "dahua",
             settingsJson: "{\"host\":\"10.0.0.1\"}",
-            enabled: true,
+            enabled: true
         });
 
         const rows = db.select().from(devices).all();
@@ -44,11 +44,11 @@ describe("registerDevice", () => {
         const repo = createDevicesRepo(db);
         const uc1 = createRegisterDeviceUC({
             devicesRepo: repo,
-            clock: { now: () => new Date("2020-01-01T00:00:00.000Z") },
+            clock: { now: () => new Date("2020-01-01T00:00:00.000Z") }
         });
         const uc2 = createRegisterDeviceUC({
             devicesRepo: repo,
-            clock: { now: () => new Date("2020-01-02T00:00:00.000Z") },
+            clock: { now: () => new Date("2020-01-02T00:00:00.000Z") }
         });
 
         uc1({
@@ -56,7 +56,7 @@ describe("registerDevice", () => {
             name: "Gate 2",
             direction: "OUT",
             adapterKey: "dahua",
-            enabled: true,
+            enabled: true
         });
 
         uc2({
@@ -64,7 +64,7 @@ describe("registerDevice", () => {
             name: "Gate 2 V2",
             direction: "OUT",
             adapterKey: "dahua-v2",
-            enabled: false,
+            enabled: false
         });
 
         const rows = db.select().from(devices).where(eq(devices.id, "dev-2")).all();

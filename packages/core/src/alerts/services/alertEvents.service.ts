@@ -5,7 +5,7 @@ export function createAlertEventsService(deps: AlertEventsServiceDeps): AlertEve
         withTx(tx: unknown) {
             return createAlertEventsService({
                 ...deps,
-                eventsRepo: deps.eventsRepo.withTx(tx),
+                eventsRepo: deps.eventsRepo.withTx(tx)
             });
         },
 
@@ -19,7 +19,7 @@ export function createAlertEventsService(deps: AlertEventsServiceDeps): AlertEve
         },
         listLatestByRuleIds(input) {
             return deps.eventsRepo.listLatestByRuleIds(input);
-        },
+        }
     };
 }
 

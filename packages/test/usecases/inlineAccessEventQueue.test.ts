@@ -8,7 +8,7 @@ describe("inlineAccessEventQueue", () => {
 
         const queue = createInlineAccessEventQueue({
             maxInFlight: 1,
-            processById,
+            processById
         });
 
         queue.enqueue("a");

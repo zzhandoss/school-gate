@@ -11,7 +11,7 @@ const addFormats = (addFormatsModule as unknown as { default: (ajv: any) => void
 const ajv = new Ajv2020({
     allErrors: true,
     strict: false,
-    validateSchema: true,
+    validateSchema: true
 });
 addFormats(ajv);
 
@@ -32,7 +32,7 @@ export function ensureDeviceSettingsSchema(schema: unknown): JsonObject {
         throw new HttpError({
             status: 400,
             code: "invalid_device_settings_schema",
-            message: "deviceSettingsSchema must be an object",
+            message: "deviceSettingsSchema must be an object"
         });
     }
 
@@ -44,7 +44,7 @@ export function ensureDeviceSettingsSchema(schema: unknown): JsonObject {
             message: `deviceSettingsSchema is not a valid JSON Schema draft 2020-12: ${toValidationMessage(
                 ajv.errors,
                 "schema is invalid"
-            )}`,
+            )}`
         });
     }
 
@@ -62,7 +62,7 @@ function parseSettingsJson(settingsJson: string | null | undefined): unknown {
         throw new HttpError({
             status: 400,
             code: "invalid_device_settings",
-            message: "settingsJson must be valid JSON",
+            message: "settingsJson must be valid JSON"
         });
     }
 }
@@ -81,7 +81,7 @@ export function ensureDeviceSettingsMatchSchema(input: {
             message: `settingsJson does not match adapter schema: ${toValidationMessage(
                 validate.errors,
                 "value is invalid"
-            )}`,
+            )}`
         });
     }
 }

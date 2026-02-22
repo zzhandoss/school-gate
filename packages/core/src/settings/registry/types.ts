@@ -19,11 +19,7 @@ export type GroupRegistry<TGroup extends string, TConfig, TOverrides, TValue> = 
     entries: readonly SettingEntry<TConfig, TOverrides, TValue>[];
 };
 
-export type SettingEntryValue<TEntry> = TEntry extends SettingEntry<
-    infer _Config,
-    infer _Overrides,
-    infer TValue
->
+export type SettingEntryValue<TEntry> = TEntry extends SettingEntry<any, any, infer TValue>
     ? TValue
     : never;
 

@@ -5,5 +5,5 @@ import { alertNotificationRequestedHandler, alertNotificationRequestedHandlerTyp
 export const outboxHandlers = {
     [auditRequestedHandlerType]: auditRequestedHandler,
     [parentNotificationRequestedHandlerType]: parentNotificationRequestedHandler,
-    [alertNotificationRequestedHandlerType]: alertNotificationRequestedHandler,
+    [alertNotificationRequestedHandlerType]: alertNotificationRequestedHandler
 } as const;

@@ -9,15 +9,15 @@ export const deviceServiceDeviceSchema = z.object({
     enabled: z.boolean(),
     settingsJson: z.string().nullable(),
     createdAt: z.string().min(1),
-    updatedAt: z.string().min(1),
+    updatedAt: z.string().min(1)
 });
 
 export const listDeviceServiceDevicesResultSchema = z.object({
-    devices: z.array(deviceServiceDeviceSchema),
+    devices: z.array(deviceServiceDeviceSchema)
 });
 
 export const getDeviceServiceDeviceResultSchema = z.object({
-    device: deviceServiceDeviceSchema,
+    device: deviceServiceDeviceSchema
 });
 
 export const upsertDeviceServiceDeviceSchema = z.object({
@@ -26,7 +26,7 @@ export const upsertDeviceServiceDeviceSchema = z.object({
     direction: deviceDirectionSchema,
     adapterKey: z.string().min(1),
     enabled: z.boolean().default(true),
-    settingsJson: z.string().nullable().optional(),
+    settingsJson: z.string().nullable().optional()
 });
 
 export const updateDeviceServiceDeviceSchema = z.object({
@@ -34,11 +34,11 @@ export const updateDeviceServiceDeviceSchema = z.object({
     direction: deviceDirectionSchema.optional(),
     adapterKey: z.string().min(1).optional(),
     enabled: z.boolean().optional(),
-    settingsJson: z.string().nullable().optional(),
+    settingsJson: z.string().nullable().optional()
 });
 
 export const setDeviceServiceDeviceEnabledSchema = z.object({
-    enabled: z.boolean(),
+    enabled: z.boolean()
 });
 
 export type DeviceServiceDeviceDto = z.infer<typeof deviceServiceDeviceSchema>;

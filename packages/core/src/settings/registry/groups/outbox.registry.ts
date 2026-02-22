@@ -26,7 +26,7 @@ export const outboxRegistry = defineGroupRegistry({
                 overrides.pollMs = value;
             },
             parseInput: (input) => positiveInt.optional().parse(input),
-            serialize: (value) => value.toString(),
+            serialize: (value) => value.toString()
         }),
         defineSettingEntry({
             key: runtimeSettingKeys.outboxBatch,
@@ -37,7 +37,7 @@ export const outboxRegistry = defineGroupRegistry({
                 overrides.batch = value;
             },
             parseInput: (input) => positiveInt.optional().parse(input),
-            serialize: (value) => value.toString(),
+            serialize: (value) => value.toString()
         }),
         defineSettingEntry({
             key: runtimeSettingKeys.outboxMaxAttempts,
@@ -48,7 +48,7 @@ export const outboxRegistry = defineGroupRegistry({
                 overrides.maxAttempts = value;
             },
             parseInput: (input) => positiveInt.optional().parse(input),
-            serialize: (value) => value.toString(),
+            serialize: (value) => value.toString()
         }),
         defineSettingEntry({
             key: runtimeSettingKeys.outboxLeaseMs,
@@ -59,7 +59,7 @@ export const outboxRegistry = defineGroupRegistry({
                 overrides.leaseMs = value;
             },
             parseInput: (input) => positiveInt.optional().parse(input),
-            serialize: (value) => value.toString(),
+            serialize: (value) => value.toString()
         }),
         defineSettingEntry({
             key: runtimeSettingKeys.outboxProcessingBy,
@@ -70,7 +70,7 @@ export const outboxRegistry = defineGroupRegistry({
                 overrides.processingBy = value;
             },
             parseInput: (input) => nonEmptyString.optional().parse(input),
-            serialize: (value) => value,
-        }),
-    ],
+            serialize: (value) => value
+        })
+    ]
 });

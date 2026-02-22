@@ -32,13 +32,13 @@ async function main() {
     const botClient = createBotHttpClient({ baseUrl: botCfg.baseUrl, token: botCfg.internalToken });
     const notificationSender = createBotNotificationSender({
         botClient,
-        template: { parentTemplate: notificationsCfg.parentTemplate },
+        template: { parentTemplate: notificationsCfg.parentTemplate }
     });
     const heartbeat = createHeartbeatWriter({
         repo: createWorkerHeartbeatsRepo(client.db),
         workerId: "outbox",
         clock,
-        baseMeta: { pollMs, batch, maxAttempts },
+        baseMeta: { pollMs, batch, maxAttempts }
     });
     heartbeat.onStart();
 
@@ -53,7 +53,7 @@ async function main() {
             const botHealthy = await botClient.isHealthy();
             if (!botHealthy) {
                 if (lastBotHealthy !== false) {
-                logger.warn("outbox bot unavailable, skipping claims");
+                    logger.warn("outbox bot unavailable, skipping claims");
                 }
                 lastBotHealthy = false;
                 heartbeat.onSuccess({ claimed: 0, processed: 0, failed: 0 });
@@ -77,13 +77,13 @@ async function main() {
                 notificationSender,
                 notificationFreshness: {
                     parentMaxAgeMs: notificationsCfg.parentMaxAgeMs,
-                    alertMaxAgeMs: notificationsCfg.alertMaxAgeMs,
-                },
+                    alertMaxAgeMs: notificationsCfg.alertMaxAgeMs
+                }
             });
             heartbeat.onSuccess({
                 claimed: res.claimed,
                 processed: res.processed,
-                failed: res.failed,
+                failed: res.failed
             });
 
             if (res.claimed > 0) {
@@ -91,7 +91,7 @@ async function main() {
                     {
                         claimed: res.claimed,
                         processed: res.processed,
-                        failed: res.failed,
+                        failed: res.failed
                     },
                     "outbox batch processed"
                 );

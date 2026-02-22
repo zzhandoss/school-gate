@@ -19,8 +19,8 @@ export function fail(c: Context, err: ApiError) {
             error: {
                 code: err.code,
                 message: err.message,
-                ...(err.data !== undefined ? { data: err.data } : {}),
-            },
+                ...(err.data !== undefined ? { data: err.data } : {})
+            }
         },
         err.status as ContentfulStatusCode
     );

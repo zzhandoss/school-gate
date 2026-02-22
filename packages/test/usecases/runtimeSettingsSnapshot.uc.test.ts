@@ -19,7 +19,7 @@ describe("Runtime settings snapshot", () => {
         MONITORING_WORKER_TTL_MS: process.env.MONITORING_WORKER_TTL_MS,
         NOTIFICATIONS_PARENT_TEMPLATE: process.env.NOTIFICATIONS_PARENT_TEMPLATE,
         NOTIFICATIONS_PARENT_MAX_AGE_MS: process.env.NOTIFICATIONS_PARENT_MAX_AGE_MS,
-        NOTIFICATIONS_ALERT_MAX_AGE_MS: process.env.NOTIFICATIONS_ALERT_MAX_AGE_MS,
+        NOTIFICATIONS_ALERT_MAX_AGE_MS: process.env.NOTIFICATIONS_ALERT_MAX_AGE_MS
     };
 
     beforeAll(() => {
@@ -65,7 +65,7 @@ describe("Runtime settings snapshot", () => {
         const settingsService = createSettingsService({
             settingsRepo,
             runtimeConfigProvider,
-            clock: { now: () => new Date("2026-01-27T12:30:00.000Z") },
+            clock: { now: () => new Date("2026-01-27T12:30:00.000Z") }
         });
 
         settingsService.setRuntimeSettings({
@@ -74,7 +74,7 @@ describe("Runtime settings snapshot", () => {
             accessEvents: { leaseMs: 45_000 },
             retention: { accessEventsDays: 10 },
             monitoring: { workerTtlMs: 240_000 },
-            notifications: { parentTemplate: "Hi {{lastName}}", parentMaxAgeMs: 660_000, alertMaxAgeMs: 360_000 },
+            notifications: { parentTemplate: "Hi {{lastName}}", parentMaxAgeMs: 660_000, alertMaxAgeMs: 360_000 }
         });
 
         const snapshot = settingsService.listRuntimeSettingsSnapshot();

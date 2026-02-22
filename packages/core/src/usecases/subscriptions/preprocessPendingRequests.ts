@@ -17,7 +17,7 @@ export function createPreprocessPendingRequestsUC(
                     await deps.subscriptionRequestsService.markReadyForReview({
                         id: req.id,
                         personId: existing.id,
-                        resolvedAt: deps.clock.now(),
+                        resolvedAt: deps.clock.now()
                     });
                     ready++;
                     continue;
@@ -27,7 +27,7 @@ export function createPreprocessPendingRequestsUC(
                     await deps.subscriptionRequestsService.markNeedsPerson({
                         id: req.id,
                         message: "Person not found. Admin must create person manually.",
-                        resolvedAt: deps.clock.now(),
+                        resolvedAt: deps.clock.now()
                     });
                     needsPerson++;
                     continue;
@@ -42,7 +42,7 @@ export function createPreprocessPendingRequestsUC(
                         id: personId,
                         iin: req.iin,
                         firstName: r.firstName ?? null,
-                        lastName: r.lastName ?? null,
+                        lastName: r.lastName ?? null
                     });
 
                     for (const m of r.mappings ?? []) {
@@ -52,14 +52,14 @@ export function createPreprocessPendingRequestsUC(
                             id: deps.idGen.nextId(),
                             personId,
                             deviceId: m.deviceId,
-                            terminalPersonId: m.terminalPersonId,
+                            terminalPersonId: m.terminalPersonId
                         });
                     }
 
                     await deps.subscriptionRequestsService.markReadyForReview({
                         id: req.id,
                         personId,
-                        resolvedAt: deps.clock.now(),
+                        resolvedAt: deps.clock.now()
                     });
 
                     ready++;
@@ -70,7 +70,7 @@ export function createPreprocessPendingRequestsUC(
                     await deps.subscriptionRequestsService.markNeedsPerson({
                         id: req.id,
                         message: "Person not found in device. Admin must create person or reject request.",
-                        resolvedAt: deps.clock.now(),
+                        resolvedAt: deps.clock.now()
                     });
                     needsPerson++;
                     continue;
@@ -79,7 +79,7 @@ export function createPreprocessPendingRequestsUC(
                 await deps.subscriptionRequestsService.markNeedsPerson({
                     id: req.id,
                     message: `Auto-resolve error: ${r.message}`,
-                    resolvedAt: deps.clock.now(),
+                    resolvedAt: deps.clock.now()
                 });
                 errors++;
             } catch (e: any) {
@@ -88,7 +88,7 @@ export function createPreprocessPendingRequestsUC(
                 await deps.subscriptionRequestsService.markNeedsPerson({
                     id: req.id,
                     message: `Preprocess failed: ${String(e?.message ?? e)}`,
-                    resolvedAt: deps.clock.now(),
+                    resolvedAt: deps.clock.now()
                 });
             }
         }

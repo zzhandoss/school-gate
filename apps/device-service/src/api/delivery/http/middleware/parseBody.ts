@@ -14,7 +14,7 @@ export function parseBody<TSchema extends z.ZodTypeAny>(schema: TSchema) {
             throw new HttpError({
                 status: 400,
                 code: "invalid_json",
-                message: "Request body is not valid JSON",
+                message: "Request body is not valid JSON"
             });
         }
 
@@ -24,7 +24,7 @@ export function parseBody<TSchema extends z.ZodTypeAny>(schema: TSchema) {
                 status: 400,
                 code: "validation_error",
                 message: "Request validation failed",
-                data: { issues: parsed.error.issues },
+                data: { issues: parsed.error.issues }
             });
         }
 

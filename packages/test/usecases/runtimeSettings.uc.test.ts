@@ -8,7 +8,7 @@ import {
     getMonitoringConfig,
     getNotificationsConfig,
     getOutboxWorkerConfig,
-    getWorkerConfig,
+    getWorkerConfig
 } from "@school-gate/config";
 
 describe("Runtime settings", () => {
@@ -32,7 +32,7 @@ describe("Runtime settings", () => {
         const settingsService = createSettingsService({
             settingsRepo,
             runtimeConfigProvider: undefined as never,
-            clock: { now: () => new Date("2026-01-27T12:00:00.000Z") },
+            clock: { now: () => new Date("2026-01-27T12:00:00.000Z") }
         });
 
         settingsService.setRuntimeSettings({
@@ -40,7 +40,7 @@ describe("Runtime settings", () => {
             outbox: { batch: 7, maxAttempts: 3 },
             accessEvents: { leaseMs: 45_000, processingBy: "test-worker" },
             monitoring: { workerTtlMs: 180000 },
-            notifications: { parentTemplate: "Hi {{firstName}}", parentMaxAgeMs: 700_000, alertMaxAgeMs: 400_000 },
+            notifications: { parentTemplate: "Hi {{firstName}}", parentMaxAgeMs: 700_000, alertMaxAgeMs: 400_000 }
         });
 
         const runtime = settingsService.getRuntimeSettings();
@@ -71,7 +71,7 @@ describe("Runtime settings", () => {
         const settingsService = createSettingsService({
             settingsRepo,
             runtimeConfigProvider: undefined as never,
-            clock: { now: () => new Date("2026-01-27T12:00:00.000Z") },
+            clock: { now: () => new Date("2026-01-27T12:00:00.000Z") }
         });
 
         expect(() => {

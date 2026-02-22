@@ -14,11 +14,11 @@ export const deviceServiceAdapterSchema = z.object({
     version: z.string().min(1).optional(),
     mode: z.enum(["active", "draining"]),
     registeredAt: z.string().min(1),
-    lastSeenAt: z.string().min(1),
+    lastSeenAt: z.string().min(1)
 });
 
 export const listDeviceServiceAdaptersResultSchema = z.object({
-    adapters: z.array(deviceServiceAdapterSchema),
+    adapters: z.array(deviceServiceAdapterSchema)
 });
 
 export type DeviceServiceAdapterDto = z.infer<typeof deviceServiceAdapterSchema>;

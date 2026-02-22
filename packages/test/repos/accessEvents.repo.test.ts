@@ -31,7 +31,7 @@ describe("AccessEventsRepo", () => {
             direction: "IN",
             occurredAt: now,
             idempotencyKey: "k1",
-            rawPayload: "{}",
+            rawPayload: "{}"
         });
 
         const r2 = await repo.insertIdempotent({
@@ -40,7 +40,7 @@ describe("AccessEventsRepo", () => {
             direction: "IN",
             occurredAt: now,
             idempotencyKey: "k1",
-            rawPayload: "{}",
+            rawPayload: "{}"
         });
 
         expect(r1).toBe("inserted");
@@ -56,7 +56,7 @@ describe("AccessEventsRepo", () => {
             deviceId: "d1",
             direction: "IN",
             occurredAt: new Date(now.getTime() - 1000),
-            idempotencyKey: "kn1",
+            idempotencyKey: "kn1"
         });
 
         await repo.insertIdempotent({
@@ -64,7 +64,7 @@ describe("AccessEventsRepo", () => {
             deviceId: "d1",
             direction: "OUT",
             occurredAt: new Date(now.getTime() - 2000),
-            idempotencyKey: "kf1",
+            idempotencyKey: "kf1"
         });
 
         await repo.markFailed({
@@ -72,7 +72,7 @@ describe("AccessEventsRepo", () => {
             error: "boom",
             attempts: 1,
             maxAttempts: 3,
-            nextAttemptAt: new Date(now.getTime() - 500),
+            nextAttemptAt: new Date(now.getTime() - 500)
         });
 
         const due = await repo.listDueForProcessing({ limit: 10, now });
@@ -91,7 +91,7 @@ describe("AccessEventsRepo", () => {
             deviceId: "d1",
             direction: "IN",
             occurredAt: new Date(now.getTime() - 40 * 24 * 3600 * 1000), // 40 дней назад
-            idempotencyKey: "kold1",
+            idempotencyKey: "kold1"
         });
 
         await repo.insertIdempotent({
@@ -99,11 +99,11 @@ describe("AccessEventsRepo", () => {
             deviceId: "d1",
             direction: "OUT",
             occurredAt: new Date(now.getTime() - 1 * 24 * 3600 * 1000), // 1 день назад
-            idempotencyKey: "knew1",
+            idempotencyKey: "knew1"
         });
 
         const deleted = await repo.deleteOlderThan({
-            before: new Date(now.getTime() - 30 * 24 * 3600 * 1000),
+            before: new Date(now.getTime() - 30 * 24 * 3600 * 1000)
         });
 
         expect(deleted).toBe(1);
@@ -118,14 +118,14 @@ describe("AccessEventsRepo", () => {
             deviceId: "d1",
             direction: "IN",
             occurredAt: now,
-            idempotencyKey: "kc1",
+            idempotencyKey: "kc1"
         });
 
         const claimed = await repo.claimBatch({
             limit: 10,
             now,
             leaseMs: 60_000,
-            processingBy: "worker-1",
+            processingBy: "worker-1"
         });
 
         expect(claimed).toHaveLength(1);
@@ -149,7 +149,7 @@ describe("AccessEventsRepo", () => {
             status: "PROCESSING",
             attempts: 1,
             processingAt: now,
-            processingBy: "worker-1",
+            processingBy: "worker-1"
         });
 
         await repo.markFailed({
@@ -157,7 +157,7 @@ describe("AccessEventsRepo", () => {
             error: "boom",
             attempts: 1,
             maxAttempts: 1,
-            nextAttemptAt: new Date(now.getTime() + 1000),
+            nextAttemptAt: new Date(now.getTime() + 1000)
         });
 
         const rows = await db.select().from(accessEvents);

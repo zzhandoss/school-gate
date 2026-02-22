@@ -12,7 +12,7 @@ import {
     createStubAlertsHandlers,
     createStubAdminsHandlers,
     createStubAuditLogsHandlers,
-    createStubSubscriptionsHandlers,
+    createStubSubscriptionsHandlers
 } from "../helpers/adminAuth.js";
 import { createTestDb } from "../helpers/testDb.js";
 import { createApiApp } from "../../../apps/api/src/app.js";
@@ -36,17 +36,17 @@ describe("API monitoring routes", () => {
         const monitoringRepo = createMonitoringRepo(db);
         const componentsProvider = {
             listComponents: async () => [],
-            getDeviceServiceMonitoring: async () => null,
+            getDeviceServiceMonitoring: async () => null
         };
         const getSnapshot = createGetMonitoringSnapshotUC({
             monitoringRepo,
             componentsProvider,
             clock: { now: () => now },
-            workerTtlMs: 120_000,
+            workerTtlMs: 120_000
         });
 
         const snapshotMonitoringRepo = createMonitoringSnapshotsRepo(db);
-        const listMonitoringSnapshots = createListMonitoringSnapshotsUC({ snapshotsRepo: snapshotMonitoringRepo })
+        const listMonitoringSnapshots = createListMonitoringSnapshotsUC({ snapshotsRepo: snapshotMonitoringRepo });
 
         const runtimeSettings = createRuntimeSettingsService(db);
         const logger = createLogger({ name: "api-test", level: "silent" });
@@ -64,20 +64,20 @@ describe("API monitoring routes", () => {
                         result: "duplicate",
                         status: "NEW",
                         personId: null,
-                        accessEventId: null,
-                    }),
-                },
+                        accessEventId: null
+                    })
+                }
             },
             accessEventsAdmin: {
                 listUnmatched: async () => [],
-                mapTerminalIdentity: async () => ({ status: "already_linked", updatedEvents: 0 }),
+                mapTerminalIdentity: async () => ({ status: "already_linked", updatedEvents: 0 })
             },
             persons: {
-                searchByIin: async () => [],
+                searchByIin: async () => []
             },
             subscriptionRequests: {
                 listPending: async () => ({ requests: [], page: { limit: 50, offset: 0, total: 0 } }),
-                review: async () => ({ requestId: "r1", status: "rejected", personId: null }),
+                review: async () => ({ requestId: "r1", status: "rejected", personId: null })
             },
             alerts: createStubAlertsHandlers(),
             subscriptions: createStubSubscriptionsHandlers(),
@@ -87,12 +87,12 @@ describe("API monitoring routes", () => {
                     taskName: "school-gate-retention",
                     platform: process.platform,
                     pollMs: 300000,
-                    intervalMinutes: 5,
+                    intervalMinutes: 5
                 }),
                 removeSchedule: async () => ({
                     taskName: "school-gate-retention",
                     platform: process.platform,
-                    removed: true,
+                    removed: true
                 }),
                 runOnce: async () => ({
                     accessEventsDeleted: 0,
@@ -101,13 +101,13 @@ describe("API monitoring routes", () => {
                     auditLogsCutoff: new Date("2026-01-01T00:00:00.000Z"),
                     batch: 500,
                     accessEventsDays: 30,
-                    auditLogsDays: 30,
-                }),
+                    auditLogsDays: 30
+                })
             },
             monitoring: {
                 getSnapshot: () => getSnapshot(),
-                listSnapshots: async (input) => listMonitoringSnapshots(input),
-            },
+                listSnapshots: async (input) => listMonitoringSnapshots(input)
+            }
         });
     });
 
@@ -130,7 +130,7 @@ describe("API monitoring routes", () => {
                 direction: "IN",
                 occurredAt: older,
                 idempotencyKey: "dev-1:ae-new-old",
-                status: "NEW",
+                status: "NEW"
             },
             {
                 id: "ae-new-newer",
@@ -138,7 +138,7 @@ describe("API monitoring routes", () => {
                 direction: "OUT",
                 occurredAt: newer,
                 idempotencyKey: "dev-1:ae-new-newer",
-                status: "NEW",
+                status: "NEW"
             },
             {
                 id: "ae-processed",
@@ -146,7 +146,7 @@ describe("API monitoring routes", () => {
                 direction: "IN",
                 occurredAt: older,
                 idempotencyKey: "dev-1:ae-processed",
-                status: "PROCESSED",
+                status: "PROCESSED"
             },
             {
                 id: "ae-error",
@@ -155,7 +155,7 @@ describe("API monitoring routes", () => {
                 occurredAt: old,
                 idempotencyKey: "dev-1:ae-error",
                 status: "ERROR",
-                lastError: "person_resolve_failed",
+                lastError: "person_resolve_failed"
             },
             {
                 id: "ae-failed-retry",
@@ -164,8 +164,8 @@ describe("API monitoring routes", () => {
                 occurredAt: old,
                 idempotencyKey: "dev-1:ae-failed-retry",
                 status: "FAILED_RETRY",
-                lastError: "person_resolve_failed",
-            },
+                lastError: "person_resolve_failed"
+            }
         ]);
 
         await db.insert(outboxEvents).values([
@@ -175,7 +175,7 @@ describe("API monitoring routes", () => {
                 payloadJson: "{}",
                 status: "new",
                 attempts: 0,
-                createdAt: old,
+                createdAt: old
             },
             {
                 id: "ob-new-newer",
@@ -183,7 +183,7 @@ describe("API monitoring routes", () => {
                 payloadJson: "{}",
                 status: "new",
                 attempts: 0,
-                createdAt: newer,
+                createdAt: newer
             },
             {
                 id: "ob-error",
@@ -192,7 +192,7 @@ describe("API monitoring routes", () => {
                 status: "error",
                 attempts: 3,
                 createdAt: old,
-                lastError: "telegram_send_failed",
+                lastError: "telegram_send_failed"
             },
             {
                 id: "ob-error-2",
@@ -201,7 +201,7 @@ describe("API monitoring routes", () => {
                 status: "error",
                 attempts: 2,
                 createdAt: newer,
-                lastError: "telegram_send_failed",
+                lastError: "telegram_send_failed"
             },
             {
                 id: "ob-processed",
@@ -209,8 +209,8 @@ describe("API monitoring routes", () => {
                 payloadJson: "{}",
                 status: "processed",
                 attempts: 1,
-                createdAt: older,
-            },
+                createdAt: older
+            }
         ]);
 
         await db.insert(workerHeartbeats).values([
@@ -219,7 +219,7 @@ describe("API monitoring routes", () => {
                 updatedAt: now,
                 lastStartedAt: old,
                 lastSuccessAt: now,
-                metaJson: JSON.stringify({ pollMs: 1000, batch: 10 }),
+                metaJson: JSON.stringify({ pollMs: 1000, batch: 10 })
             },
             {
                 workerId: "retention",
@@ -227,8 +227,8 @@ describe("API monitoring routes", () => {
                 lastStartedAt: old,
                 lastErrorAt: old,
                 lastError: "retention_failed",
-                metaJson: JSON.stringify({ mode: "run-once" }),
-            },
+                metaJson: JSON.stringify({ mode: "run-once" })
+            }
         ]);
 
         const res = await app.request("/api/monitoring");
@@ -240,14 +240,14 @@ describe("API monitoring routes", () => {
         expect(json.data.accessEvents.counts).toMatchObject({
             NEW: 2,
             PROCESSED: 1,
-            ERROR: 1,
+            ERROR: 1
         });
         expect(json.data.accessEvents.oldestUnprocessedOccurredAt).toBe(older.toISOString());
 
         expect(json.data.outbox.counts).toMatchObject({
             new: 2,
             error: 2,
-            processed: 1,
+            processed: 1
         });
         expect(json.data.outbox.oldestNewCreatedAt).toBe(old.toISOString());
         expect(json.data.now).toBe(now.toISOString());
@@ -255,7 +255,7 @@ describe("API monitoring routes", () => {
         expect(Array.isArray(json.data.workers)).toBe(true);
         expect(json.data.workers.map((w: any) => w.workerId)).toEqual([
             "access-events",
-            "retention",
+            "retention"
         ]);
         expect(json.data.workers).toEqual([
             {
@@ -267,7 +267,7 @@ describe("API monitoring routes", () => {
                 lastError: null,
                 status: "ok",
                 ttlMs: 120000,
-                meta: { pollMs: 1000, batch: 10 },
+                meta: { pollMs: 1000, batch: 10 }
             },
             {
                 workerId: "retention",
@@ -278,23 +278,23 @@ describe("API monitoring routes", () => {
                 lastError: "retention_failed",
                 status: "stale",
                 ttlMs: 120000,
-                meta: { mode: "run-once" },
-            },
+                meta: { mode: "run-once" }
+            }
         ]);
 
         expect(json.data.topErrors.accessEvents).toEqual([
             {
                 error: "person_resolve_failed",
                 count: 2,
-                lastAt: old.toISOString(),
-            },
+                lastAt: old.toISOString()
+            }
         ]);
         expect(json.data.topErrors.outbox).toEqual([
             {
                 error: "telegram_send_failed",
                 count: 2,
-                lastAt: newer.toISOString(),
-            },
+                lastAt: newer.toISOString()
+            }
         ]);
     });
 
@@ -309,18 +309,18 @@ describe("API monitoring routes", () => {
                     PROCESSED: 0,
                     FAILED_RETRY: 0,
                     UNMATCHED: 0,
-                    ERROR: 0,
+                    ERROR: 0
                 },
-                oldestUnprocessedOccurredAt: null,
+                oldestUnprocessedOccurredAt: null
             },
             outbox: {
                 counts: { new: 2, processing: 0, processed: 1, error: 0 },
-                oldestNewCreatedAt: newer,
+                oldestNewCreatedAt: newer
             },
             workers: [],
             topErrors: { accessEvents: [], outbox: [] },
             components: [],
-            deviceService: null,
+            deviceService: null
         };
 
         snapshotsRepo.insert({
@@ -329,7 +329,7 @@ describe("API monitoring routes", () => {
             snapshot,
             outboxNewCount: snapshot.outbox.counts.new,
             outboxOldestNewAt: snapshot.outbox.oldestNewCreatedAt,
-            accessOldestUnprocessedAt: snapshot.accessEvents.oldestUnprocessedOccurredAt,
+            accessOldestUnprocessedAt: snapshot.accessEvents.oldestUnprocessedOccurredAt
         });
 
         const res = await app.request("/api/monitoring/snapshots?limit=10");

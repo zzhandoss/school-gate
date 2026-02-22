@@ -12,7 +12,7 @@ export function createOutbox(db: Db): Outbox {
                 type: input.event.type,
                 payloadJson: JSON.stringify(input.event.payload),
                 status: "new",
-                attempts: 0,
+                attempts: 0
             }).run();
         },
 
@@ -31,7 +31,7 @@ export function createOutbox(db: Db): Outbox {
                     id: outboxEvents.id,
                     type: outboxEvents.type,
                     payloadJson: outboxEvents.payloadJson,
-                    attempts: outboxEvents.attempts,
+                    attempts: outboxEvents.attempts
                 })
                 .from(outboxEvents)
                 .where(eligible)
@@ -49,7 +49,7 @@ export function createOutbox(db: Db): Outbox {
                     status: "processing",
                     attempts: sql`${outboxEvents.attempts} + 1`,
                     processingAt: input.now,
-                    processingBy: input.processingBy,
+                    processingBy: input.processingBy
                 })
                 .where(and(inArray(outboxEvents.id, ids), eligible))
                 .run();
@@ -63,7 +63,7 @@ export function createOutbox(db: Db): Outbox {
                 .set({
                     status: "processed",
                     processedAt: input.processedAt,
-                    lastError: null,
+                    lastError: null
                 })
                 .where(eq(outboxEvents.id, input.id))
                 .run();
@@ -76,7 +76,7 @@ export function createOutbox(db: Db): Outbox {
                     status: sql`CASE WHEN ${outboxEvents.attempts} >= ${input.maxAttempts} THEN 'error' ELSE 'new' END`,
                     lastError: input.error,
                     processingAt: null,
-                    processingBy: null,
+                    processingBy: null
                 })
                 .where(eq(outboxEvents.id, input.id))
                 .run();

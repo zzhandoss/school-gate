@@ -16,10 +16,10 @@ export const accessEventItemSchema = z.object({
         id: z.string().min(1),
         iin: z.string().min(1),
         firstName: z.string().nullable(),
-        lastName: z.string().nullable(),
+        lastName: z.string().nullable()
     }).nullable(),
     processedAt: z.string().min(1).nullable(),
-    createdAt: z.string().min(1),
+    createdAt: z.string().min(1)
 });
 
 export const listAccessEventsQuerySchema = z.object({
@@ -31,7 +31,7 @@ export const listAccessEventsQuerySchema = z.object({
     iin: z.string().min(1).optional(),
     terminalPersonId: z.string().min(1).optional(),
     from: z.string().datetime().optional(),
-    to: z.string().datetime().optional(),
+    to: z.string().datetime().optional()
 });
 
 export const listAccessEventsResultSchema = z.object({
@@ -39,8 +39,8 @@ export const listAccessEventsResultSchema = z.object({
     page: z.object({
         limit: z.number().int().positive(),
         offset: z.number().int().nonnegative(),
-        total: z.number().int().nonnegative(),
-    }),
+        total: z.number().int().nonnegative()
+    })
 });
 
 export const unmatchedAccessEventSchema = z.object({
@@ -51,22 +51,22 @@ export const unmatchedAccessEventSchema = z.object({
     terminalPersonId: z.string().min(1).nullable(),
     iin: z.string().min(1).nullable(),
     status: z.enum(["UNMATCHED"]),
-    createdAt: z.string().min(1),
+    createdAt: z.string().min(1)
 });
 
 export const listUnmatchedAccessEventsResultSchema = z.object({
-    events: z.array(unmatchedAccessEventSchema),
+    events: z.array(unmatchedAccessEventSchema)
 });
 
 export const mapTerminalIdentitySchema = z.object({
     personId: z.string().min(1),
     deviceId: z.string().min(1),
-    terminalPersonId: z.string().min(1),
+    terminalPersonId: z.string().min(1)
 });
 
 export const mapTerminalIdentityResultSchema = z.object({
     status: z.enum(["linked", "already_linked"]),
-    updatedEvents: z.number().int().nonnegative(),
+    updatedEvents: z.number().int().nonnegative()
 });
 
 export type UnmatchedAccessEventDto = z.infer<typeof unmatchedAccessEventSchema>;

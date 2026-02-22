@@ -5,7 +5,7 @@ import type {
     AlertRulesServiceDeps,
     CreateAlertRuleInput,
     CreateAlertRuleResult,
-    UpdateAlertRuleInput,
+    UpdateAlertRuleInput
 } from "./alertRules.types.js";
 import { parseAlertRuleConfig } from "../rules/registry.js";
 import { AlertRuleConfigInvalidError, AlertRuleNotFoundError } from "../../utils/errors.js";
@@ -15,7 +15,7 @@ export function createAlertRulesService(deps: AlertRulesServiceDeps): AlertRules
         withTx(tx: unknown) {
             return createAlertRulesService({
                 ...deps,
-                rulesRepo: deps.rulesRepo.withTx(tx),
+                rulesRepo: deps.rulesRepo.withTx(tx)
             });
         },
 
@@ -39,7 +39,7 @@ export function createAlertRulesService(deps: AlertRulesServiceDeps): AlertRules
                 isEnabled: input.isEnabled,
                 config,
                 createdAt: now,
-                updatedAt: now,
+                updatedAt: now
             });
             if (deps.outbox) {
                 enqueueAuditRequested({
@@ -50,11 +50,11 @@ export function createAlertRulesService(deps: AlertRulesServiceDeps): AlertRules
                     entityType: "alert_rule",
                     entityId: ruleId,
                     at: now,
-                    meta: { name: input.name, type: input.type, severity: input.severity, isEnabled: input.isEnabled },
+                    meta: { name: input.name, type: input.type, severity: input.severity, isEnabled: input.isEnabled }
                 });
             }
             return {
- ruleId };
+                ruleId };
         },
 
         async update(input: UpdateAlertRuleInput): Promise<void> {
@@ -77,7 +77,7 @@ export function createAlertRulesService(deps: AlertRulesServiceDeps): AlertRules
                 severity: input.severity,
                 isEnabled: input.isEnabled,
                 config,
-                updatedAt,
+                updatedAt
             });
             if (!updated) throw new AlertRuleNotFoundError();
             if (deps.outbox) {
@@ -93,8 +93,8 @@ export function createAlertRulesService(deps: AlertRulesServiceDeps): AlertRules
                         name: input.name,
                         severity: input.severity,
                         isEnabled: input.isEnabled,
-                        hasConfig: input.config !== undefined,
-                    },
+                        hasConfig: input.config !== undefined
+                    }
                 });
             }
         },
@@ -105,6 +105,6 @@ export function createAlertRulesService(deps: AlertRulesServiceDeps): AlertRules
 
         list(input) {
             return deps.rulesRepo.list(input);
-        },
+        }
     };
 }

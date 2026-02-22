@@ -6,7 +6,7 @@ export function createPasswordResetsService(deps: PasswordResetsServiceDeps): Pa
         withTx(tx: unknown) {
             return createPasswordResetsService({
                 ...deps,
-                passwordResetsRepo: deps.passwordResetsRepo.withTx(tx),
+                passwordResetsRepo: deps.passwordResetsRepo.withTx(tx)
             });
         },
 
@@ -20,12 +20,12 @@ export function createPasswordResetsService(deps: PasswordResetsServiceDeps): Pa
         async markUsed(input) {
             const updated = await deps.passwordResetsRepo.markUsed({
                 tokenHash: input.tokenHash,
-                usedAt: input.usedAt,
+                usedAt: input.usedAt
             });
             if (!updated) {
                 throw new PasswordResetNotFoundError();
             }
-        },
+        }
     };
 }
 

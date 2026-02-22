@@ -1,6 +1,6 @@
 import { asEnum, asPositiveInt, asRecord } from "../helpers.js";
 import type { RuleEvaluator } from "./evaluator.types.js";
-import { MonitoringSnapshot } from "../../../monitoring/index.js";
+import type { MonitoringSnapshot } from "../../../monitoring/index.js";
 
 function sumErrors(list: MonitoringSnapshot["topErrors"]["accessEvents"]): number {
     return list.reduce((acc, stat) => acc + stat.count, 0);
@@ -17,7 +17,7 @@ type ErrorSpikeConfig = ReturnType<typeof parseErrorSpikeConfig>;
 
 export const evaluateErrorSpikeRule: RuleEvaluator<"error_spike", ErrorSpikeConfig> = ({
     rule,
-    context,
+    context
 }) => {
     const previousSnapshot = context.previousSnapshot;
     if (!previousSnapshot) {
@@ -26,7 +26,7 @@ export const evaluateErrorSpikeRule: RuleEvaluator<"error_spike", ErrorSpikeConf
             triggeredMessage: "error spike threshold reached",
             resolvedMessage: "error spike cleared",
             details: null,
-            skipReason: "previous_snapshot_missing",
+            skipReason: "previous_snapshot_missing"
         };
     }
     const source = rule.config.source;
@@ -49,7 +49,7 @@ export const evaluateErrorSpikeRule: RuleEvaluator<"error_spike", ErrorSpikeConf
             currentTotal,
             previousTotal,
             delta,
-            increaseBy: rule.config.increaseBy,
-        },
+            increaseBy: rule.config.increaseBy
+        }
     };
 };

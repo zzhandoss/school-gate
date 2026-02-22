@@ -2,7 +2,7 @@
     AdminDisabledError,
     AdminTgCodePurposeMismatchError,
     AdminTgLinkExpiredError,
-    AdminTgLinkUsedError,
+    AdminTgLinkUsedError
 } from "../../../utils/errors.js";
 import type { AdminTgCodesService } from "../../services/adminTgCodes.types.js";
 import type { AdminsService } from "../../services/admins.types.js";
@@ -44,6 +44,6 @@ export function createTelegramCodeStrategy(deps: {
 
             await deps.adminTgCodesService.markUsed({ codeHash, usedAt: deps.clock.now() });
             return { admin };
-        },
+        }
     };
 }

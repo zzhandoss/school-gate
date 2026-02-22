@@ -1,7 +1,7 @@
 import type {
     MonitoringSnapshotCollector,
     MonitoringSnapshotCollectorInput,
-    MonitoringSnapshotSlice,
+    MonitoringSnapshotSlice
 } from "../pipeline/snapshotPipeline.js";
 
 export const collectComponentsSnapshot: MonitoringSnapshotCollector = async (

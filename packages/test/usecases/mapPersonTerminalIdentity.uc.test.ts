@@ -30,7 +30,7 @@ describe("MapPersonTerminalIdentityUC", () => {
             personsRepo: createPersonsRepo(db),
             personTerminalIdentitiesRepo: createPersonTerminalIdentitiesRepo(db),
             accessEventsRepo: createAccessEventsRepo(db),
-            idGen: { nextId: () => "x" },
+            idGen: { nextId: () => "x" }
         });
 
         await expect(
@@ -50,7 +50,7 @@ describe("MapPersonTerminalIdentityUC", () => {
             personsRepo,
             personTerminalIdentitiesRepo: ptiRepo,
             accessEventsRepo: createAccessEventsRepo(db),
-            idGen: { nextId: () => "x" },
+            idGen: { nextId: () => "x" }
         });
 
         await expect(
@@ -72,14 +72,14 @@ describe("MapPersonTerminalIdentityUC", () => {
             occurredAt: new Date(),
             terminalPersonId: "T-1",
             idempotencyKey: "k1",
-            status: "UNMATCHED",
+            status: "UNMATCHED"
         });
 
         const uc = createMapPersonTerminalIdentityUC({
             personsRepo,
             personTerminalIdentitiesRepo: ptiRepo,
             accessEventsRepo,
-            idGen: { nextId: () => "pti-new" },
+            idGen: { nextId: () => "pti-new" }
         });
 
         const res = await uc({ personId: "p1", deviceId: "dev-1", terminalPersonId: "T-1" });

@@ -1,55 +1,55 @@
-import type { SessionState } from './types'
+import type { SessionState } from "./types";
 
 type SessionAdminPayload = {
-  id: string
-  email: string
-  status: 'pending' | 'active' | 'disabled'
-  name: string | null
-  tgUserId: string | null
-  roleId?: string | null
-  roleName?: string | null
-  permissions?: Array<string>
-}
+    id: string
+    email: string
+    status: "pending" | "active" | "disabled"
+    name: string | null
+    tgUserId: string | null
+    roleId?: string | null
+    roleName?: string | null
+    permissions?: Array<string>
+};
 
 export type AuthSessionPayload = {
-  admin: SessionAdminPayload
-  roleId?: string | null
-  roleName?: string | null
-  permissions?: Array<string>
-}
+    admin: SessionAdminPayload
+    roleId?: string | null
+    roleName?: string | null
+    permissions?: Array<string>
+};
 
 export function mapSessionPayload(
-  payload: AuthSessionPayload,
-  fallback: SessionState | null = null
+    payload: AuthSessionPayload,
+    fallback: SessionState | null = null
 ): SessionState {
-  const roleId =
-    payload.roleId ??
+    const roleId =
+        payload.roleId ??
     payload.admin.roleId ??
     fallback?.admin.roleId ??
-    'unknown'
+    "unknown";
 
-  const roleName =
-    payload.roleName ??
+    const roleName =
+        payload.roleName ??
     payload.admin.roleName ??
     fallback?.admin.roleName ??
-    null
+    null;
 
-  const permissions =
-    payload.permissions ??
+    const permissions =
+        payload.permissions ??
     payload.admin.permissions ??
     fallback?.admin.permissions ??
-    []
+    [];
 
-  return {
-    admin: {
-      id: payload.admin.id,
-      email: payload.admin.email,
-      status: payload.admin.status,
-      name: payload.admin.name,
-      tgUserId: payload.admin.tgUserId,
-      roleId,
-      roleName,
-      permissions
-    }
-  }
+    return {
+        admin: {
+            id: payload.admin.id,
+            email: payload.admin.email,
+            status: payload.admin.status,
+            name: payload.admin.name,
+            tgUserId: payload.admin.tgUserId,
+            roleId,
+            roleName,
+            permissions
+        }
+    };
 }

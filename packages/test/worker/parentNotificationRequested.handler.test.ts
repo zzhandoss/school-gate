@@ -18,9 +18,9 @@ describe("parentNotificationRequestedHandler", () => {
                     direction: "IN",
                     occurredAt: "2020-01-01T00:00:00.000Z",
                     personId: "p1",
-                    tgUserId: "tg1",
+                    tgUserId: "tg1"
                 }),
-                attempts: 0,
+                attempts: 0
             },
             {
                 db: undefined,
@@ -30,8 +30,8 @@ describe("parentNotificationRequestedHandler", () => {
                     sendAccessEvent: async (input) => {
                         sent.push(input);
                     },
-                    sendAlert: async () => {},
-                },
+                    sendAlert: async () => {}
+                }
             }
         );
 
@@ -46,12 +46,12 @@ describe("parentNotificationRequestedHandler", () => {
                     id: "e1",
                     type: "parent.notification.requested",
                     payloadJson: "{}",
-                    attempts: 0,
+                    attempts: 0
                 },
                 {
                     db: undefined,
                     now: () => new Date(),
-                    newId: () => "x",
+                    newId: () => "x"
                 }
             )
         ).rejects.toThrow("Notification sender not configured");
@@ -72,9 +72,9 @@ describe("parentNotificationRequestedHandler", () => {
                     direction: "IN",
                     occurredAt: "2020-01-01T00:00:00.000Z",
                     personId: "p1",
-                    tgUserId: "tg1",
+                    tgUserId: "tg1"
                 }),
-                attempts: 0,
+                attempts: 0
             },
             {
                 db,
@@ -85,8 +85,8 @@ describe("parentNotificationRequestedHandler", () => {
                     sendAccessEvent: async (input) => {
                         sent.push(input);
                     },
-                    sendAlert: async () => {},
-                },
+                    sendAlert: async () => {}
+                }
             }
         );
 

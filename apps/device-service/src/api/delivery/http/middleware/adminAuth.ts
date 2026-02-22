@@ -32,7 +32,7 @@ export function adminAuth(input: { jwtSecret: string }) {
 
         c.set("admin", {
             adminId: candidate.sub,
-            permissions: candidate.permissions.map(String),
+            permissions: candidate.permissions.map(String)
         });
 
         await next();

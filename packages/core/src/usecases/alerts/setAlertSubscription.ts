@@ -4,7 +4,7 @@ import type { Clock, IdGenerator } from "../../utils/common.types.js";
 import type { AlertRulesService } from "../../alerts/index.js";
 import type { AlertSubscriptionsService } from "../../alerts/index.js";
 import { AdminNotFoundError, AdminTelegramNotLinkedError, AlertRuleNotFoundError } from "../../utils/errors.js";
-import { AdminsService } from "../../iam/index.js";
+import type { AdminsService } from "../../iam/index.js";
 
 export type SetAlertSubscriptionInput = {
     adminId: string;
@@ -33,7 +33,7 @@ export function createSetAlertSubscriptionUC(deps: {
         await deps.subscriptionsService.upsert({
             adminId: input.adminId,
             ruleId: input.ruleId,
-            isEnabled: input.isEnabled,
+            isEnabled: input.isEnabled
         });
 
         enqueueAuditRequested({
@@ -44,7 +44,7 @@ export function createSetAlertSubscriptionUC(deps: {
             entityType: "alert_subscription",
             entityId: `${input.adminId}:${input.ruleId}`,
             at: deps.clock.now(),
-            meta: { ruleId: input.ruleId, isEnabled: input.isEnabled },
+            meta: { ruleId: input.ruleId, isEnabled: input.isEnabled }
         });
     };
 }

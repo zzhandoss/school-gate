@@ -2,7 +2,7 @@
 import {
     SubscriptionRequestNotFoundError,
     SubscriptionRequestNotPendingError,
-    SubscriptionRequestNotReadyError,
+    SubscriptionRequestNotReadyError
 } from "../../utils/errors.js";
 import type { ReviewSubscriptionRequestDeps, ReviewSubscriptionRequestFlow } from "./reviewSubscriptionRequest.types.js";
 
@@ -36,14 +36,14 @@ export function createReviewSubscriptionRequestFlow(
                 subscriptionsService.upsertActiveSync({
                     id: deps.idGen.nextId(),
                     tgUserId: req.tgUserId,
-                    personId: req.personId!,
+                    personId: req.personId!
                 });
 
                 subscriptionRequestsService.updateStatusSync({
                     id: req.id,
                     status: "approved",
                     reviewedAt,
-                    reviewedBy: input.adminTgUserId,
+                    reviewedBy: input.adminTgUserId
                 });
 
                 outbox.enqueue({
@@ -56,9 +56,9 @@ export function createReviewSubscriptionRequestFlow(
                             entityType: "subscription_request",
                             entityId: req.id,
                             at: reviewedAt.toISOString(),
-                            meta: { tgUserId: req.tgUserId, personId: req.personId, iin: req.iin },
-                        },
-                    },
+                            meta: { tgUserId: req.tgUserId, personId: req.personId, iin: req.iin }
+                        }
+                    }
                 });
 
                 outbox.enqueue({
@@ -73,12 +73,12 @@ export function createReviewSubscriptionRequestFlow(
                             status: "triggered",
                             message: formatSubscriptionRequestReviewMessage({
                                 status: "approved",
-                                iin: req.iin,
+                                iin: req.iin
                             }),
                             createdAt: reviewedAt.toISOString(),
-                            tgUserId: req.tgUserId,
-                        },
-                    },
+                            tgUserId: req.tgUserId
+                        }
+                    }
                 });
 
                 return { requestId: req.id, status: "approved", personId: req.personId };
@@ -92,7 +92,7 @@ export function createReviewSubscriptionRequestFlow(
                 id: req.id,
                 status: "rejected",
                 reviewedAt,
-                reviewedBy: input.adminTgUserId,
+                reviewedBy: input.adminTgUserId
             });
 
             outbox.enqueue({
@@ -105,9 +105,9 @@ export function createReviewSubscriptionRequestFlow(
                         entityType: "subscription_request",
                         entityId: req.id,
                         at: reviewedAt.toISOString(),
-                        meta: { tgUserId: req.tgUserId, iin: req.iin, resolutionStatus: req.resolutionStatus },
-                    },
-                },
+                        meta: { tgUserId: req.tgUserId, iin: req.iin, resolutionStatus: req.resolutionStatus }
+                    }
+                }
             });
 
             outbox.enqueue({
@@ -122,12 +122,12 @@ export function createReviewSubscriptionRequestFlow(
                         status: "triggered",
                         message: formatSubscriptionRequestReviewMessage({
                             status: "rejected",
-                            iin: req.iin,
+                            iin: req.iin
                         }),
                         createdAt: reviewedAt.toISOString(),
-                        tgUserId: req.tgUserId,
-                    },
-                },
+                        tgUserId: req.tgUserId
+                    }
+                }
             });
 
             return { requestId: req.id, status: "rejected", personId: req.personId ?? null };

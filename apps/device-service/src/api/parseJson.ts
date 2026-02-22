@@ -22,7 +22,7 @@ export async function parseJson<T>(
     if (!parsed.success) {
         return {
             ok: false,
-            response: fail(c, { status: 400, code: "validation_error", message }),
+            response: fail(c, { status: 400, code: "validation_error", message })
         };
     }
 

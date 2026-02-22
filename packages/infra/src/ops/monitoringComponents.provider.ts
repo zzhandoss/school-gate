@@ -1,7 +1,7 @@
 import type {
     ComponentHealth,
     DeviceServiceMonitoring,
-    MonitoringComponentsProvider,
+    MonitoringComponentsProvider
 } from "@school-gate/core";
 
 type HttpTarget = {
@@ -41,13 +41,13 @@ type DeviceServiceMonitoringDto = {
 
 type ApiResponse<T> =
     | {
-          success: true;
-          data: T;
-      }
+        success: true;
+        data: T;
+    }
     | {
-          success: false;
-          error?: unknown;
-      };
+        success: false;
+        error?: unknown;
+    };
 
 function parseDate(value: string | null): Date | null {
     if (!value) return null;
@@ -64,7 +64,7 @@ function mapDeviceServiceDto(dto: DeviceServiceMonitoringDto): DeviceServiceMoni
             mode: adapter.mode,
             lastSeenAt: new Date(adapter.lastSeenAt),
             status: adapter.status,
-            ttlMs: adapter.ttlMs,
+            ttlMs: adapter.ttlMs
         })),
         devices: dto.devices.map((device) => ({
             deviceId: device.deviceId,
@@ -72,12 +72,12 @@ function mapDeviceServiceDto(dto: DeviceServiceMonitoringDto): DeviceServiceMoni
             adapterKey: device.adapterKey,
             lastEventAt: parseDate(device.lastEventAt),
             status: device.status,
-            ttlMs: device.ttlMs,
+            ttlMs: device.ttlMs
         })),
         outbox: {
             counts: dto.outbox.counts as DeviceServiceMonitoring["outbox"]["counts"],
-            oldestNewCreatedAt: parseDate(dto.outbox.oldestNewCreatedAt),
-        },
+            oldestNewCreatedAt: parseDate(dto.outbox.oldestNewCreatedAt)
+        }
     };
 }
 
@@ -120,7 +120,7 @@ export function createDeviceServiceMonitoringHttpClient(input: {
             } catch {
                 return null;
             }
-        },
+        }
     };
 }
 
@@ -148,7 +148,7 @@ export function createMonitoringComponentsProvider(input: {
                                 status: "down",
                                 checkedAt,
                                 responseTimeMs,
-                                error: `${res.status} ${res.statusText}`,
+                                error: `${res.status} ${res.statusText}`
                             } satisfies ComponentHealth;
                         }
                         return {
@@ -156,7 +156,7 @@ export function createMonitoringComponentsProvider(input: {
                             status: "ok",
                             checkedAt,
                             responseTimeMs,
-                            error: null,
+                            error: null
                         } satisfies ComponentHealth;
                     } catch (e) {
                         const message = e instanceof Error ? e.message : String(e);
@@ -165,7 +165,7 @@ export function createMonitoringComponentsProvider(input: {
                             status: "down",
                             checkedAt,
                             responseTimeMs: null,
-                            error: message,
+                            error: message
                         } satisfies ComponentHealth;
                     }
                 })
@@ -175,6 +175,6 @@ export function createMonitoringComponentsProvider(input: {
         async getDeviceServiceMonitoring() {
             if (!input.deviceServiceClient) return null;
             return input.deviceServiceClient.getMonitoring();
-        },
+        }
     };
 }

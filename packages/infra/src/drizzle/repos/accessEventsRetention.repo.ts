@@ -23,7 +23,7 @@ export function createAccessEventsRetentionRepo(db: Db): AccessEventsRetentionRe
         },
         withTx(tx) {
             return createAccessEventsRetentionRepo(tx as Db);
-        },
+        }
 
     };
 }

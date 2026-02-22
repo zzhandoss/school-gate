@@ -12,7 +12,7 @@ export const PERMISSIONS = [
     "settings.read",
     "settings.write",
     "monitoring.read",
-    "retention.manage",
+    "retention.manage"
 ] as const;
 
 export type Permission = typeof PERMISSIONS[number];

@@ -1,4 +1,4 @@
-import { z } from "zod";
+import type { z } from "zod";
 
 function formatIssues(issues: z.ZodIssue[]): string {
     return issues

@@ -16,12 +16,12 @@ export const auditLogs = sqliteTable(
 
         at: integer("at", { mode: "timestamp" })
             .notNull()
-            .default(sql`(unixepoch())`),
+            .default(sql`(unixepoch())`)
     },
     (t) => ({
         eventUniq: uniqueIndex("audit_logs_event_id_unique").on(t.eventId),
         idxEntity: index("audit_logs_entity_idx").on(t.entityType, t.entityId),
         idxActorAt: index("audit_logs_actor_at_idx").on(t.actorId, t.at),
-        idxAt: index("audit_logs_at_idx").on(t.at),
+        idxAt: index("audit_logs_at_idx").on(t.at)
     })
 );

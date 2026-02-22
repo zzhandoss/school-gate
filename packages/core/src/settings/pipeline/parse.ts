@@ -25,7 +25,7 @@ export function parseRows(
         const value: ParsedSetting<SettingValue> = {
             key: entry.key,
             value: result.data,
-            updatedAt: row.updatedAt,
+            updatedAt: row.updatedAt
         };
         parsed.set(entry.key, value);
     }

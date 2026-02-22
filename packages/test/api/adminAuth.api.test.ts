@@ -6,7 +6,7 @@ import {
     adminTgCodes as adminTgCodesTable,
     passwordResets as passwordResetsTable,
     rolePermissions as rolePermissionsTable,
-    roles as rolesTable,
+    roles as rolesTable
 } from "@school-gate/db/schema";
 import { createAdminsRepo } from "@school-gate/infra/drizzle/repos/admins.repo";
 import { createAdminInvitesRepo } from "@school-gate/infra/drizzle/repos/adminInvites.repo";
@@ -34,7 +34,7 @@ import {
     createStubAdminsHandlers,
     createStubAlertsHandlers,
     createStubAuditLogsHandlers,
-    createStubSubscriptionsHandlers,
+    createStubSubscriptionsHandlers
 } from "../helpers/adminAuth.js";
 import { createTestDb } from "../helpers/testDb.js";
 import { createApiApp } from "../../../apps/api/src/app.js";
@@ -90,7 +90,7 @@ describe("API admin auth routes", () => {
             outbox,
             tokenHasher,
             idGen,
-            clock,
+            clock
         });
         const acceptAdminInvite = createAcceptAdminInviteFlow({
             adminInvitesService,
@@ -100,7 +100,7 @@ describe("API admin auth routes", () => {
             passwordHasher,
             tokenHasher,
             idGen,
-            clock,
+            clock
         });
         const requestPasswordReset = createRequestPasswordResetFlow({
             adminsService,
@@ -108,7 +108,7 @@ describe("API admin auth routes", () => {
             outbox,
             tokenHasher,
             idGen,
-            clock,
+            clock
         });
         const confirmPasswordReset = createConfirmPasswordResetFlow({
             adminsService,
@@ -117,7 +117,7 @@ describe("API admin auth routes", () => {
             outbox,
             tokenHasher,
             idGen,
-            clock,
+            clock
         });
         const createTelegramLinkCode = createCreateTelegramLinkCodeFlow({
             adminsService,
@@ -125,7 +125,7 @@ describe("API admin auth routes", () => {
             outbox,
             tokenHasher,
             idGen,
-            clock,
+            clock
         });
         const linkTelegramByCode = createLinkTelegramByCodeFlow({
             adminsService,
@@ -133,7 +133,7 @@ describe("API admin auth routes", () => {
             outbox,
             tokenHasher,
             idGen,
-            clock,
+            clock
         });
         const getAdminAccess = createGetAdminAccessFlow({ adminsService, rolesService });
         const adminAuth = createAdminAuth({
@@ -144,8 +144,8 @@ describe("API admin auth routes", () => {
                 refreshCookieName: "sg_admin_refresh",
                 path: "/",
                 secure: false,
-                sameSite: "lax",
-            },
+                sameSite: "lax"
+            }
         });
 
         const runtimeSettings = createRuntimeSettingsService(db);
@@ -168,7 +168,7 @@ describe("API admin auth routes", () => {
                         throw new HttpError({
                             status: 401,
                             code: "invalid_credentials",
-                            message: "Invalid credentials",
+                            message: "Invalid credentials"
                         });
                     }
                     const access = await getAdminAccess(result.admin.id);
@@ -178,8 +178,8 @@ describe("API admin auth routes", () => {
                         payload: {
                             adminId: access.adminId,
                             roleId: access.roleId,
-                            permissions: access.permissions,
-                        },
+                            permissions: access.permissions
+                        }
                     });
                     return {
                         token,
@@ -192,8 +192,8 @@ describe("API admin auth routes", () => {
                             roleId: result.admin.roleId,
                             status: result.admin.status,
                             name: result.admin.name,
-                            tgUserId: result.admin.tgUserId,
-                        },
+                            tgUserId: result.admin.tgUserId
+                        }
                     };
                 },
                 requestTelegramLoginCode: async () => ({
@@ -232,8 +232,8 @@ describe("API admin auth routes", () => {
                         roleId: "role-1",
                         status: "active",
                         name: input.name ?? null,
-                        tgUserId: null,
-                    },
+                        tgUserId: null
+                    }
                 }),
                 changeMyPassword: async (input) => {
                     const admin = await adminsService.getById(input.adminId);
@@ -264,17 +264,17 @@ describe("API admin auth routes", () => {
                         await createRole({
                             id: roleId,
                             name: input.roleName,
-                            permissions: (input.permissions ?? []) as Permission[],
+                            permissions: (input.permissions ?? []) as Permission[]
                         });
                         const result = await createAdminInvite({
                             roleId,
                             email: input.email,
                             createdBy: input.adminId,
-                            expiresAt,
+                            expiresAt
                         });
                         return {
                             ...result,
-                            expiresAt: result.expiresAt.toISOString(),
+                            expiresAt: result.expiresAt.toISOString()
                         };
                     }
                     if (!input.roleId) {
@@ -284,27 +284,27 @@ describe("API admin auth routes", () => {
                         roleId: input.roleId,
                         email: input.email,
                         createdBy: input.adminId,
-                        expiresAt,
+                        expiresAt
                     });
                     return {
                         ...result,
-                        expiresAt: result.expiresAt.toISOString(),
+                        expiresAt: result.expiresAt.toISOString()
                     };
                 },
                 acceptInvite: (input) => acceptAdminInvite(input),
                 requestPasswordReset: (input) =>
                     requestPasswordReset({
                         email: input.email,
-                        expiresAt: new Date(clock.now().getTime() + input.expiresInMs),
+                        expiresAt: new Date(clock.now().getTime() + input.expiresInMs)
                     }),
                 confirmPasswordReset: (input) => confirmPasswordReset(input),
                 createTelegramLinkCode: (input) =>
                     createTelegramLinkCode({
                         adminId: input.adminId,
-                        expiresAt: new Date(clock.now().getTime() + input.expiresInMs),
+                        expiresAt: new Date(clock.now().getTime() + input.expiresInMs)
                     }).then((result) => ({
                         ...result,
-                        expiresAt: result.expiresAt.toISOString(),
+                        expiresAt: result.expiresAt.toISOString()
                     })),
                 linkTelegramByCode: (input) => linkTelegramByCode(input),
                 unlinkTelegram: async (input) => {
@@ -322,14 +322,14 @@ describe("API admin auth routes", () => {
                     await createRole({
                         id: roleId,
                         name: input.name,
-                        permissions: input.permissions as Permission[],
+                        permissions: input.permissions as Permission[]
                     });
                     return { roleId };
                 },
                 updateRolePermissions: (input) =>
                     updateRolePermissions({
                         roleId: input.roleId,
-                        permissions: input.permissions as Permission[],
+                        permissions: input.permissions as Permission[]
                     }).then(() => ({ roleId: input.roleId })),
                 listRoles: async () => {
                     const roles = await listRoles();
@@ -338,16 +338,16 @@ describe("API admin auth routes", () => {
                             id: role.id,
                             name: role.name,
                             createdAt: role.createdAt.toISOString(),
-                            updatedAt: role.updatedAt.toISOString(),
-                        })),
+                            updatedAt: role.updatedAt.toISOString()
+                        }))
                     };
                 },
                 listRolePermissions: (roleId) =>
                     listRolePermissions(roleId).then((permissions) => ({
                         roleId,
-                        permissions,
+                        permissions
                     })),
-                listPermissions: () => ({ permissions: listPermissions() }),
+                listPermissions: () => ({ permissions: listPermissions() })
             },
             admins: createStubAdminsHandlers(),
             runtimeSettings,
@@ -358,20 +358,20 @@ describe("API admin auth routes", () => {
                         result: "duplicate",
                         status: "NEW",
                         personId: null,
-                        accessEventId: null,
-                    }),
-                },
+                        accessEventId: null
+                    })
+                }
             },
             accessEventsAdmin: {
                 listUnmatched: async () => [],
-                mapTerminalIdentity: async () => ({ status: "already_linked", updatedEvents: 0 }),
+                mapTerminalIdentity: async () => ({ status: "already_linked", updatedEvents: 0 })
             },
             persons: {
-                searchByIin: async () => [],
+                searchByIin: async () => []
             },
             subscriptionRequests: {
                 listPending: async () => ({ requests: [], page: { limit: 50, offset: 0, total: 0 } }),
-                review: async () => ({ requestId: "r1", status: "rejected", personId: null }),
+                review: async () => ({ requestId: "r1", status: "rejected", personId: null })
             },
             alerts: createStubAlertsHandlers(),
             subscriptions: createStubSubscriptionsHandlers(),
@@ -381,12 +381,12 @@ describe("API admin auth routes", () => {
                     taskName: "school-gate-retention",
                     platform: process.platform,
                     pollMs: 300000,
-                    intervalMinutes: 5,
+                    intervalMinutes: 5
                 }),
                 removeSchedule: async () => ({
                     taskName: "school-gate-retention",
                     platform: process.platform,
-                    removed: true,
+                    removed: true
                 }),
                 runOnce: async () => ({
                     accessEventsDeleted: 0,
@@ -395,8 +395,8 @@ describe("API admin auth routes", () => {
                     auditLogsCutoff: new Date("2026-01-01T00:00:00.000Z"),
                     batch: 500,
                     accessEventsDays: 30,
-                    auditLogsDays: 30,
-                }),
+                    auditLogsDays: 30
+                })
             },
             monitoring: {
                 getSnapshot: async () => ({
@@ -408,21 +408,21 @@ describe("API admin auth routes", () => {
                             PROCESSED: 0,
                             FAILED_RETRY: 0,
                             UNMATCHED: 0,
-                            ERROR: 0,
+                            ERROR: 0
                         },
-                        oldestUnprocessedOccurredAt: null,
+                        oldestUnprocessedOccurredAt: null
                     },
                     outbox: {
                         counts: { new: 0, processing: 0, processed: 0, error: 0 },
-                        oldestNewCreatedAt: null,
+                        oldestNewCreatedAt: null
                     },
                     workers: [],
                     topErrors: { accessEvents: [], outbox: [] },
                     components: [],
-                    deviceService: null,
+                    deviceService: null
                 }),
-                listSnapshots: async () => [],
-            },
+                listSnapshots: async () => []
+            }
         });
     });
 
@@ -443,11 +443,11 @@ describe("API admin auth routes", () => {
             id: "role-admin",
             name: "super-admin",
             createdAt: now,
-            updatedAt: now,
+            updatedAt: now
         });
         await rolesRepo.replacePermissions({
             roleId: "role-admin",
-            permissions: ["admin.manage"] as Permission[],
+            permissions: ["admin.manage"] as Permission[]
         });
 
         const passwordHasher = createArgon2PasswordHasher();
@@ -461,7 +461,7 @@ describe("API admin auth routes", () => {
             name: "Admin",
             tgUserId: null,
             createdAt: now,
-            updatedAt: now,
+            updatedAt: now
         });
     });
 
@@ -469,7 +469,7 @@ describe("API admin auth routes", () => {
         const res = await app.request("/api/auth/login", {
             method: "POST",
             headers: { "content-type": "application/json" },
-            body: JSON.stringify({ email: "admin@example.com", password: "password123" }),
+            body: JSON.stringify({ email: "admin@example.com", password: "password123" })
         });
 
         expect(res.status).toBe(200);
@@ -485,8 +485,8 @@ describe("API admin auth routes", () => {
             headers: { "content-type": "application/json" },
             body: JSON.stringify({
                 roleId: "role-admin",
-                expiresInMs: 60_000,
-            }),
+                expiresInMs: 60_000
+            })
         });
 
         expect(res.status).toBe(401);
@@ -499,7 +499,7 @@ describe("API admin auth routes", () => {
         const loginRes = await app.request("/api/auth/login", {
             method: "POST",
             headers: { "content-type": "application/json" },
-            body: JSON.stringify({ email: "admin@example.com", password: "password123" }),
+            body: JSON.stringify({ email: "admin@example.com", password: "password123" })
         });
         const loginJson = (await loginRes.json()) as any;
         const token = loginJson.data.token as string;
@@ -508,14 +508,14 @@ describe("API admin auth routes", () => {
             method: "POST",
             headers: {
                 "content-type": "application/json",
-                authorization: `Bearer ${token}`,
+                authorization: `Bearer ${token}`
             },
             body: JSON.stringify({
                 roleName: "device-manager",
                 permissions: ["devices.read", "devices.write"],
                 email: "new@example.com",
-                expiresInMs: 60_000,
-            }),
+                expiresInMs: 60_000
+            })
         });
         expect(inviteRes.status).toBe(200);
         const inviteJson = (await inviteRes.json()) as any;
@@ -529,8 +529,8 @@ describe("API admin auth routes", () => {
                 token: inviteToken,
                 email: "new@example.com",
                 password: "newpass123",
-                name: "New Admin",
-            }),
+                name: "New Admin"
+            })
         });
         expect(acceptRes.status).toBe(200);
         const acceptJson = (await acceptRes.json()) as any;
@@ -542,7 +542,7 @@ describe("API admin auth routes", () => {
         const loginRes = await app.request("/api/auth/login", {
             method: "POST",
             headers: { "content-type": "application/json" },
-            body: JSON.stringify({ email: "admin@example.com", password: "password123" }),
+            body: JSON.stringify({ email: "admin@example.com", password: "password123" })
         });
         const loginJson = (await loginRes.json()) as any;
         const token = loginJson.data.token as string;
@@ -551,13 +551,13 @@ describe("API admin auth routes", () => {
             method: "POST",
             headers: {
                 "content-type": "application/json",
-                authorization: `Bearer ${token}`,
+                authorization: `Bearer ${token}`
             },
             body: JSON.stringify({
                 roleName: "super-admin",
                 permissions: ["admin.manage"],
-                expiresInMs: 60_000,
-            }),
+                expiresInMs: 60_000
+            })
         });
 
         expect(res.status).toBe(409);
@@ -570,7 +570,7 @@ describe("API admin auth routes", () => {
         const requestRes = await app.request("/api/auth/password-resets/request", {
             method: "POST",
             headers: { "content-type": "application/json" },
-            body: JSON.stringify({ email: "admin@example.com", expiresInMs: 60_000 }),
+            body: JSON.stringify({ email: "admin@example.com", expiresInMs: 60_000 })
         });
         const requestJson = (await requestRes.json()) as any;
         expect(requestJson.success).toBe(true);
@@ -579,7 +579,7 @@ describe("API admin auth routes", () => {
         const confirmRes = await app.request("/api/auth/password-resets/confirm", {
             method: "POST",
             headers: { "content-type": "application/json" },
-            body: JSON.stringify({ token, password: "new-password-123" }),
+            body: JSON.stringify({ token, password: "new-password-123" })
         });
         expect(confirmRes.status).toBe(200);
         const confirmJson = (await confirmRes.json()) as any;
@@ -588,7 +588,7 @@ describe("API admin auth routes", () => {
         const loginRes = await app.request("/api/auth/login", {
             method: "POST",
             headers: { "content-type": "application/json" },
-            body: JSON.stringify({ email: "admin@example.com", password: "new-password-123" }),
+            body: JSON.stringify({ email: "admin@example.com", password: "new-password-123" })
         });
         expect(loginRes.status).toBe(200);
     });
@@ -597,7 +597,7 @@ describe("API admin auth routes", () => {
         const loginRes = await app.request("/api/auth/login", {
             method: "POST",
             headers: { "content-type": "application/json" },
-            body: JSON.stringify({ email: "admin@example.com", password: "password123" }),
+            body: JSON.stringify({ email: "admin@example.com", password: "password123" })
         });
         const loginJson = (await loginRes.json()) as any;
         const token = loginJson.data.token as string;
@@ -606,12 +606,12 @@ describe("API admin auth routes", () => {
             method: "PATCH",
             headers: {
                 "content-type": "application/json",
-                authorization: `Bearer ${token}`,
+                authorization: `Bearer ${token}`
             },
             body: JSON.stringify({
                 currentPassword: "password123",
-                newPassword: "new-password-777",
-            }),
+                newPassword: "new-password-777"
+            })
         });
         expect(changeRes.status).toBe(200);
         const changeJson = (await changeRes.json()) as any;
@@ -621,14 +621,14 @@ describe("API admin auth routes", () => {
         const oldLoginRes = await app.request("/api/auth/login", {
             method: "POST",
             headers: { "content-type": "application/json" },
-            body: JSON.stringify({ email: "admin@example.com", password: "password123" }),
+            body: JSON.stringify({ email: "admin@example.com", password: "password123" })
         });
         expect(oldLoginRes.status).toBe(401);
 
         const newLoginRes = await app.request("/api/auth/login", {
             method: "POST",
             headers: { "content-type": "application/json" },
-            body: JSON.stringify({ email: "admin@example.com", password: "new-password-777" }),
+            body: JSON.stringify({ email: "admin@example.com", password: "new-password-777" })
         });
         expect(newLoginRes.status).toBe(200);
     });
@@ -637,7 +637,7 @@ describe("API admin auth routes", () => {
         const loginRes = await app.request("/api/auth/login", {
             method: "POST",
             headers: { "content-type": "application/json" },
-            body: JSON.stringify({ email: "admin@example.com", password: "password123" }),
+            body: JSON.stringify({ email: "admin@example.com", password: "password123" })
         });
         const loginJson = (await loginRes.json()) as any;
         const token = loginJson.data.token as string;
@@ -646,9 +646,9 @@ describe("API admin auth routes", () => {
             method: "POST",
             headers: {
                 "content-type": "application/json",
-                authorization: `Bearer ${token}`,
+                authorization: `Bearer ${token}`
             },
-            body: JSON.stringify({ expiresInMs: 60_000 }),
+            body: JSON.stringify({ expiresInMs: 60_000 })
         });
         const codeJson = (await codeRes.json()) as any;
         expect(codeJson.success).toBe(true);
@@ -657,7 +657,7 @@ describe("API admin auth routes", () => {
         const linkRes = await app.request("/api/auth/telegram/link-by-code", {
             method: "POST",
             headers: { "content-type": "application/json" },
-            body: JSON.stringify({ code, tgUserId: "tg-1" }),
+            body: JSON.stringify({ code, tgUserId: "tg-1" })
         });
         expect(linkRes.status).toBe(200);
         const linkJson = (await linkRes.json()) as any;
@@ -669,7 +669,7 @@ describe("API admin auth routes", () => {
         const loginRes = await app.request("/api/auth/login", {
             method: "POST",
             headers: { "content-type": "application/json" },
-            body: JSON.stringify({ email: "admin@example.com", password: "password123" }),
+            body: JSON.stringify({ email: "admin@example.com", password: "password123" })
         });
         const loginJson = (await loginRes.json()) as any;
         const token = loginJson.data.token as string;
@@ -678,9 +678,9 @@ describe("API admin auth routes", () => {
             method: "POST",
             headers: {
                 "content-type": "application/json",
-                authorization: `Bearer ${token}`,
+                authorization: `Bearer ${token}`
             },
-            body: JSON.stringify({ expiresInMs: 60_000 }),
+            body: JSON.stringify({ expiresInMs: 60_000 })
         });
         const codeJson = (await codeRes.json()) as any;
         const code = codeJson.data.code as string;
@@ -688,7 +688,7 @@ describe("API admin auth routes", () => {
         await app.request("/api/auth/telegram/link-by-code", {
             method: "POST",
             headers: { "content-type": "application/json" },
-            body: JSON.stringify({ code, tgUserId: "tg-1" }),
+            body: JSON.stringify({ code, tgUserId: "tg-1" })
         });
 
         const unlinkRes = await app.request("/api/auth/telegram/unlink", {
@@ -712,7 +712,7 @@ describe("API admin auth routes", () => {
         const loginRes = await app.request("/api/auth/login", {
             method: "POST",
             headers: { "content-type": "application/json" },
-            body: JSON.stringify({ email: "admin@example.com", password: "password123" }),
+            body: JSON.stringify({ email: "admin@example.com", password: "password123" })
         });
         const loginJson = (await loginRes.json()) as any;
         const token = loginJson.data.token as string;
@@ -721,12 +721,12 @@ describe("API admin auth routes", () => {
             method: "POST",
             headers: {
                 "content-type": "application/json",
-                authorization: `Bearer ${token}`,
+                authorization: `Bearer ${token}`
             },
             body: JSON.stringify({
                 name: "viewer",
-                permissions: ["monitoring.read"],
-            }),
+                permissions: ["monitoring.read"]
+            })
         });
         expect(createRes.status).toBe(200);
         const createJson = (await createRes.json()) as any;
@@ -736,9 +736,9 @@ describe("API admin auth routes", () => {
             method: "PATCH",
             headers: {
                 "content-type": "application/json",
-                authorization: `Bearer ${token}`,
+                authorization: `Bearer ${token}`
             },
-            body: JSON.stringify({ permissions: ["monitoring.read", "settings.read"] }),
+            body: JSON.stringify({ permissions: ["monitoring.read", "settings.read"] })
         });
         expect(updateRes.status).toBe(200);
     });
@@ -747,14 +747,14 @@ describe("API admin auth routes", () => {
         const loginRes = await app.request("/api/auth/login", {
             method: "POST",
             headers: { "content-type": "application/json" },
-            body: JSON.stringify({ email: "admin@example.com", password: "password123" }),
+            body: JSON.stringify({ email: "admin@example.com", password: "password123" })
         });
         const loginJson = (await loginRes.json()) as any;
         const token = loginJson.data.token as string;
 
         const rolesRes = await app.request("/api/auth/roles", {
             method: "GET",
-            headers: { authorization: `Bearer ${token}` },
+            headers: { authorization: `Bearer ${token}` }
         });
         expect(rolesRes.status).toBe(200);
         const rolesJson = (await rolesRes.json()) as any;
@@ -763,7 +763,7 @@ describe("API admin auth routes", () => {
 
         const permsRes = await app.request("/api/auth/roles/role-admin/permissions", {
             method: "GET",
-            headers: { authorization: `Bearer ${token}` },
+            headers: { authorization: `Bearer ${token}` }
         });
         expect(permsRes.status).toBe(200);
         const permsJson = (await permsRes.json()) as any;
@@ -774,14 +774,14 @@ describe("API admin auth routes", () => {
         const loginRes = await app.request("/api/auth/login", {
             method: "POST",
             headers: { "content-type": "application/json" },
-            body: JSON.stringify({ email: "admin@example.com", password: "password123" }),
+            body: JSON.stringify({ email: "admin@example.com", password: "password123" })
         });
         const loginJson = (await loginRes.json()) as any;
         const token = loginJson.data.token as string;
 
         const res = await app.request("/api/auth/permissions", {
             method: "GET",
-            headers: { authorization: `Bearer ${token}` },
+            headers: { authorization: `Bearer ${token}` }
         });
         expect(res.status).toBe(200);
         const json = (await res.json()) as any;

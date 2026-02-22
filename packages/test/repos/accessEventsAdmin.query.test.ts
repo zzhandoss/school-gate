@@ -29,13 +29,13 @@ describe("AccessEventsAdminQuery", () => {
             id: "p-1",
             iin: "030512550123",
             firstName: "Aida",
-            lastName: "Nur",
+            lastName: "Nur"
         });
         await db.insert(personTerminalIdentities).values({
             id: "pti-1",
             personId: "p-1",
             deviceId: "dev-1",
-            terminalPersonId: "T-1",
+            terminalPersonId: "T-1"
         });
         await db.insert(accessEvents).values({
             id: "ev-1",
@@ -48,7 +48,7 @@ describe("AccessEventsAdminQuery", () => {
             status: "ERROR",
             attempts: 3,
             lastError: "person_resolve_failed",
-            createdAt: occurredAt,
+            createdAt: occurredAt
         });
 
         const query = createAccessEventsAdminQuery(db);
@@ -62,8 +62,8 @@ describe("AccessEventsAdminQuery", () => {
                 id: "p-1",
                 iin: "030512550123",
                 firstName: "Aida",
-                lastName: "Nur",
-            },
+                lastName: "Nur"
+            }
         });
     });
 
@@ -71,13 +71,13 @@ describe("AccessEventsAdminQuery", () => {
         const occurredAt = new Date("2026-02-11T08:00:00.000Z");
         await db.insert(persons).values({
             id: "p-1",
-            iin: "030512550123",
+            iin: "030512550123"
         });
         await db.insert(personTerminalIdentities).values({
             id: "pti-1",
             personId: "p-1",
             deviceId: "dev-1",
-            terminalPersonId: "T-1",
+            terminalPersonId: "T-1"
         });
         await db.insert(accessEvents).values({
             id: "ev-2",
@@ -89,7 +89,7 @@ describe("AccessEventsAdminQuery", () => {
             idempotencyKey: "dev-1:ev-2",
             status: "PROCESSED",
             attempts: 1,
-            createdAt: occurredAt,
+            createdAt: occurredAt
         });
 
         const query = createAccessEventsAdminQuery(db);

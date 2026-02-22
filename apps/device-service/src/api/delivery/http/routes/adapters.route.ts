@@ -24,7 +24,7 @@ export function createAdaptersRoutes(input: {
             middleware: [input.auth.requirePermissions(["devices.read"]), useResponse(listDeviceServiceAdaptersResultSchema)],
             success: { schema: listDeviceServiceAdaptersResultSchema },
             errors: [401, 403, 500],
-            security: [{ adminBearerAuth: [] }],
+            security: [{ adminBearerAuth: [] }]
         }),
         handler(() => input.module.list())
     );

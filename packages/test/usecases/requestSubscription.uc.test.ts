@@ -36,7 +36,7 @@ describe("RequestSubscriptionUC", () => {
         const res = await uc({
             tgUserId: "tg1",
             chatId: "chat-1",
-            iin: "030512550123",
+            iin: "030512550123"
         });
 
         expect(res).toEqual({ requestId: "req-1", status: "pending", iin: "030512550123" });

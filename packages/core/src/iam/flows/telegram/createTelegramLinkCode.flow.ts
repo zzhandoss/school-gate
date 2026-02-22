@@ -19,7 +19,7 @@ export function createCreateTelegramLinkCodeFlow(
             codeHash,
             adminId: admin.id,
             purpose: "link",
-            expiresAt: input.expiresAt,
+            expiresAt: input.expiresAt
         });
 
         enqueueAuditRequested({
@@ -30,7 +30,7 @@ export function createCreateTelegramLinkCodeFlow(
             entityType: "admin",
             entityId: admin.id,
             at: createdAt,
-            meta: { expiresAt: input.expiresAt.toISOString() },
+            meta: { expiresAt: input.expiresAt.toISOString() }
         });
 
         return { code, expiresAt: input.expiresAt };

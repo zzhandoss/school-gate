@@ -26,7 +26,7 @@ export const workerRegistry = defineGroupRegistry({
                 overrides.pollMs = value;
             },
             parseInput: (input) => positiveInt.optional().parse(input),
-            serialize: (value) => value.toString(),
+            serialize: (value) => value.toString()
         }),
         defineSettingEntry({
             key: runtimeSettingKeys.workerBatch,
@@ -37,7 +37,7 @@ export const workerRegistry = defineGroupRegistry({
                 overrides.batch = value;
             },
             parseInput: (input) => positiveInt.optional().parse(input),
-            serialize: (value) => value.toString(),
+            serialize: (value) => value.toString()
         }),
         defineSettingEntry({
             key: runtimeSettingKeys.featureAutoResolvePerson,
@@ -48,7 +48,7 @@ export const workerRegistry = defineGroupRegistry({
                 overrides.autoResolvePersonByIin = value;
             },
             parseInput: (input) => z.boolean().optional().parse(input),
-            serialize: (value) => String(value),
-        }),
-    ],
+            serialize: (value) => String(value)
+        })
+    ]
 });

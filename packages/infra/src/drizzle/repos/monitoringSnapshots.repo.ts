@@ -5,7 +5,7 @@ import type {
     MonitoringSnapshot,
     MonitoringSnapshotsRepo,
     MonitoringSnapshotRecord,
-    DeviceServiceMonitoring,
+    DeviceServiceMonitoring
 } from "@school-gate/core";
 
 function toDate(value: unknown): Date | null {
@@ -40,11 +40,11 @@ function parseSnapshot(raw: unknown): MonitoringSnapshot {
         now: toDate(data.now) ?? new Date(0),
         accessEvents: {
             counts: accessEvents.counts ?? {},
-            oldestUnprocessedOccurredAt: toDate(accessEvents.oldestUnprocessedOccurredAt),
+            oldestUnprocessedOccurredAt: toDate(accessEvents.oldestUnprocessedOccurredAt)
         },
         outbox: {
             counts: outbox.counts ?? {},
-            oldestNewCreatedAt: toDate(outbox.oldestNewCreatedAt),
+            oldestNewCreatedAt: toDate(outbox.oldestNewCreatedAt)
         },
         workers: workers.map((worker: any) => ({
             workerId: String(worker.workerId),
@@ -55,60 +55,60 @@ function parseSnapshot(raw: unknown): MonitoringSnapshot {
             lastError: worker.lastError ?? null,
             status: worker.status,
             ttlMs: worker.ttlMs,
-            meta: worker.meta ?? null,
+            meta: worker.meta ?? null
         })),
         topErrors: {
             accessEvents: Array.isArray(topErrors.accessEvents)
                 ? topErrors.accessEvents.map((stat: any) => ({
-                      error: String(stat.error),
-                      count: Number(stat.count ?? 0),
-                      lastAt: toDate(stat.lastAt),
-                  }))
+                    error: String(stat.error),
+                    count: Number(stat.count ?? 0),
+                    lastAt: toDate(stat.lastAt)
+                }))
                 : [],
             outbox: Array.isArray(topErrors.outbox)
                 ? topErrors.outbox.map((stat: any) => ({
-                      error: String(stat.error),
-                      count: Number(stat.count ?? 0),
-                      lastAt: toDate(stat.lastAt),
-                  }))
-                : [],
+                    error: String(stat.error),
+                    count: Number(stat.count ?? 0),
+                    lastAt: toDate(stat.lastAt)
+                }))
+                : []
         },
         components: components.map((component: any) => ({
             componentId: String(component.componentId),
             status: component.status,
             checkedAt: toDate(component.checkedAt) ?? new Date(0),
             responseTimeMs: component.responseTimeMs ?? null,
-            error: component.error ?? null,
+            error: component.error ?? null
         })),
         deviceService: deviceService
             ? ({
-                  adapters: Array.isArray(deviceService.adapters)
-                      ? deviceService.adapters.map((adapter: any) => ({
-                            adapterId: String(adapter.adapterId),
-                            vendorKey: String(adapter.vendorKey),
-                            baseUrl: String(adapter.baseUrl),
-                            mode: adapter.mode,
-                            lastSeenAt: toDate(adapter.lastSeenAt) ?? new Date(0),
-                            status: adapter.status,
-                            ttlMs: adapter.ttlMs,
-                        }))
-                      : [],
-                  devices: Array.isArray(deviceService.devices)
-                      ? deviceService.devices.map((device: any) => ({
-                            deviceId: String(device.deviceId),
-                            name: device.name ?? null,
-                            adapterKey: String(device.adapterKey),
-                            lastEventAt: toDate(device.lastEventAt),
-                            status: device.status,
-                            ttlMs: device.ttlMs,
-                        }))
-                      : [],
-                  outbox: {
-                      counts: (deviceService.outbox?.counts ?? {}) as DeviceServiceMonitoring["outbox"]["counts"],
-                      oldestNewCreatedAt: toDate(deviceService.outbox?.oldestNewCreatedAt),
-                  },
-              } satisfies DeviceServiceMonitoring)
-            : null,
+                adapters: Array.isArray(deviceService.adapters)
+                    ? deviceService.adapters.map((adapter: any) => ({
+                        adapterId: String(adapter.adapterId),
+                        vendorKey: String(adapter.vendorKey),
+                        baseUrl: String(adapter.baseUrl),
+                        mode: adapter.mode,
+                        lastSeenAt: toDate(adapter.lastSeenAt) ?? new Date(0),
+                        status: adapter.status,
+                        ttlMs: adapter.ttlMs
+                    }))
+                    : [],
+                devices: Array.isArray(deviceService.devices)
+                    ? deviceService.devices.map((device: any) => ({
+                        deviceId: String(device.deviceId),
+                        name: device.name ?? null,
+                        adapterKey: String(device.adapterKey),
+                        lastEventAt: toDate(device.lastEventAt),
+                        status: device.status,
+                        ttlMs: device.ttlMs
+                    }))
+                    : [],
+                outbox: {
+                    counts: (deviceService.outbox?.counts ?? {}) as DeviceServiceMonitoring["outbox"]["counts"],
+                    oldestNewCreatedAt: toDate(deviceService.outbox?.oldestNewCreatedAt)
+                }
+            } satisfies DeviceServiceMonitoring)
+            : null
     };
 }
 
@@ -117,7 +117,7 @@ function mapRow(row: any): MonitoringSnapshotRecord {
     return {
         id: row.id,
         createdAt: toDate(row.createdAt) ?? new Date(0),
-        snapshot,
+        snapshot
     };
 }
 
@@ -131,7 +131,7 @@ export function createMonitoringSnapshotsRepo(db: Db): MonitoringSnapshotsRepo {
                     snapshotJson: JSON.stringify(input.snapshot),
                     outboxNewCount: input.outboxNewCount,
                     outboxOldestNewAt: input.outboxOldestNewAt,
-                    accessOldestUnprocessedAt: input.accessOldestUnprocessedAt,
+                    accessOldestUnprocessedAt: input.accessOldestUnprocessedAt
                 })
                 .run();
         },
@@ -143,9 +143,9 @@ export function createMonitoringSnapshotsRepo(db: Db): MonitoringSnapshotsRepo {
 
             const query = conditions.length
                 ? db
-                      .select()
-                      .from(monitoringSnapshots)
-                      .where(and(...conditions))
+                    .select()
+                    .from(monitoringSnapshots)
+                    .where(and(...conditions))
                 : db.select().from(monitoringSnapshots);
 
             const rows = query
@@ -176,7 +176,7 @@ export function createMonitoringSnapshotsRepo(db: Db): MonitoringSnapshotsRepo {
         },
         withTx(tx) {
             return createMonitoringSnapshotsRepo(tx as Db);
-        },
+        }
 
     };
 }

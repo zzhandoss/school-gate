@@ -7,7 +7,7 @@ import {
     createStubAlertsHandlers,
     createStubAdminsHandlers,
     createStubAuditLogsHandlers,
-    createStubSubscriptionsHandlers,
+    createStubSubscriptionsHandlers
 } from "../helpers/adminAuth.js";
 import { createTestDb } from "../helpers/testDb.js";
 import { createApiApp } from "../../../apps/api/src/app.js";
@@ -36,20 +36,20 @@ describe("API retention schedule routes", () => {
                         result: "duplicate",
                         status: "NEW",
                         personId: null,
-                        accessEventId: null,
-                    }),
-                },
+                        accessEventId: null
+                    })
+                }
             },
             accessEventsAdmin: {
                 listUnmatched: async () => [],
-                mapTerminalIdentity: async () => ({ status: "already_linked", updatedEvents: 0 }),
+                mapTerminalIdentity: async () => ({ status: "already_linked", updatedEvents: 0 })
             },
             persons: {
-                searchByIin: async () => [],
+                searchByIin: async () => []
             },
             subscriptionRequests: {
                 listPending: async () => ({ requests: [], page: { limit: 50, offset: 0, total: 0 } }),
-                review: async () => ({ requestId: "r1", status: "rejected", personId: null }),
+                review: async () => ({ requestId: "r1", status: "rejected", personId: null })
             },
             alerts: createStubAlertsHandlers(),
             subscriptions: createStubSubscriptionsHandlers(),
@@ -59,12 +59,12 @@ describe("API retention schedule routes", () => {
                     taskName: "school-gate-retention",
                     platform: process.platform,
                     pollMs: 300000,
-                    intervalMinutes: 5,
+                    intervalMinutes: 5
                 }),
                 removeSchedule: async () => ({
                     taskName: "school-gate-retention",
                     platform: process.platform,
-                    removed: true,
+                    removed: true
                 }),
                 runOnce: async () => ({
                     accessEventsDeleted: 2,
@@ -73,8 +73,8 @@ describe("API retention schedule routes", () => {
                     auditLogsCutoff: new Date("2026-01-01T00:00:00.000Z"),
                     batch: 500,
                     accessEventsDays: 30,
-                    auditLogsDays: 30,
-                }),
+                    auditLogsDays: 30
+                })
             },
             monitoring: {
                 getSnapshot: async () => ({
@@ -86,21 +86,21 @@ describe("API retention schedule routes", () => {
                             PROCESSED: 0,
                             FAILED_RETRY: 0,
                             UNMATCHED: 0,
-                            ERROR: 0,
+                            ERROR: 0
                         },
-                        oldestUnprocessedOccurredAt: null,
+                        oldestUnprocessedOccurredAt: null
                     },
                     outbox: {
                         counts: { new: 0, processing: 0, processed: 0, error: 0 },
-                        oldestNewCreatedAt: null,
+                        oldestNewCreatedAt: null
                     },
                     workers: [],
                     topErrors: { accessEvents: [], outbox: [] },
                     components: [],
-                    deviceService: null,
+                    deviceService: null
                 }),
-                listSnapshots: async () => [],
-            },
+                listSnapshots: async () => []
+            }
         });
     });
 
@@ -110,7 +110,7 @@ describe("API retention schedule routes", () => {
 
     it("POST /admin/retention/schedule/apply returns applied schedule info", async () => {
         const res = await app.request("/api/retention/schedule/apply", {
-            method: "POST",
+            method: "POST"
         });
 
         expect(res.status).toBe(200);
@@ -118,13 +118,13 @@ describe("API retention schedule routes", () => {
         expect(json.success).toBe(true);
         expect(json.data).toMatchObject({
             taskName: "school-gate-retention",
-            intervalMinutes: 5,
+            intervalMinutes: 5
         });
     });
 
     it("POST /admin/retention/schedule/remove returns removal info", async () => {
         const res = await app.request("/api/retention/schedule/remove", {
-            method: "POST",
+            method: "POST"
         });
 
         expect(res.status).toBe(200);
@@ -132,13 +132,13 @@ describe("API retention schedule routes", () => {
         expect(json.success).toBe(true);
         expect(json.data).toMatchObject({
             taskName: "school-gate-retention",
-            removed: true,
+            removed: true
         });
     });
 
     it("POST /admin/retention/run-once returns cleanup summary", async () => {
         const res = await app.request("/api/retention/run-once", {
-            method: "POST",
+            method: "POST"
         });
 
         expect(res.status).toBe(200);
@@ -147,7 +147,7 @@ describe("API retention schedule routes", () => {
         expect(json.data).toMatchObject({
             accessEventsDeleted: 2,
             auditLogsDeleted: 1,
-            batch: 500,
+            batch: 500
         });
         expect(typeof json.data.accessEventsCutoff).toBe("string");
         expect(typeof json.data.auditLogsCutoff).toBe("string");

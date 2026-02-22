@@ -7,9 +7,9 @@ import type {
     MonitoringRepo,
     OutboxStatus,
     OutboxStatusCounts,
-    WorkerHeartbeat, WorkerHeartbeatMeta,
+    WorkerHeartbeat, WorkerHeartbeatMeta
 } from "@school-gate/core";
-import { AccessEventStatus } from "@school-gate/core";
+import type { AccessEventStatus } from "@school-gate/core";
 
 const accessEventStatuses: AccessEventStatus[] = [
     "NEW",
@@ -17,7 +17,7 @@ const accessEventStatuses: AccessEventStatus[] = [
     "PROCESSED",
     "FAILED_RETRY",
     "UNMATCHED",
-    "ERROR",
+    "ERROR"
 ];
 
 const outboxStatuses: OutboxStatus[] = ["new", "processing", "processed", "error"];
@@ -79,7 +79,7 @@ export function createMonitoringRepo(db: Db): MonitoringRepo {
             const rows = await db
                 .select({
                     status: accessEvents.status,
-                    count: sql<number>`count(*)`,
+                    count: sql<number>`count(*)`
                 })
                 .from(accessEvents)
                 .groupBy(accessEvents.status);
@@ -96,7 +96,7 @@ export function createMonitoringRepo(db: Db): MonitoringRepo {
             if (statuses.length === 0) return null;
             const rows = await db
                 .select({
-                    value: min(accessEvents.occurredAt),
+                    value: min(accessEvents.occurredAt)
                 })
                 .from(accessEvents)
                 .where(inArray(accessEvents.status, statuses))
@@ -110,7 +110,7 @@ export function createMonitoringRepo(db: Db): MonitoringRepo {
             const rows = await db
                 .select({
                     status: outboxEvents.status,
-                    count: sql<number>`count(*)`,
+                    count: sql<number>`count(*)`
                 })
                 .from(outboxEvents)
                 .groupBy(outboxEvents.status);
@@ -127,7 +127,7 @@ export function createMonitoringRepo(db: Db): MonitoringRepo {
             if (statuses.length === 0) return null;
             const rows = await db
                 .select({
-                    value: min(outboxEvents.createdAt),
+                    value: min(outboxEvents.createdAt)
                 })
                 .from(outboxEvents)
                 .where(inArray(outboxEvents.status, statuses))
@@ -150,7 +150,7 @@ export function createMonitoringRepo(db: Db): MonitoringRepo {
                 lastSuccessAt: toDate(row.lastSuccessAt),
                 lastErrorAt: toDate(row.lastErrorAt),
                 lastError: row.lastError ?? null,
-                meta: parseMeta(row.metaJson ?? null),
+                meta: parseMeta(row.metaJson ?? null)
             })) satisfies WorkerHeartbeat[];
         },
 
@@ -160,7 +160,7 @@ export function createMonitoringRepo(db: Db): MonitoringRepo {
                 .select({
                     error: accessEvents.lastError,
                     count: sql<number>`count(*)`,
-                    lastAt: lastAtExpr,
+                    lastAt: lastAtExpr
                 })
                 .from(accessEvents)
                 .where(and(inArray(accessEvents.status, ["ERROR", "FAILED_RETRY"]), isNotNull(accessEvents.lastError)))
@@ -171,7 +171,7 @@ export function createMonitoringRepo(db: Db): MonitoringRepo {
             return rows.map((row) => ({
                 error: String(row.error),
                 count: Number(row.count),
-                lastAt: toDate(row.lastAt),
+                lastAt: toDate(row.lastAt)
             })) satisfies ErrorStat[];
         },
 
@@ -181,7 +181,7 @@ export function createMonitoringRepo(db: Db): MonitoringRepo {
                 .select({
                     error: outboxEvents.lastError,
                     count: sql<number>`count(*)`,
-                    lastAt: lastAtExpr,
+                    lastAt: lastAtExpr
                 })
                 .from(outboxEvents)
                 .where(and(inArray(outboxEvents.status, ["error"]), isNotNull(outboxEvents.lastError)))
@@ -192,12 +192,12 @@ export function createMonitoringRepo(db: Db): MonitoringRepo {
             return rows.map((row) => ({
                 error: String(row.error),
                 count: Number(row.count),
-                lastAt: toDate(row.lastAt),
+                lastAt: toDate(row.lastAt)
             })) satisfies ErrorStat[];
         },
         withTx(tx) {
             return createMonitoringRepo(tx as Db);
-        },
+        }
 
     };
 }

@@ -17,7 +17,7 @@ const snapshotCollectorRegistry: SnapshotCollectorDefinition[] = [
     { id: "workers", collector: collectWorkersSnapshot },
     { id: "topErrors", collector: collectTopErrorsSnapshot },
     { id: "components", collector: collectComponentsSnapshot },
-    { id: "deviceService", collector: collectDeviceServiceSnapshot },
+    { id: "deviceService", collector: collectDeviceServiceSnapshot }
 ];
 
 export const snapshotCollectors = snapshotCollectorRegistry.map((entry) => entry.collector);

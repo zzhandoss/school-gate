@@ -1,7 +1,6 @@
 import type {
-    MonitoringSnapshot,
     MonitoringSnapshotInsert,
-    MonitoringSnapshotRecord,
+    MonitoringSnapshotRecord
 } from "../../monitoring/index.js";
 import type { MonitoringService, MonitoringSnapshotsService } from "../../monitoring/index.js";
 import type { IdGenerator } from "../../utils/index.js";
@@ -16,7 +15,7 @@ export function createCaptureMonitoringSnapshotUC(deps: {
         const record: MonitoringSnapshotRecord = {
             id: deps.idGen.nextId(),
             createdAt: snapshot.now,
-            snapshot,
+            snapshot
         };
 
         const insert: MonitoringSnapshotInsert = {
@@ -25,7 +24,7 @@ export function createCaptureMonitoringSnapshotUC(deps: {
             snapshot: record.snapshot,
             outboxNewCount: record.snapshot.outbox.counts.new,
             outboxOldestNewAt: record.snapshot.outbox.oldestNewCreatedAt,
-            accessOldestUnprocessedAt: record.snapshot.accessEvents.oldestUnprocessedOccurredAt,
+            accessOldestUnprocessedAt: record.snapshot.accessEvents.oldestUnprocessedOccurredAt
         };
 
         deps.snapshotService.insert(insert);

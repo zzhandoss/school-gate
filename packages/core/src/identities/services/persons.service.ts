@@ -6,7 +6,7 @@ export function createPersonsService(deps: PersonsServiceDeps): PersonsService {
         withTx(tx: unknown) {
             return createPersonsService({
                 ...deps,
-                personsRepo: deps.personsRepo.withTx(tx),
+                personsRepo: deps.personsRepo.withTx(tx)
             });
         },
 
@@ -43,7 +43,7 @@ export function createPersonsService(deps: PersonsServiceDeps): PersonsService {
                 return person ? [person] : [];
             }
             return deps.personsRepo.searchByIinPrefix({ iinPrefix: iin, limit: input.limit });
-        },
+        }
     };
 }
 

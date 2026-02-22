@@ -2,7 +2,7 @@ import { z } from "zod";
 import {
     runtimeSettingKeys,
     type AccessEventsWorkerConfig,
-    type AccessEventsRuntimeOverrides,
+    type AccessEventsRuntimeOverrides
 } from "../../../config/runtimeConfig.js";
 import { defineGroupRegistry, defineSettingEntry } from "../types.js";
 
@@ -30,7 +30,7 @@ export const accessEventsRegistry = defineGroupRegistry({
                 overrides.pollMs = value;
             },
             parseInput: (input) => positiveInt.optional().parse(input),
-            serialize: (value) => value.toString(),
+            serialize: (value) => value.toString()
         }),
         defineSettingEntry({
             key: runtimeSettingKeys.accessEventsBatch,
@@ -41,7 +41,7 @@ export const accessEventsRegistry = defineGroupRegistry({
                 overrides.batch = value;
             },
             parseInput: (input) => positiveInt.optional().parse(input),
-            serialize: (value) => value.toString(),
+            serialize: (value) => value.toString()
         }),
         defineSettingEntry({
             key: runtimeSettingKeys.accessEventsRetryDelayMs,
@@ -52,7 +52,7 @@ export const accessEventsRegistry = defineGroupRegistry({
                 overrides.retryDelayMs = value;
             },
             parseInput: (input) => positiveInt.optional().parse(input),
-            serialize: (value) => value.toString(),
+            serialize: (value) => value.toString()
         }),
         defineSettingEntry({
             key: runtimeSettingKeys.accessEventsLeaseMs,
@@ -63,7 +63,7 @@ export const accessEventsRegistry = defineGroupRegistry({
                 overrides.leaseMs = value;
             },
             parseInput: (input) => positiveInt.optional().parse(input),
-            serialize: (value) => value.toString(),
+            serialize: (value) => value.toString()
         }),
         defineSettingEntry({
             key: runtimeSettingKeys.accessEventsMaxAttempts,
@@ -74,7 +74,7 @@ export const accessEventsRegistry = defineGroupRegistry({
                 overrides.maxAttempts = value;
             },
             parseInput: (input) => positiveInt.optional().parse(input),
-            serialize: (value) => value.toString(),
+            serialize: (value) => value.toString()
         }),
         defineSettingEntry({
             key: runtimeSettingKeys.accessEventsProcessingBy,
@@ -85,7 +85,7 @@ export const accessEventsRegistry = defineGroupRegistry({
                 overrides.processingBy = value;
             },
             parseInput: (input) => nonEmptyString.optional().parse(input),
-            serialize: (value) => value,
-        }),
-    ],
+            serialize: (value) => value
+        })
+    ]
 });

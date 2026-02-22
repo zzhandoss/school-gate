@@ -15,11 +15,11 @@ export function createHeartbeatWriter(input: {
     const minIntervalMs = input.minIntervalMs ?? 30_000;
     const hostMeta: WorkerHeartbeatMeta = {
         hostname: os.hostname(),
-        pid: process.pid,
+        pid: process.pid
     };
     const baseMeta: WorkerHeartbeatMeta = {
         ...hostMeta,
-        ...(input.baseMeta ?? {}),
+        ...(input.baseMeta ?? {})
     };
 
     let lastWriteAt: Date | null = null;
@@ -58,10 +58,10 @@ export function createHeartbeatWriter(input: {
                 workerId: input.workerId,
                 at,
                 error: message,
-                meta: mergeMeta(meta),
+                meta: mergeMeta(meta)
             });
             recordWrite(at);
-        },
+        }
     };
 }
 

@@ -7,7 +7,7 @@ import type {
     ProcessAccessEventByIdResult,
     ProcessAccessEventsDeps,
     ProcessAccessEventsInput,
-    ProcessAccessEventsResult,
+    ProcessAccessEventsResult
 } from "./processAccessEvents.types.js";
 
 function createAccessEventProcessor(deps: AccessEventProcessorDeps): AccessEventProcessor {
@@ -20,7 +20,7 @@ function createAccessEventProcessor(deps: AccessEventProcessorDeps): AccessEvent
 
         const mapping = await deps.personTerminalIdentitiesRepo.getByDeviceAndTerminalPersonId({
             deviceId: event.deviceId,
-            terminalPersonId: event.terminalPersonId,
+            terminalPersonId: event.terminalPersonId
         });
 
         if (!mapping) return null;
@@ -62,9 +62,9 @@ function createAccessEventProcessor(deps: AccessEventProcessorDeps): AccessEvent
                                 iin: person.iin,
                                 firstName: person.firstName ?? null,
                                 lastName: person.lastName ?? null,
-                                tgUserId: sub.tgUserId,
-                            },
-                        },
+                                tgUserId: sub.tgUserId
+                            }
+                        }
                     });
                 }
 
@@ -80,7 +80,7 @@ function createAccessEventProcessor(deps: AccessEventProcessorDeps): AccessEvent
                 error: String(e?.message ?? e),
                 attempts: event.attempts + 1,
                 maxAttempts: input.maxAttempts,
-                nextAttemptAt,
+                nextAttemptAt
             });
             return { processed: 0, unmatched: 0, failed: 1, notifications: 0 };
         }
@@ -98,7 +98,7 @@ export function createProcessAccessEventsUC(deps: ProcessAccessEventsDeps) {
             limit: input.limit,
             now: batchNow,
             leaseMs: input.leaseMs,
-            processingBy: input.processingBy,
+            processingBy: input.processingBy
         });
 
         let processed = 0;
@@ -109,7 +109,7 @@ export function createProcessAccessEventsUC(deps: ProcessAccessEventsDeps) {
         for (const event of events) {
             const res = await processor.processEvent(event, {
                 retryDelayMs: input.retryDelayMs,
-                maxAttempts: input.maxAttempts,
+                maxAttempts: input.maxAttempts
             });
             processed += res.processed;
             unmatched += res.unmatched;
@@ -131,7 +131,7 @@ export function createProcessAccessEventByIdUC(deps: ProcessAccessEventsDeps) {
             id: input.id,
             now: deps.clock.now(),
             leaseMs: input.leaseMs,
-            processingBy: input.processingBy,
+            processingBy: input.processingBy
         });
 
         if (!event) {
@@ -140,7 +140,7 @@ export function createProcessAccessEventByIdUC(deps: ProcessAccessEventsDeps) {
 
         const res = await processor.processEvent(event, {
             retryDelayMs: input.retryDelayMs,
-            maxAttempts: input.maxAttempts,
+            maxAttempts: input.maxAttempts
         });
 
         if (res.failed > 0) return { status: "failed", notifications: 0 };

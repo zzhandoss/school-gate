@@ -109,7 +109,7 @@ export const runtimeSettingKeys = {
     monitoringWorkerTtlMs: "monitoring.worker_ttl_ms",
     notificationsParentTemplate: "notifications.parent_template",
     notificationsParentMaxAgeMs: "notifications.parent_max_age_ms",
-    notificationsAlertMaxAgeMs: "notifications.alert_max_age_ms",
+    notificationsAlertMaxAgeMs: "notifications.alert_max_age_ms"
 } as const;
 
 export const runtimeSettingKeyList = Object.values(runtimeSettingKeys);

@@ -26,9 +26,9 @@ export function enqueueAuditRequested(input: EnqueueAuditRequestedInput): void {
                 entityType: input.entityType,
                 entityId: input.entityId,
                 at,
-                meta: input.meta,
-            },
-        },
+                meta: input.meta
+            }
+        }
     });
 }
 

@@ -8,7 +8,7 @@ const loggingSchema = z.object({
     LOG_DIR: z.string().min(1).default("data/logs"),
     LOG_MAX_BYTES: z.coerce.number().int().positive().default(100 * 1024 * 1024),
     LOG_RETENTION_DAYS: z.coerce.number().int().positive().default(7),
-    LOG_LEVEL: logLevelSchema.default("info"),
+    LOG_LEVEL: logLevelSchema.default("info")
 });
 
 export type LoggingConfig = {
@@ -24,6 +24,6 @@ export function getLoggingConfig(): LoggingConfig {
         dir: parsed.LOG_DIR,
         maxBytes: parsed.LOG_MAX_BYTES,
         retentionDays: parsed.LOG_RETENTION_DAYS,
-        level: parsed.LOG_LEVEL,
+        level: parsed.LOG_LEVEL
     };
 }

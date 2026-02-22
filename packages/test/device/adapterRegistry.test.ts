@@ -6,7 +6,7 @@ describe("adapter registry identity behavior", () => {
         let now = new Date("2026-02-10T00:00:00.000Z");
         const registry = new AdapterRegistry({
             aliveTtlMs: 30_000,
-            now: () => now,
+            now: () => now
         });
 
         registry.register({
@@ -16,7 +16,7 @@ describe("adapter registry identity behavior", () => {
             baseUrl: "http://localhost:4020",
             retentionMs: 60_000,
             capabilities: ["fetchEvents"],
-            version: "1.0.0",
+            version: "1.0.0"
         });
 
         now = new Date("2026-02-10T00:00:05.000Z");
@@ -27,7 +27,7 @@ describe("adapter registry identity behavior", () => {
             baseUrl: "http://localhost:4021",
             retentionMs: 60_000,
             capabilities: ["fetchEvents"],
-            version: "1.0.1",
+            version: "1.0.1"
         })).toThrow(AdapterInstanceActiveError);
     });
 
@@ -35,7 +35,7 @@ describe("adapter registry identity behavior", () => {
         let now = new Date("2026-02-10T00:00:00.000Z");
         const registry = new AdapterRegistry({
             aliveTtlMs: 10_000,
-            now: () => now,
+            now: () => now
         });
 
         const first = registry.register({
@@ -48,9 +48,9 @@ describe("adapter registry identity behavior", () => {
             deviceSettingsSchema: {
                 type: "object",
                 properties: {
-                    host: { type: "string" },
-                },
-            },
+                    host: { type: "string" }
+                }
+            }
         });
 
         now = new Date("2026-02-10T00:00:20.000Z");
@@ -65,10 +65,10 @@ describe("adapter registry identity behavior", () => {
                 type: "object",
                 properties: {
                     host: { type: "string" },
-                    timeoutMs: { type: "integer" },
+                    timeoutMs: { type: "integer" }
                 },
-                required: ["host"],
-            },
+                required: ["host"]
+            }
         });
 
         expect(second.adapterId).toBe(first.adapterId);
@@ -78,9 +78,9 @@ describe("adapter registry identity behavior", () => {
             type: "object",
             properties: {
                 host: { type: "string" },
-                timeoutMs: { type: "integer" },
+                timeoutMs: { type: "integer" }
             },
-            required: ["host"],
+            required: ["host"]
         });
     });
 
@@ -88,7 +88,7 @@ describe("adapter registry identity behavior", () => {
         let now = new Date("2026-02-10T00:00:00.000Z");
         const registry = new AdapterRegistry({
             aliveTtlMs: 10_000,
-            now: () => now,
+            now: () => now
         });
 
         const first = registry.register({
@@ -97,7 +97,7 @@ describe("adapter registry identity behavior", () => {
             instanceName: "instance-a",
             baseUrl: "http://localhost:4020",
             retentionMs: 60_000,
-            capabilities: ["fetchEvents"],
+            capabilities: ["fetchEvents"]
         });
 
         now = new Date("2026-02-10T00:00:02.000Z");
@@ -107,7 +107,7 @@ describe("adapter registry identity behavior", () => {
             instanceName: "instance-b",
             baseUrl: "http://localhost:4022",
             retentionMs: 60_000,
-            capabilities: ["fetchEvents"],
+            capabilities: ["fetchEvents"]
         });
 
         expect(second.adapterId).not.toBe(first.adapterId);
@@ -128,7 +128,7 @@ describe("adapter registry identity behavior", () => {
             instanceName: "instance-a",
             baseUrl: "http://localhost:4020",
             retentionMs: 60_000,
-            capabilities: ["fetchEvents"],
+            capabilities: ["fetchEvents"]
         };
 
         const first = firstRegistry.register(input);

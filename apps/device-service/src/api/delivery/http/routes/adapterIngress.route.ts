@@ -20,9 +20,9 @@ const assignmentsResponseSchema = z.object({
         z.object({
             deviceId: z.string().min(1),
             direction: z.enum(["IN", "OUT"]),
-            settingsJson: z.string().nullable(),
+            settingsJson: z.string().nullable()
         })
-    ),
+    )
 });
 
 const ingestEventsResultSchema = z.object({
@@ -30,9 +30,9 @@ const ingestEventsResultSchema = z.object({
         z.object({
             eventId: z.string().min(1),
             result: z.enum(["inserted", "duplicate"]),
-            deviceEventId: z.string().min(1).nullable(),
+            deviceEventId: z.string().min(1).nullable()
         })
-    ),
+    )
 });
 
 export function createAdapterIngressRoutes(input: {
@@ -52,7 +52,7 @@ export function createAdapterIngressRoutes(input: {
             middleware: [adapterBearer, parseBody(adapterRegisterSchema), useResponse(assignmentsResponseSchema)],
             success: { schema: assignmentsResponseSchema },
             errors: [400, 401, 500],
-            security: [{ deviceBearerAuth: [] }],
+            security: [{ deviceBearerAuth: [] }]
         }),
         handler<AdapterRegisterInput>(({ body }) => input.module.register(body!))
     );
@@ -67,7 +67,7 @@ export function createAdapterIngressRoutes(input: {
             middleware: [adapterBearer, parseBody(adapterHeartbeatSchema), useResponse(assignmentsResponseSchema)],
             success: { schema: assignmentsResponseSchema },
             errors: [400, 401, 404, 500],
-            security: [{ deviceBearerAuth: [] }],
+            security: [{ deviceBearerAuth: [] }]
         }),
         handler<AdapterHeartbeatInput>(({ body }) => input.module.heartbeat(body!))
     );
@@ -82,7 +82,7 @@ export function createAdapterIngressRoutes(input: {
             middleware: [adapterBearer, parseBody(adapterEventsSchema), useResponse(ingestEventsResultSchema)],
             success: { schema: ingestEventsResultSchema },
             errors: [400, 401, 403, 404, 409, 500],
-            security: [{ deviceBearerAuth: [] }],
+            security: [{ deviceBearerAuth: [] }]
         }),
         handler<AdapterEventsInput>(({ body }) => input.module.ingestEvents(body!))
     );

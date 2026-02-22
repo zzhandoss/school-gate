@@ -11,13 +11,13 @@ export const personTerminalIdentities = sqliteTable(
 
         createdAt: integer("created_at", { mode: "timestamp" })
             .notNull()
-            .default(sql`(unixepoch())`),
+            .default(sql`(unixepoch())`)
     },
     (t) => ({
         // На одном устройстве terminalPersonId должен быть уникален
         uniqDeviceTerminal: uniqueIndex("pti_device_terminal_unique").on(t.deviceId, t.terminalPersonId),
 
         // У одной персоны на одном устройстве — максимум одна “учетка”
-        uniqPersonDevice: uniqueIndex("pti_person_device_unique").on(t.personId, t.deviceId),
+        uniqPersonDevice: uniqueIndex("pti_person_device_unique").on(t.personId, t.deviceId)
     })
 );

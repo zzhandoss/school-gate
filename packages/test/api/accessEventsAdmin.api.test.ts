@@ -13,7 +13,7 @@ import {
     createStubAlertsHandlers,
     createStubAdminsHandlers,
     createStubAuditLogsHandlers,
-    createStubSubscriptionsHandlers,
+    createStubSubscriptionsHandlers
 } from "../helpers/adminAuth.js";
 import { createTestDb } from "../helpers/testDb.js";
 import { createApiApp } from "../../../apps/api/src/app.js";
@@ -40,7 +40,7 @@ describe("API access events admin routes", () => {
             personsRepo,
             personTerminalIdentitiesRepo: ptiRepo,
             accessEventsRepo,
-            idGen: { nextId: () => crypto.randomUUID() },
+            idGen: { nextId: () => crypto.randomUUID() }
         });
 
         app = createApiApp({
@@ -56,9 +56,9 @@ describe("API access events admin routes", () => {
                         result: "duplicate",
                         status: "NEW",
                         personId: null,
-                        accessEventId: null,
-                    }),
-                },
+                        accessEventId: null
+                    })
+                }
             },
             accessEventsAdmin: {
                 list: async (input) => {
@@ -97,14 +97,14 @@ describe("API access events admin routes", () => {
                     return data;
                 },
                 listUnmatched: ({ limit }) => accessEventsRepo.listUnmatched({ limit }),
-                mapTerminalIdentity: (input) => mapIdentity(input),
+                mapTerminalIdentity: (input) => mapIdentity(input)
             },
             persons: {
-                searchByIin: async () => [],
+                searchByIin: async () => []
             },
             subscriptionRequests: {
                 listPending: async () => ({ requests: [], page: { limit: 50, offset: 0, total: 0 } }),
-                review: async () => ({ requestId: "r1", status: "rejected", personId: null }),
+                review: async () => ({ requestId: "r1", status: "rejected", personId: null })
             },
             alerts: createStubAlertsHandlers(),
             subscriptions: createStubSubscriptionsHandlers(),
@@ -114,12 +114,12 @@ describe("API access events admin routes", () => {
                     taskName: "school-gate-retention",
                     platform: process.platform,
                     pollMs: 300000,
-                    intervalMinutes: 5,
+                    intervalMinutes: 5
                 }),
                 removeSchedule: async () => ({
                     taskName: "school-gate-retention",
                     platform: process.platform,
-                    removed: true,
+                    removed: true
                 }),
                 runOnce: async () => ({
                     accessEventsDeleted: 0,
@@ -128,8 +128,8 @@ describe("API access events admin routes", () => {
                     auditLogsCutoff: new Date("2026-01-01T00:00:00.000Z"),
                     batch: 500,
                     accessEventsDays: 30,
-                    auditLogsDays: 30,
-                }),
+                    auditLogsDays: 30
+                })
             },
             monitoring: {
                 getSnapshot: async () => ({
@@ -141,21 +141,21 @@ describe("API access events admin routes", () => {
                             PROCESSED: 0,
                             FAILED_RETRY: 0,
                             UNMATCHED: 0,
-                            ERROR: 0,
+                            ERROR: 0
                         },
-                        oldestUnprocessedOccurredAt: null,
+                        oldestUnprocessedOccurredAt: null
                     },
                     outbox: {
                         counts: { new: 0, processing: 0, processed: 0, error: 0 },
-                        oldestNewCreatedAt: null,
+                        oldestNewCreatedAt: null
                     },
                     workers: [],
                     topErrors: { accessEvents: [], outbox: [] },
                     components: [],
-                    deviceService: null,
+                    deviceService: null
                 }),
-                listSnapshots: async () => [],
-            },
+                listSnapshots: async () => []
+            }
         });
     });
 
@@ -178,7 +178,7 @@ describe("API access events admin routes", () => {
             occurredAt: new Date(),
             terminalPersonId: "T-1",
             idempotencyKey: "dev-1:ev-1",
-            status: "UNMATCHED",
+            status: "UNMATCHED"
         });
 
         const res = await app.request("/api/access-events/unmatched?limit=10");
@@ -190,7 +190,7 @@ describe("API access events admin routes", () => {
             id: "ev-1",
             deviceId: "dev-1",
             terminalPersonId: "T-1",
-            status: "UNMATCHED",
+            status: "UNMATCHED"
         });
     });
 
@@ -246,7 +246,7 @@ describe("API access events admin routes", () => {
             occurredAt: new Date(),
             terminalPersonId: "T-2",
             idempotencyKey: "dev-1:ev-2",
-            status: "UNMATCHED",
+            status: "UNMATCHED"
         });
 
         const mapRes = await app.request("/api/access-events/mappings", {
@@ -255,8 +255,8 @@ describe("API access events admin routes", () => {
             body: JSON.stringify({
                 personId: "p-1",
                 deviceId: "dev-1",
-                terminalPersonId: "T-2",
-            }),
+                terminalPersonId: "T-2"
+            })
         });
 
         expect(mapRes.status).toBe(200);
@@ -278,8 +278,8 @@ describe("API access events admin routes", () => {
             body: JSON.stringify({
                 personId: "missing",
                 deviceId: "dev-1",
-                terminalPersonId: "T-404",
-            }),
+                terminalPersonId: "T-404"
+            })
         });
 
         expect(res.status).toBe(404);
@@ -298,7 +298,7 @@ describe("API access events admin routes", () => {
             id: "pti-1",
             personId: "p-1",
             deviceId: "dev-1",
-            terminalPersonId: "T-1",
+            terminalPersonId: "T-1"
         });
 
         const res = await app.request("/api/access-events/mappings", {
@@ -307,8 +307,8 @@ describe("API access events admin routes", () => {
             body: JSON.stringify({
                 personId: "p-2",
                 deviceId: "dev-1",
-                terminalPersonId: "T-1",
-            }),
+                terminalPersonId: "T-1"
+            })
         });
 
         expect(res.status).toBe(409);

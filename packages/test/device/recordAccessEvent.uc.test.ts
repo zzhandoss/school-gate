@@ -28,13 +28,13 @@ describe("recordAccessEvent", () => {
     it("inserts device event and enqueues outbox", () => {
         const tx = createDeviceUnitOfWork(db, {
             deviceEventsRepo: createDeviceEventsRepo,
-            deviceOutboxRepo: createDeviceOutboxRepo,
+            deviceOutboxRepo: createDeviceOutboxRepo
         });
 
         const ids = ["evt-1", "out-1"];
         const uc = createRecordDeviceAccessEventUC({
             tx,
-            idGen: { nextId: () => ids.shift() ?? "x" },
+            idGen: { nextId: () => ids.shift() ?? "x" }
         });
 
         const occurredAt = new Date("2020-01-01T00:00:00.000Z");
@@ -44,7 +44,7 @@ describe("recordAccessEvent", () => {
             direction: "IN",
             occurredAt,
             terminalPersonId: "tp-1",
-            rawPayload: "{\"x\":1}",
+            rawPayload: "{\"x\":1}"
         });
 
         expect(res.result).toBe("inserted");
@@ -66,13 +66,13 @@ describe("recordAccessEvent", () => {
     it("does not enqueue outbox for duplicates", () => {
         const tx = createDeviceUnitOfWork(db, {
             deviceEventsRepo: createDeviceEventsRepo,
-            deviceOutboxRepo: createDeviceOutboxRepo,
+            deviceOutboxRepo: createDeviceOutboxRepo
         });
 
         const ids = ["evt-2", "out-2", "evt-3"];
         const uc = createRecordDeviceAccessEventUC({
             tx,
-            idGen: { nextId: () => ids.shift() ?? "x" },
+            idGen: { nextId: () => ids.shift() ?? "x" }
         });
 
         const occurredAt = new Date("2020-01-01T00:00:00.000Z");
@@ -80,7 +80,7 @@ describe("recordAccessEvent", () => {
             deviceId: "dev-2",
             eventId: "e-2",
             direction: "OUT" as const,
-            occurredAt,
+            occurredAt
         };
 
         const r1 = uc(input);

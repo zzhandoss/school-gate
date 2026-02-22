@@ -1,7 +1,7 @@
 import { and, asc, eq, like, or, sql } from "drizzle-orm";
 import type { Db } from "@school-gate/db/drizzle";
 import { persons } from "@school-gate/db/schema";
-import { Person, PersonsRepo } from "@school-gate/core";
+import type { Person, PersonsRepo } from "@school-gate/core";
 
 function toDate(v: unknown): Date {
     return v instanceof Date ? v : new Date(String(v));
@@ -19,7 +19,7 @@ function mapPerson(row: typeof persons.$inferSelect): Person {
         terminalPersonId: row.terminalPersonId ?? null,
         firstName: row.firstName ?? null,
         lastName: row.lastName ?? null,
-        createdAt: toDate(row.createdAt),
+        createdAt: toDate(row.createdAt)
     } satisfies Person;
 }
 
@@ -59,7 +59,7 @@ export function createPersonsRepo(db: Db): PersonsRepo {
                     iin: input.iin,
                     terminalPersonId: input.terminalPersonId ?? null,
                     firstName: input.firstName ?? null,
-                    lastName: input.lastName ?? null,
+                    lastName: input.lastName ?? null
                 });
             } catch (e: unknown) {
                 if (isUniqueConstraintError(e)) {
@@ -154,6 +154,6 @@ export function createPersonsRepo(db: Db): PersonsRepo {
 
         withTx(tx) {
             return createPersonsRepo(tx as Db);
-        },
+        }
     };
 }

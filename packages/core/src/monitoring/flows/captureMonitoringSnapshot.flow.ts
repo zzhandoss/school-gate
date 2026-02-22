@@ -1,6 +1,6 @@
 import type {
     MonitoringSnapshotInsert,
-    MonitoringSnapshotRecord,
+    MonitoringSnapshotRecord
 } from "../entities/monitoring.types.js";
 import type {
     CaptureMonitoringSnapshotFlowDeps,
@@ -15,7 +15,7 @@ export function createCaptureMonitoringSnapshotFlow(deps: CaptureMonitoringSnaps
         const record: MonitoringSnapshotRecord = {
             id: deps.idGen.nextId(),
             createdAt: snapshot.now,
-            snapshot,
+            snapshot
         };
 
         const insert: MonitoringSnapshotInsert = {
@@ -24,7 +24,7 @@ export function createCaptureMonitoringSnapshotFlow(deps: CaptureMonitoringSnaps
             snapshot: record.snapshot,
             outboxNewCount: record.snapshot.outbox.counts.new,
             outboxOldestNewAt: record.snapshot.outbox.oldestNewCreatedAt,
-            accessOldestUnprocessedAt: record.snapshot.accessEvents.oldestUnprocessedOccurredAt,
+            accessOldestUnprocessedAt: record.snapshot.accessEvents.oldestUnprocessedOccurredAt
         };
 
         deps.snapshotsService.insert(insert);

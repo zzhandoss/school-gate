@@ -2,7 +2,7 @@ import type { DeviceAdapterClient } from "../ports/deviceAdapterClient.js";
 import type { DeviceCursorsRepo } from "../repos/deviceCursors.repo.js";
 import type {
     RecordDeviceAccessEventInput,
-    RecordDeviceAccessEventResult,
+    RecordDeviceAccessEventResult
 } from "./recordAccessEvent.js";
 
 export type BackfillDeviceEventsInput = {
@@ -31,7 +31,7 @@ export function createBackfillDeviceEventsUC(deps: {
         const events = await deps.adapterClient.fetchEvents({
             deviceId: input.deviceId,
             sinceEventId: cursor?.lastAckedEventId ?? null,
-            limit: input.limit,
+            limit: input.limit
         });
 
         let inserted = 0;
@@ -44,7 +44,7 @@ export function createBackfillDeviceEventsUC(deps: {
                 direction: event.direction,
                 occurredAt: event.occurredAt,
                 terminalPersonId: event.terminalPersonId ?? null,
-                rawPayload: event.rawPayload ?? null,
+                rawPayload: event.rawPayload ?? null
             });
 
             if (result.result === "inserted") {
@@ -59,7 +59,7 @@ export function createBackfillDeviceEventsUC(deps: {
             fetched: events.length,
             inserted,
             duplicates,
-            lastEventId,
+            lastEventId
         };
     };
 }

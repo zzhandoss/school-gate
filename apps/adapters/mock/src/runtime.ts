@@ -2,7 +2,7 @@ import crypto from "node:crypto";
 import type { createAdapterEventsRepo } from "./eventsRepo.js";
 import type { PeopleCatalog } from "./peopleCatalog.js";
 import type { AdapterAccessEvent, AdapterAssignment } from "./types.js";
-import { createDeviceServiceClient } from "./deviceServiceClient.js";
+import type { createDeviceServiceClient } from "./deviceServiceClient.js";
 
 export type AdapterRuntimeConfig = {
     vendorKey: string;
@@ -88,7 +88,7 @@ export function createAdapterRuntime(deps: AdapterRuntimeDeps) {
         try {
             await registerOnce();
         } catch (err) {
-            // eslint-disable-next-line no-console
+             
             console.error("[adapter-mock] register failed", err);
             scheduleHeartbeat(5_000);
         }
@@ -110,7 +110,7 @@ export function createAdapterRuntime(deps: AdapterRuntimeDeps) {
             });
             scheduleHeartbeat(assignments.heartbeatIntervalMs);
         } catch (err) {
-            // eslint-disable-next-line no-console
+             
             console.error("[adapter-mock] heartbeat failed", err);
             scheduleHeartbeat(5_000);
         }
@@ -193,7 +193,7 @@ export function createAdapterRuntime(deps: AdapterRuntimeDeps) {
                 deps.eventsRepo.markSent(accepted, now());
             }
         } catch (err) {
-            // eslint-disable-next-line no-console
+             
             console.error("[adapter-mock] push failed", err);
         } finally {
             isPushing = false;

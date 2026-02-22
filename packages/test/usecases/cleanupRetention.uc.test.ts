@@ -36,7 +36,7 @@ describe("Cleanup retention usecase", () => {
                 direction: "IN",
                 occurredAt: old,
                 idempotencyKey: "dev-1:ae-old-1",
-                status: "PROCESSED",
+                status: "PROCESSED"
             },
             {
                 id: "ae-old-2",
@@ -44,7 +44,7 @@ describe("Cleanup retention usecase", () => {
                 direction: "IN",
                 occurredAt: old,
                 idempotencyKey: "dev-1:ae-old-2",
-                status: "UNMATCHED",
+                status: "UNMATCHED"
             },
             {
                 id: "ae-old-3",
@@ -52,7 +52,7 @@ describe("Cleanup retention usecase", () => {
                 direction: "OUT",
                 occurredAt: old,
                 idempotencyKey: "dev-1:ae-old-3",
-                status: "ERROR",
+                status: "ERROR"
             },
             {
                 id: "ae-old-retry",
@@ -60,7 +60,7 @@ describe("Cleanup retention usecase", () => {
                 direction: "OUT",
                 occurredAt: old,
                 idempotencyKey: "dev-1:ae-old-retry",
-                status: "FAILED_RETRY",
+                status: "FAILED_RETRY"
             },
             {
                 id: "ae-fresh",
@@ -68,8 +68,8 @@ describe("Cleanup retention usecase", () => {
                 direction: "IN",
                 occurredAt: fresh,
                 idempotencyKey: "dev-1:ae-fresh",
-                status: "PROCESSED",
-            },
+                status: "PROCESSED"
+            }
         ]);
 
         await db.insert(auditLogs).values([
@@ -79,7 +79,7 @@ describe("Cleanup retention usecase", () => {
                 action: "test",
                 entityType: "subscription_request",
                 entityId: "r-1",
-                at: old,
+                at: old
             },
             {
                 id: "al-old-2",
@@ -87,7 +87,7 @@ describe("Cleanup retention usecase", () => {
                 action: "test",
                 entityType: "subscription_request",
                 entityId: "r-2",
-                at: old,
+                at: old
             },
             {
                 id: "al-old-3",
@@ -95,7 +95,7 @@ describe("Cleanup retention usecase", () => {
                 action: "test",
                 entityType: "subscription_request",
                 entityId: "r-3",
-                at: old,
+                at: old
             },
             {
                 id: "al-fresh",
@@ -103,20 +103,20 @@ describe("Cleanup retention usecase", () => {
                 action: "test",
                 entityType: "subscription_request",
                 entityId: "r-4",
-                at: fresh,
-            },
+                at: fresh
+            }
         ]);
 
         const cleanupRetention = createCleanupRetentionUC({
             accessEventsRetentionRepo: createAccessEventsRetentionRepo(db),
-            auditLogsRetentionRepo: createAuditLogsRetentionRepo(db),
+            auditLogsRetentionRepo: createAuditLogsRetentionRepo(db)
         });
 
         const result = await cleanupRetention({
             now,
             batch: 2,
             accessEventsDays: 30,
-            auditLogsDays: 30,
+            auditLogsDays: 30
         });
 
         expect(result.accessEventsDeleted).toBe(2);

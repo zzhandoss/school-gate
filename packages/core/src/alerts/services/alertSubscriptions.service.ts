@@ -1,6 +1,6 @@
 ﻿import type {
     AlertSubscriptionsService,
-    AlertSubscriptionsServiceDeps,
+    AlertSubscriptionsServiceDeps
 } from "./alertSubscriptions.types.js";
 
 export function createAlertSubscriptionsService(
@@ -10,7 +10,7 @@ export function createAlertSubscriptionsService(
         withTx(tx: unknown) {
             return createAlertSubscriptionsService({
                 ...deps,
-                subscriptionsRepo: deps.subscriptionsRepo.withTx(tx),
+                subscriptionsRepo: deps.subscriptionsRepo.withTx(tx)
             });
         },
 
@@ -23,7 +23,7 @@ export function createAlertSubscriptionsService(
                 ruleId: input.ruleId,
                 isEnabled: input.isEnabled,
                 createdAt: now,
-                updatedAt: now,
+                updatedAt: now
             });
         },
         list(input) {
@@ -31,7 +31,7 @@ export function createAlertSubscriptionsService(
         },
         listRecipientsByRuleIds(input) {
             return deps.subscriptionsRepo.listRecipientsByRuleIds(input);
-        },
+        }
     };
 }
 

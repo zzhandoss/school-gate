@@ -48,7 +48,7 @@ describe("admin invites", () => {
         await rolesService.createRole({
             id: "role-manager",
             name: "manager",
-            permissions: ["devices.read", "devices.write"],
+            permissions: ["devices.read", "devices.write"]
         });
 
         await adminsRepo.create({
@@ -60,7 +60,7 @@ describe("admin invites", () => {
             name: "Super Admin",
             tgUserId: null,
             createdAt: clock.now(),
-            updatedAt: clock.now(),
+            updatedAt: clock.now()
         });
 
         const createInvite = createCreateAdminInviteFlow({
@@ -68,14 +68,14 @@ describe("admin invites", () => {
             adminInvitesService,
             tokenHasher,
             idGen,
-            clock,
+            clock
         });
 
         const invite = await createInvite({
             roleId: "role-manager",
             email: "Admin@Example.com",
             createdBy: "super-admin",
-            expiresAt: new Date("2026-02-01T00:00:00.000Z"),
+            expiresAt: new Date("2026-02-01T00:00:00.000Z")
         });
 
         const acceptInvite = createAcceptAdminInviteFlow({
@@ -85,14 +85,14 @@ describe("admin invites", () => {
             passwordHasher,
             tokenHasher,
             idGen,
-            clock,
+            clock
         });
 
         const result = await acceptInvite({
             token: invite.token,
             email: "admin@example.com",
             password: "Password123!",
-            name: "Admin",
+            name: "Admin"
         });
 
         expect(result.roleId).toBe("role-manager");

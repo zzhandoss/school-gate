@@ -1,7 +1,7 @@
 import {
     listDeviceServiceAdaptersResultSchema,
     type DeviceServiceAdapterDto,
-    type ListDeviceServiceAdaptersResultDto,
+    type ListDeviceServiceAdaptersResultDto
 } from "@school-gate/contracts";
 import type { AdapterSession } from "../adapterRegistry.js";
 import type { AdminAuth } from "../adminAuth.js";
@@ -23,7 +23,7 @@ function toDto(adapter: AdapterSession): DeviceServiceAdapterDto {
         version: adapter.version,
         mode: adapter.mode,
         registeredAt: adapter.registeredAt.toISOString(),
-        lastSeenAt: adapter.lastSeenAt.toISOString(),
+        lastSeenAt: adapter.lastSeenAt.toISOString()
     };
 }
 
@@ -40,8 +40,8 @@ export function createDeviceServiceAdaptersRoutes(input: {
                     return adapters.then((items) => listDeviceServiceAdaptersResultSchema.parse({ adapters: items.map(toDto) }));
                 }
                 return listDeviceServiceAdaptersResultSchema.parse({ adapters: adapters.map(toDto) });
-            },
-        },
+            }
+        }
     });
 }
 

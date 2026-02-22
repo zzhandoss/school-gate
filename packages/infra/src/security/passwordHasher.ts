@@ -12,6 +12,6 @@ export function createArgon2PasswordHasher(): PasswordHasher {
         },
         verify(hash, password) {
             return argon2.verify(hash, password);
-        },
+        }
     };
 }

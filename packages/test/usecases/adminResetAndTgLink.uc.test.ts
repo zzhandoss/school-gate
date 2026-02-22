@@ -57,7 +57,7 @@ describe("admin reset and telegram link", () => {
         await rolesService.createRole({
             id: "role-manager",
             name: "manager",
-            permissions: ["devices.read"],
+            permissions: ["devices.read"]
         });
 
         const adminId = "admin-1";
@@ -70,7 +70,7 @@ describe("admin reset and telegram link", () => {
             name: "Admin",
             tgUserId: null,
             createdAt: clock.now(),
-            updatedAt: clock.now(),
+            updatedAt: clock.now()
         });
 
         const requestReset = createRequestPasswordResetFlow({
@@ -79,12 +79,12 @@ describe("admin reset and telegram link", () => {
             outbox,
             tokenHasher,
             idGen,
-            clock,
+            clock
         });
 
         const reset = await requestReset({
             email: "admin@example.com",
-            expiresAt: new Date("2026-01-01T01:00:00.000Z"),
+            expiresAt: new Date("2026-01-01T01:00:00.000Z")
         });
         expect(reset.token).toBeTruthy();
 
@@ -95,12 +95,12 @@ describe("admin reset and telegram link", () => {
             outbox,
             tokenHasher,
             idGen,
-            clock,
+            clock
         });
 
         await confirmReset({
             token: reset.token!,
-            password: "NewPassword!",
+            password: "NewPassword!"
         });
 
         const result = await adminsService.login({ email: "admin@example.com", password: "NewPassword!" });
@@ -112,12 +112,12 @@ describe("admin reset and telegram link", () => {
             outbox,
             tokenHasher,
             idGen,
-            clock,
+            clock
         });
 
         const linkCode = await createLinkCode({
             adminId,
-            expiresAt: new Date("2026-01-01T00:05:00.000Z"),
+            expiresAt: new Date("2026-01-01T00:05:00.000Z")
         });
 
         const linkByCode = createLinkTelegramByCodeFlow({
@@ -126,7 +126,7 @@ describe("admin reset and telegram link", () => {
             outbox,
             tokenHasher,
             idGen,
-            clock,
+            clock
         });
 
         await linkByCode({ code: linkCode.code, tgUserId: "tg-1" });
@@ -135,11 +135,11 @@ describe("admin reset and telegram link", () => {
 
         const secondCode = await createLinkCode({
             adminId,
-            expiresAt: new Date("2026-01-01T00:06:00.000Z"),
+            expiresAt: new Date("2026-01-01T00:06:00.000Z")
         });
 
         await expect(linkByCode({ code: secondCode.code, tgUserId: "tg-1" })).resolves.toEqual({
-            adminId,
+            adminId
         });
     });
 });

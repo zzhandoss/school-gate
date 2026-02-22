@@ -125,7 +125,7 @@ export function createIdentityFindResolver(input: {
                 errors.push({
                     adapterKey: device.adapterKey,
                     deviceId: device.deviceId,
-                    message: "Active adapter session not found",
+                    message: "Active adapter session not found"
                 });
                 continue;
             }
@@ -136,7 +136,7 @@ export function createIdentityFindResolver(input: {
                     deviceId: device.deviceId,
                     identityKey: params.identityKey,
                     identityValue: params.identityValue,
-                    limit,
+                    limit
                 });
                 if (!found) {
                     continue;
@@ -156,14 +156,14 @@ export function createIdentityFindResolver(input: {
                     ...(found.rawPayload !== undefined ? { rawPayload: found.rawPayload } : {}),
                     ...(found.displayName !== undefined ? { displayName: found.displayName } : {}),
                     ...(found.source !== undefined ? { source: found.source } : {}),
-                    ...(found.userType !== undefined ? { userType: found.userType } : {}),
+                    ...(found.userType !== undefined ? { userType: found.userType } : {})
                 });
             } catch (error) {
                 const message = error instanceof Error ? error.message : String(error);
                 errors.push({
                     adapterKey: device.adapterKey,
                     deviceId: device.deviceId,
-                    message,
+                    message
                 });
             }
         }
@@ -181,9 +181,9 @@ export function createIdentityFindResolver(input: {
                 devicesScanned: enabledDevices.length,
                 devicesEligible,
                 requestsSent,
-                errors: errors.length,
+                errors: errors.length
             },
-            errors,
+            errors
         };
     };
 }

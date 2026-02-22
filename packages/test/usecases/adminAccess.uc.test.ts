@@ -45,7 +45,7 @@ describe("getAdminAccess", () => {
             name: null,
             tgUserId: null,
             createdAt: now,
-            updatedAt: now,
+            updatedAt: now
         });
 
         const adminsService = createAdminsService({ adminsRepo });
@@ -74,7 +74,7 @@ describe("getAdminAccess", () => {
             name: null,
             tgUserId: null,
             createdAt: now,
-            updatedAt: now,
+            updatedAt: now
         });
 
         const adminsService = createAdminsService({ adminsRepo });
@@ -100,7 +100,7 @@ describe("getAdminAccess", () => {
             name: null,
             tgUserId: null,
             createdAt: now,
-            updatedAt: now,
+            updatedAt: now
         });
 
         const missingRolesRepo: RolesRepo = {
@@ -110,7 +110,7 @@ describe("getAdminAccess", () => {
             list: async () => [],
             listPermissions: async () => [],
             replacePermissions: async () => {},
-            withTx: () => missingRolesRepo,
+            withTx: () => missingRolesRepo
         };
 
         const adminsService = createAdminsService({ adminsRepo });

@@ -116,7 +116,7 @@ export class AdapterRegistry {
             capabilities: input.capabilities,
             mode: "active",
             registeredAt: now,
-            lastSeenAt: now,
+            lastSeenAt: now
         };
         if (input.deviceSettingsSchema !== undefined) {
             base.deviceSettingsSchema = input.deviceSettingsSchema;

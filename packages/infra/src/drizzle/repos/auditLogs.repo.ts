@@ -43,7 +43,7 @@ export function createAuditLogsRepo(db: Db): AuditLogsRepo {
 
             const [rows, totalRows] = await Promise.all([
                 whereExpr ? logsQuery.where(whereExpr) : logsQuery,
-                whereExpr ? totalQuery.where(whereExpr) : totalQuery,
+                whereExpr ? totalQuery.where(whereExpr) : totalQuery
             ]);
 
             return {
@@ -55,13 +55,13 @@ export function createAuditLogsRepo(db: Db): AuditLogsRepo {
                     entityType: row.entityType,
                     entityId: row.entityId,
                     meta: parseMeta(row.metaJson ?? null),
-                    at: toDate(row.at),
+                    at: toDate(row.at)
                 })),
                 page: {
                     limit,
                     offset,
-                    total: totalRows[0]?.value ?? 0,
-                },
+                    total: totalRows[0]?.value ?? 0
+                }
             };
         },
         async write(entry: AuditLogEntry): Promise<void> {
@@ -73,12 +73,12 @@ export function createAuditLogsRepo(db: Db): AuditLogsRepo {
                 entityType: entry.entityType,
                 entityId: entry.entityId,
                 metaJson: entry.meta ? JSON.stringify(entry.meta) : null,
-                at: entry.at,
+                at: entry.at
             }).onConflictDoNothing({ target: auditLogs.eventId });
         },
         withTx(tx) {
             return createAuditLogsRepo(tx as Db);
-        },
+        }
 
     };
 }

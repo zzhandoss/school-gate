@@ -39,7 +39,7 @@ export function createRecordDeviceAccessEventUC(deps: {
                 direction: input.direction,
                 occurredAt: input.occurredAt,
                 terminalPersonId: input.terminalPersonId ?? null,
-                rawPayload: input.rawPayload ?? null,
+                rawPayload: input.rawPayload ?? null
             });
 
             if (result === "duplicate") {
@@ -56,9 +56,9 @@ export function createRecordDeviceAccessEventUC(deps: {
                         direction: input.direction,
                         occurredAt: input.occurredAt.getTime(),
                         terminalPersonId: input.terminalPersonId ?? null,
-                        rawPayload: input.rawPayload ?? null,
-                    },
-                },
+                        rawPayload: input.rawPayload ?? null
+                    }
+                }
             });
 
             return { result, deviceEventId };

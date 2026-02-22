@@ -1,25 +1,25 @@
-import { redirect } from '@tanstack/react-router'
+import { redirect } from "@tanstack/react-router";
 
-import { ensureSession } from './service'
+import { ensureSession } from "./service";
 
 export async function requireAuth() {
-  if (typeof window === 'undefined') {
-    return
-  }
+    if (typeof window === "undefined") {
+        return;
+    }
 
-  const session = await ensureSession()
-  if (!session) {
-    throw redirect({ to: '/login' })
-  }
+    const session = await ensureSession();
+    if (!session) {
+        throw redirect({ to: "/login" });
+    }
 }
 
 export async function redirectIfAuthed() {
-  if (typeof window === 'undefined') {
-    return
-  }
+    if (typeof window === "undefined") {
+        return;
+    }
 
-  const session = await ensureSession()
-  if (session) {
-    throw redirect({ to: '/dashboard' })
-  }
+    const session = await ensureSession();
+    if (session) {
+        throw redirect({ to: "/dashboard" });
+    }
 }

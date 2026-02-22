@@ -9,7 +9,7 @@ import type {
     NotificationsRuntimeOverrides,
     OutboxRuntimeOverrides,
     RetentionRuntimeOverrides,
-    WorkerRuntimeOverrides,
+    WorkerRuntimeOverrides
 } from "../../config/runtimeConfig.js";
 
 export function getRuntimeSettings(settingsRepo: SettingsRepo): RuntimeSettings {
@@ -21,6 +21,6 @@ export function getRuntimeSettings(settingsRepo: SettingsRepo): RuntimeSettings 
         accessEvents: overrides.get("accessEvents") as AccessEventsRuntimeOverrides,
         retention: overrides.get("retention") as RetentionRuntimeOverrides,
         monitoring: overrides.get("monitoring") as MonitoringRuntimeOverrides,
-        notifications: overrides.get("notifications") as NotificationsRuntimeOverrides,
+        notifications: overrides.get("notifications") as NotificationsRuntimeOverrides
     };
 }

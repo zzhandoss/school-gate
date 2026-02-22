@@ -2,7 +2,7 @@ import { z } from "zod";
 import {
     runtimeSettingKeys,
     type NotificationsConfig,
-    type NotificationsRuntimeOverrides,
+    type NotificationsRuntimeOverrides
 } from "../../../config/runtimeConfig.js";
 import { defineGroupRegistry, defineSettingEntry } from "../types.js";
 
@@ -30,7 +30,7 @@ export const notificationsRegistry = defineGroupRegistry({
                 overrides.parentTemplate = value;
             },
             parseInput: (input) => nonEmptyString.optional().parse(input),
-            serialize: (value) => value,
+            serialize: (value) => value
         }),
         defineSettingEntry({
             key: runtimeSettingKeys.notificationsParentMaxAgeMs,
@@ -41,7 +41,7 @@ export const notificationsRegistry = defineGroupRegistry({
                 overrides.parentMaxAgeMs = value;
             },
             parseInput: (input) => positiveInt.optional().parse(input),
-            serialize: (value) => value.toString(),
+            serialize: (value) => value.toString()
         }),
         defineSettingEntry({
             key: runtimeSettingKeys.notificationsAlertMaxAgeMs,
@@ -52,7 +52,7 @@ export const notificationsRegistry = defineGroupRegistry({
                 overrides.alertMaxAgeMs = value;
             },
             parseInput: (input) => positiveInt.optional().parse(input),
-            serialize: (value) => value.toString(),
-        }),
-    ],
+            serialize: (value) => value.toString()
+        })
+    ]
 });

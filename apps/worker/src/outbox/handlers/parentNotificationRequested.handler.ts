@@ -35,10 +35,10 @@ export const parentNotificationRequestedHandler: OutboxEventHandler = async (
                         notificationType: DomainEvents.PARENT_NOTIFICATION_REQUESTED,
                         ageMs,
                         maxAgeMs,
-                        sourceTimestamp: payload.occurredAt,
-                    },
-                },
-            },
+                        sourceTimestamp: payload.occurredAt
+                    }
+                }
+            }
         });
         return;
     }

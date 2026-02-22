@@ -7,7 +7,7 @@ import { ruCommon } from "./locales/ru";
 
 const resources = {
     en: { common: enCommon },
-    ru: { common: ruCommon },
+    ru: { common: ruCommon }
 } as const;
 
 if (!i18n.isInitialized) {
@@ -21,14 +21,14 @@ if (!i18n.isInitialized) {
             defaultNS: "common",
             ns: ["common"],
             interpolation: {
-                escapeValue: false,
+                escapeValue: false
             },
             detection: {
                 order: ["localStorage", "navigator"],
                 lookupLocalStorage: "school_gate_admin_locale",
-                caches: ["localStorage"],
-            },
-        })
+                caches: ["localStorage"]
+            }
+        });
 }
 
 export { i18n };

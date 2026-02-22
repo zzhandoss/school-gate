@@ -25,7 +25,7 @@ export const monitoringRegistry = defineGroupRegistry({
                 overrides.workerTtlMs = value;
             },
             parseInput: (input) => positiveInt.optional().parse(input),
-            serialize: (value) => value.toString(),
-        }),
-    ],
+            serialize: (value) => value.toString()
+        })
+    ]
 });

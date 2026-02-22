@@ -42,9 +42,9 @@ describe("DeviceService devices routes", () => {
                 devices: [],
                 outbox: {
                     counts: { new: 0, processing: 0, processed: 0, error: 0 },
-                    oldestNewCreatedAt: null,
-                },
-            }),
+                    oldestNewCreatedAt: null
+                }
+            })
         };
 
         const jwtSecret = "test-admin-jwt-secret-32-chars-min!";
@@ -54,8 +54,8 @@ describe("DeviceService devices routes", () => {
             payload: {
                 adminId: "admin-1",
                 roleId: "role-1",
-                permissions: ["devices.read", "devices.write"] as Permission[],
-            },
+                permissions: ["devices.read", "devices.write"] as Permission[]
+            }
         });
 
         app = createDeviceServiceApp({
@@ -64,7 +64,7 @@ describe("DeviceService devices routes", () => {
                 internalToken: "test-internal-token",
                 heartbeatIntervalMs: 30000,
                 batchLimit: 200,
-                deviceTtlMs: 300000,
+                deviceTtlMs: 300000
             },
             logger,
             monitoring,
@@ -83,7 +83,7 @@ describe("DeviceService devices routes", () => {
                         direction: input.direction,
                         adapterKey: input.adapterKey,
                         settingsJson: input.settingsJson ?? null,
-                        enabled: input.enabled,
+                        enabled: input.enabled
                     }),
                 update: (id, input) =>
                     updateDevice({
@@ -92,14 +92,14 @@ describe("DeviceService devices routes", () => {
                         direction: input.direction,
                         adapterKey: input.adapterKey,
                         settingsJson: input.settingsJson,
-                        enabled: input.enabled,
+                        enabled: input.enabled
                     }).updated,
                 setEnabled: (input) => setDeviceEnabled({ id: input.deviceId, enabled: input.enabled }).updated,
-                delete: (id) => deleteDevice(id).deleted,
+                delete: (id) => deleteDevice(id).deleted
             },
             adapters: {
-                list: () => registry.list(),
-            },
+                list: () => registry.list()
+            }
         });
     });
 
@@ -117,7 +117,7 @@ describe("DeviceService devices routes", () => {
 
     it("lists devices (empty by default)", async () => {
         const res = await app.request("/api/devices", {
-            headers: { authorization: `Bearer ${adminToken}` },
+            headers: { authorization: `Bearer ${adminToken}` }
         });
         expect(res.status).toBe(200);
         await expect(res.json()).resolves.toEqual({ success: true, data: { devices: [] } });
@@ -129,8 +129,8 @@ describe("DeviceService devices routes", () => {
             headers: {
                 origin: "http://localhost:3000",
                 "access-control-request-method": "GET",
-                "access-control-request-headers": "authorization,content-type",
-            },
+                "access-control-request-headers": "authorization,content-type"
+            }
         });
 
         expect(res.status).toBe(204);
@@ -147,15 +147,15 @@ describe("DeviceService devices routes", () => {
                 name: "Main door",
                 direction: "IN",
                 adapterKey: "mock",
-                enabled: true,
-            }),
+                enabled: true
+            })
         });
         expect(upsertRes.status).toBe(200);
         const upsertJson = (await upsertRes.json()) as any;
         expect(upsertJson.success).toBe(true);
 
         const listRes = await app.request("/api/devices", {
-            headers: { authorization: `Bearer ${adminToken}` },
+            headers: { authorization: `Bearer ${adminToken}` }
         });
         expect(listRes.status).toBe(200);
         const json = (await listRes.json()) as any;
@@ -166,7 +166,7 @@ describe("DeviceService devices routes", () => {
             name: "Main door",
             direction: "IN",
             adapterKey: "mock",
-            enabled: true,
+            enabled: true
         });
         expect(typeof json.data.devices[0].createdAt).toBe("string");
     });
@@ -180,12 +180,12 @@ describe("DeviceService devices routes", () => {
                 name: "Main door",
                 direction: "IN",
                 adapterKey: "mock",
-                enabled: true,
-            }),
+                enabled: true
+            })
         });
 
         const res = await app.request("/api/devices/dev-1", {
-            headers: { authorization: `Bearer ${adminToken}` },
+            headers: { authorization: `Bearer ${adminToken}` }
         });
         expect(res.status).toBe(200);
         const json = (await res.json()) as any;
@@ -195,7 +195,7 @@ describe("DeviceService devices routes", () => {
             name: "Main door",
             direction: "IN",
             adapterKey: "mock",
-            enabled: true,
+            enabled: true
         });
     });
 
@@ -208,19 +208,19 @@ describe("DeviceService devices routes", () => {
                 name: "Main door",
                 direction: "IN",
                 adapterKey: "mock",
-                enabled: true,
-            }),
+                enabled: true
+            })
         });
 
         const patchRes = await app.request("/api/devices/dev-1", {
             method: "PATCH",
             headers: { "content-type": "application/json", authorization: `Bearer ${adminToken}` },
-            body: JSON.stringify({ name: "Updated name", settingsJson: "{\"zone\":\"A\"}" }),
+            body: JSON.stringify({ name: "Updated name", settingsJson: "{\"zone\":\"A\"}" })
         });
         expect(patchRes.status).toBe(200);
 
         const getRes = await app.request("/api/devices/dev-1", {
-            headers: { authorization: `Bearer ${adminToken}` },
+            headers: { authorization: `Bearer ${adminToken}` }
         });
         const json = (await getRes.json()) as any;
         expect(json.success).toBe(true);
@@ -238,21 +238,21 @@ describe("DeviceService devices routes", () => {
                 name: "Exit",
                 direction: "OUT",
                 adapterKey: "mock",
-                enabled: true,
-            }),
+                enabled: true
+            })
         });
 
         const patchRes = await app.request("/api/devices/dev-2/enabled", {
             method: "PATCH",
             headers: { "content-type": "application/json", authorization: `Bearer ${adminToken}` },
-            body: JSON.stringify({ enabled: false }),
+            body: JSON.stringify({ enabled: false })
         });
         expect(patchRes.status).toBe(200);
         const patchJson = (await patchRes.json()) as any;
         expect(patchJson.success).toBe(true);
 
         const listRes = await app.request("/api/devices", {
-            headers: { authorization: `Bearer ${adminToken}` },
+            headers: { authorization: `Bearer ${adminToken}` }
         });
         const json = (await listRes.json()) as any;
         expect(json.success).toBe(true);
@@ -268,18 +268,18 @@ describe("DeviceService devices routes", () => {
                 name: "Main door",
                 direction: "IN",
                 adapterKey: "mock",
-                enabled: true,
-            }),
+                enabled: true
+            })
         });
 
         const delRes = await app.request("/api/devices/dev-1", {
             method: "DELETE",
-            headers: { authorization: `Bearer ${adminToken}` },
+            headers: { authorization: `Bearer ${adminToken}` }
         });
         expect(delRes.status).toBe(200);
 
         const getRes = await app.request("/api/devices/dev-1", {
-            headers: { authorization: `Bearer ${adminToken}` },
+            headers: { authorization: `Bearer ${adminToken}` }
         });
         expect(getRes.status).toBe(404);
     });
@@ -288,7 +288,7 @@ describe("DeviceService devices routes", () => {
         const res = await app.request("/api/devices/missing/enabled", {
             method: "PATCH",
             headers: { "content-type": "application/json", authorization: `Bearer ${adminToken}` },
-            body: JSON.stringify({ enabled: true }),
+            body: JSON.stringify({ enabled: true })
         });
         expect(res.status).toBe(404);
         const json = (await res.json()) as any;
@@ -301,7 +301,7 @@ describe("DeviceService devices routes", () => {
             method: "POST",
             headers: {
                 authorization: "Bearer test-token",
-                "content-type": "application/json",
+                "content-type": "application/json"
             },
             body: JSON.stringify({
                 vendorKey: "mock",
@@ -312,17 +312,17 @@ describe("DeviceService devices routes", () => {
                     type: "object",
                     properties: {
                         host: { type: "string", description: "Terminal host address" },
-                        timeoutMs: { type: "integer" },
+                        timeoutMs: { type: "integer" }
                     },
-                    required: ["host"],
+                    required: ["host"]
                 },
-                version: "1.0.0",
-            }),
+                version: "1.0.0"
+            })
         });
         expect(registerRes.status).toBe(200);
 
         const res = await app.request("/api/adapters", {
-            headers: { authorization: `Bearer ${adminToken}` },
+            headers: { authorization: `Bearer ${adminToken}` }
         });
         expect(res.status).toBe(200);
         const json = (await res.json()) as any;
@@ -339,10 +339,10 @@ describe("DeviceService devices routes", () => {
                 type: "object",
                 properties: {
                     host: { type: "string", description: "Terminal host address" },
-                    timeoutMs: { type: "integer" },
+                    timeoutMs: { type: "integer" }
                 },
-                required: ["host"],
-            },
+                required: ["host"]
+            }
         });
     });
 
@@ -351,7 +351,7 @@ describe("DeviceService devices routes", () => {
             method: "POST",
             headers: {
                 authorization: "Bearer test-token",
-                "content-type": "application/json",
+                "content-type": "application/json"
             },
             body: JSON.stringify({
                 vendorKey: "mock-invalid",
@@ -361,9 +361,9 @@ describe("DeviceService devices routes", () => {
                 capabilities: ["fetchEvents"],
                 deviceSettingsSchema: {
                     type: "object",
-                    required: [123],
-                },
-            }),
+                    required: [123]
+                }
+            })
         });
 
         expect(res.status).toBe(400);
@@ -377,7 +377,7 @@ describe("DeviceService devices routes", () => {
             method: "POST",
             headers: {
                 authorization: "Bearer test-token",
-                "content-type": "application/json",
+                "content-type": "application/json"
             },
             body: JSON.stringify({
                 vendorKey: "mock-schema-upsert",
@@ -390,12 +390,12 @@ describe("DeviceService devices routes", () => {
                     type: "object",
                     properties: {
                         host: { type: "string", minLength: 1 },
-                        timeoutMs: { type: "integer", minimum: 100 },
+                        timeoutMs: { type: "integer", minimum: 100 }
                     },
                     required: ["host"],
-                    additionalProperties: false,
-                },
-            }),
+                    additionalProperties: false
+                }
+            })
         });
         expect(registerRes.status).toBe(200);
 
@@ -408,8 +408,8 @@ describe("DeviceService devices routes", () => {
                 direction: "IN",
                 adapterKey: "mock-schema-upsert",
                 enabled: true,
-                settingsJson: JSON.stringify({ timeoutMs: 200 }),
-            }),
+                settingsJson: JSON.stringify({ timeoutMs: 200 })
+            })
         });
         expect(invalidRes.status).toBe(400);
         const invalidJson = (await invalidRes.json()) as any;
@@ -425,8 +425,8 @@ describe("DeviceService devices routes", () => {
                 direction: "IN",
                 adapterKey: "mock-schema-upsert",
                 enabled: true,
-                settingsJson: JSON.stringify({ host: "10.1.1.10", timeoutMs: 250 }),
-            }),
+                settingsJson: JSON.stringify({ host: "10.1.1.10", timeoutMs: 250 })
+            })
         });
         expect(validRes.status).toBe(200);
     });
@@ -441,15 +441,15 @@ describe("DeviceService devices routes", () => {
                 direction: "IN",
                 adapterKey: "legacy",
                 enabled: true,
-                settingsJson: JSON.stringify({ some: "legacy-value" }),
-            }),
+                settingsJson: JSON.stringify({ some: "legacy-value" })
+            })
         });
 
         const registerRes = await app.request("/adapters/register", {
             method: "POST",
             headers: {
                 authorization: "Bearer test-token",
-                "content-type": "application/json",
+                "content-type": "application/json"
             },
             body: JSON.stringify({
                 vendorKey: "mock-schema-update",
@@ -461,19 +461,19 @@ describe("DeviceService devices routes", () => {
                     $schema: "https://json-schema.org/draft/2020-12/schema",
                     type: "object",
                     properties: {
-                        host: { type: "string", minLength: 1 },
+                        host: { type: "string", minLength: 1 }
                     },
                     required: ["host"],
-                    additionalProperties: false,
-                },
-            }),
+                    additionalProperties: false
+                }
+            })
         });
         expect(registerRes.status).toBe(200);
 
         const patchInvalidRes = await app.request("/api/devices/dev-patch-effective", {
             method: "PATCH",
             headers: { "content-type": "application/json", authorization: `Bearer ${adminToken}` },
-            body: JSON.stringify({ adapterKey: "mock-schema-update" }),
+            body: JSON.stringify({ adapterKey: "mock-schema-update" })
         });
         expect(patchInvalidRes.status).toBe(400);
         const patchInvalidJson = (await patchInvalidRes.json()) as any;
@@ -485,8 +485,8 @@ describe("DeviceService devices routes", () => {
             headers: { "content-type": "application/json", authorization: `Bearer ${adminToken}` },
             body: JSON.stringify({
                 adapterKey: "mock-schema-update",
-                settingsJson: JSON.stringify({ host: "10.1.1.20" }),
-            }),
+                settingsJson: JSON.stringify({ host: "10.1.1.20" })
+            })
         });
         expect(patchValidRes.status).toBe(200);
     });
@@ -498,16 +498,16 @@ describe("DeviceService devices routes", () => {
             instanceName: "Lab A",
             baseUrl: "http://localhost:1234",
             retentionMs: 3600000,
-            capabilities: ["fetchEvents"],
+            capabilities: ["fetchEvents"]
         };
 
         const first = await app.request("/adapters/register", {
             method: "POST",
             headers: {
                 authorization: "Bearer test-token",
-                "content-type": "application/json",
+                "content-type": "application/json"
             },
-            body: JSON.stringify(body),
+            body: JSON.stringify(body)
         });
         expect(first.status).toBe(200);
 
@@ -515,9 +515,9 @@ describe("DeviceService devices routes", () => {
             method: "POST",
             headers: {
                 authorization: "Bearer test-token",
-                "content-type": "application/json",
+                "content-type": "application/json"
             },
-            body: JSON.stringify(body),
+            body: JSON.stringify(body)
         });
 
         expect(second.status).toBe(409);
@@ -531,7 +531,7 @@ describe("DeviceService devices routes", () => {
             method: "POST",
             headers: {
                 authorization: "Bearer test-token",
-                "content-type": "application/json",
+                "content-type": "application/json"
             },
             body: JSON.stringify({
                 vendorKey: "dahua",
@@ -542,10 +542,10 @@ describe("DeviceService devices routes", () => {
                 deviceSettingsSchema: {
                     type: "object",
                     properties: {
-                        identityQueryMappings: { type: "object" },
-                    },
-                },
-            }),
+                        identityQueryMappings: { type: "object" }
+                    }
+                }
+            })
         });
         expect(registerRes.status).toBe(200);
 
@@ -562,11 +562,11 @@ describe("DeviceService devices routes", () => {
                     identityQueryMappings: {
                         iin: {
                             provider: "dahua.findPerson",
-                            paramsTemplate: { "person.id": "{{identityValue}}" },
-                        },
-                    },
-                }),
-            }),
+                            paramsTemplate: { "person.id": "{{identityValue}}" }
+                        }
+                    }
+                })
+            })
         });
         expect(upsertRes.status).toBe(200);
 
@@ -585,10 +585,10 @@ describe("DeviceService devices routes", () => {
                                         source: "accessUser",
                                         userType: "0",
                                         score: null,
-                                        rawPayload: "{\"source\":\"accessUser\"}",
-                                    },
-                                ],
-                            },
+                                        rawPayload: "{\"source\":\"accessUser\"}"
+                                    }
+                                ]
+                            }
                         }),
                         { status: 200, headers: { "content-type": "application/json" } }
                     )
@@ -600,12 +600,12 @@ describe("DeviceService devices routes", () => {
             method: "POST",
             headers: {
                 authorization: "Bearer test-internal-token",
-                "content-type": "application/json",
+                "content-type": "application/json"
             },
             body: JSON.stringify({
                 identityKey: "iin",
-                identityValue: "900101000001",
-            }),
+                identityValue: "900101000001"
+            })
         });
         expect(res.status).toBe(200);
         const json = (await res.json()) as any;
@@ -619,8 +619,8 @@ describe("DeviceService devices routes", () => {
                 source: "accessUser",
                 userType: "0",
                 score: null,
-                rawPayload: "{\"source\":\"accessUser\"}",
-            },
+                rawPayload: "{\"source\":\"accessUser\"}"
+            }
         ]);
     });
 });

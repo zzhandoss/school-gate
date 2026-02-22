@@ -1,6 +1,6 @@
 ﻿import type {
     PersonTerminalIdentitiesService,
-    PersonTerminalIdentitiesServiceDeps,
+    PersonTerminalIdentitiesServiceDeps
 } from "./personTerminalIdentities.types.js";
 
 export function createPersonTerminalIdentitiesService(
@@ -10,7 +10,7 @@ export function createPersonTerminalIdentitiesService(
         withTx(tx: unknown) {
             return createPersonTerminalIdentitiesService({
                 ...deps,
-                personTerminalIdentitiesRepo: deps.personTerminalIdentitiesRepo.withTx(tx),
+                personTerminalIdentitiesRepo: deps.personTerminalIdentitiesRepo.withTx(tx)
             });
         },
 
@@ -39,7 +39,7 @@ export function createPersonTerminalIdentitiesService(
         },
         listByPersonId(input) {
             return deps.personTerminalIdentitiesRepo.listByPersonId(input);
-        },
+        }
     };
 }
 

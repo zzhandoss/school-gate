@@ -21,7 +21,7 @@ export function createGetAdminAccessFlow(deps: GetAdminAccessDeps): GetAdminAcce
         return {
             adminId: admin.id,
             roleId: admin.roleId,
-            permissions,
+            permissions
         };
     };
 }

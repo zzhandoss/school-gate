@@ -12,7 +12,7 @@ export function createSetAdminRoleFlow(deps: SetAdminRoleDeps): SetAdminRoleFlow
             adminId: input.adminId,
             roleId: input.roleId,
             updatedAt: deps.clock.now(),
-            actorId: input.changedByAdminId,
+            actorId: input.changedByAdminId
         });
     };
 }

@@ -8,7 +8,7 @@ export type RolePreset = {
 export const ROLE_PRESETS: RolePreset[] = [
     {
         name: "super_admin",
-        permissions: [...PERMISSIONS],
+        permissions: [...PERMISSIONS]
     },
     {
         name: "manager",
@@ -23,13 +23,13 @@ export const ROLE_PRESETS: RolePreset[] = [
             "persons.read",
             "persons.write",
             "settings.read",
-            "monitoring.read",
-        ],
+            "monitoring.read"
+        ]
     },
     {
         name: "device_manager",
-        permissions: ["devices.read", "devices.write", "monitoring.read"],
-    },
+        permissions: ["devices.read", "devices.write", "monitoring.read"]
+    }
 ];
 
 export function getRolePreset(name: string): RolePreset | null {

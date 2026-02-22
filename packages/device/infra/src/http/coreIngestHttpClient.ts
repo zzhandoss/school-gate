@@ -3,7 +3,7 @@ import type {
     CoreAccessEventBatchResult,
     CoreAccessEventIngestInput,
     CoreAccessEventIngestResult,
-    CoreIngestClient,
+    CoreIngestClient
 } from "@school-gate/device/core/ports/coreIngestClient";
 
 export class CoreIngestHttpError extends Error {
@@ -80,10 +80,10 @@ export function createCoreIngestHttpClient(config: CoreIngestHttpClientConfig): 
                     "content-type": "application/json",
                     authorization: `Bearer ${config.token}`,
                     "x-timestamp": String(timestamp),
-                    "x-signature": signature,
+                    "x-signature": signature
                 },
                 body: rawBody,
-                signal,
+                signal
             });
 
             if (!response.ok) {
@@ -92,7 +92,7 @@ export function createCoreIngestHttpClient(config: CoreIngestHttpClientConfig): 
                 throw new CoreIngestHttpError({
                     status: response.status,
                     message,
-                    retriable: isRetriableStatus(response.status),
+                    retriable: isRetriableStatus(response.status)
                 });
             }
 
@@ -101,7 +101,7 @@ export function createCoreIngestHttpClient(config: CoreIngestHttpClientConfig): 
                 throw new CoreIngestHttpError({
                     status: response.status,
                     message: "Core ingest returned empty JSON response",
-                    retriable: true,
+                    retriable: true
                 });
             }
 
@@ -118,6 +118,6 @@ export function createCoreIngestHttpClient(config: CoreIngestHttpClientConfig): 
                 "/api/events/batch",
                 input
             );
-        },
+        }
     };
 }

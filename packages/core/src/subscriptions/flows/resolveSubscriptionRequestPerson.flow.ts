@@ -43,7 +43,7 @@ export function createResolveSubscriptionRequestPersonFlow(
             entityType: "subscription_request",
             entityId: request.id,
             at: resolvedAt,
-            meta: { personId: person.id, iin: request.iin },
+            meta: { personId: person.id, iin: request.iin }
         });
 
         return {

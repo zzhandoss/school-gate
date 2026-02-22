@@ -5,7 +5,7 @@ import {
     alertRules,
     alertSubscriptions,
     outboxEvents,
-    roles,
+    roles
 } from "@school-gate/db/schema";
 import type { MonitoringSnapshot } from "@school-gate/core/ports/monitoring";
 import { createProcessMonitoringAlertsUC } from "@school-gate/core/usecases/processMonitoringAlerts";
@@ -50,23 +50,23 @@ describe("ProcessMonitoringAlertsUC", () => {
                     PROCESSED: 0,
                     FAILED_RETRY: 0,
                     UNMATCHED: 0,
-                    ERROR: 0,
+                    ERROR: 0
                 },
-                oldestUnprocessedOccurredAt: null,
+                oldestUnprocessedOccurredAt: null
             },
             outbox: {
                 counts: {
                     new: outboxNew,
                     processing: 0,
                     processed: 0,
-                    error: 0,
+                    error: 0
                 },
-                oldestNewCreatedAt: outboxNew > 0 ? new Date(now.getTime() - 60_000) : null,
+                oldestNewCreatedAt: outboxNew > 0 ? new Date(now.getTime() - 60_000) : null
             },
             workers: [],
             topErrors: { accessEvents: [], outbox: [] },
             components: [],
-            deviceService: null,
+            deviceService: null
         };
     }
 
@@ -78,7 +78,7 @@ describe("ProcessMonitoringAlertsUC", () => {
             id: "role-1",
             name: "admin",
             createdAt: now,
-            updatedAt: now,
+            updatedAt: now
         });
 
         const adminsRepo = createAdminsRepo(db);
@@ -91,7 +91,7 @@ describe("ProcessMonitoringAlertsUC", () => {
             name: null,
             tgUserId: "tg-1",
             createdAt: now,
-            updatedAt: now,
+            updatedAt: now
         });
 
         const rulesRepo = createAlertRulesRepo(db);
@@ -103,7 +103,7 @@ describe("ProcessMonitoringAlertsUC", () => {
             isEnabled: true,
             config: { source: "core", maxNew: 1 },
             createdAt: now,
-            updatedAt: now,
+            updatedAt: now
         });
 
         const subscriptionsRepo = createAlertSubscriptionsRepo(db);
@@ -112,7 +112,7 @@ describe("ProcessMonitoringAlertsUC", () => {
             ruleId: "rule-1",
             isEnabled: true,
             createdAt: now,
-            updatedAt: now,
+            updatedAt: now
         });
 
         const idGen = (() => {
@@ -126,16 +126,16 @@ describe("ProcessMonitoringAlertsUC", () => {
             eventsRepo: createAlertEventsRepo(db),
             tx: createUnitOfWork(db, {
                 alertEventsRepo: createAlertEventsRepo,
-                outbox: createOutboxRepo,
+                outbox: createOutboxRepo
             }),
             idGen,
-            clock: { now: () => now },
+            clock: { now: () => now }
         });
 
         const triggerSnapshot = {
             id: "snap-1",
             createdAt: now,
-            snapshot: buildSnapshot(now, 2),
+            snapshot: buildSnapshot(now, 2)
         };
 
         const triggerResult = await processAlerts({ snapshot: triggerSnapshot });
@@ -152,7 +152,7 @@ describe("ProcessMonitoringAlertsUC", () => {
         const resolvedSnapshot = {
             id: "snap-2",
             createdAt: new Date(now.getTime() + 60_000),
-            snapshot: buildSnapshot(new Date(now.getTime() + 60_000), 0),
+            snapshot: buildSnapshot(new Date(now.getTime() + 60_000), 0)
         };
 
         const resolveResult = await processAlerts({ snapshot: resolvedSnapshot });

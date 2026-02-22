@@ -26,7 +26,7 @@ export function createRegisterDeviceUC(deps: { devicesRepo: DevicesRepo; clock: 
             settingsJson: input.settingsJson ?? null,
             enabled: input.enabled ?? true,
             createdAt: now,
-            updatedAt: now,
+            updatedAt: now
         });
 
         return { id: input.id };

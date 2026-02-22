@@ -28,7 +28,7 @@ describe("ListUnmatchedAccessEventsUC", () => {
             direction: "IN",
             occurredAt: new Date(),
             idempotencyKey: "k1",
-            status: "UNMATCHED",
+            status: "UNMATCHED"
         });
 
         const uc = createListUnmatchedAccessEventsUC({ accessEventsRepo });

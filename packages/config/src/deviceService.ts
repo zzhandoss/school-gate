@@ -10,7 +10,7 @@ const optionalNonEmptyString = z.preprocess(
 );
 
 const deviceDbSchema = z.object({
-    DEVICE_DB_FILE: z.string().min(1).default("./data/device.db"),
+    DEVICE_DB_FILE: z.string().min(1).default("./data/device.db")
 });
 
 const deviceOutboxSchema = z.object({
@@ -22,7 +22,7 @@ const deviceOutboxSchema = z.object({
     DEVICE_OUTBOX_MAX_ATTEMPTS: z.coerce.number().int().positive().default(10),
     DEVICE_OUTBOX_LEASE_MS: z.coerce.number().int().positive().default(60_000),
     DEVICE_OUTBOX_TIMEOUT_MS: z.coerce.number().int().positive().default(5_000),
-    DEVICE_OUTBOX_PROCESSING_BY: optionalNonEmptyString,
+    DEVICE_OUTBOX_PROCESSING_BY: optionalNonEmptyString
 });
 
 const deviceServiceSchema = z.object({
@@ -33,7 +33,7 @@ const deviceServiceSchema = z.object({
     DEVICE_ADAPTER_HEARTBEAT_MS: z.coerce.number().int().positive().default(30_000),
     DEVICE_ADAPTER_BATCH_LIMIT: z.coerce.number().int().positive().default(500),
     DEVICE_MONITORING_DEVICE_TTL_MS: z.coerce.number().int().positive().default(5 * 60 * 1000),
-    ADMIN_JWT_SECRET: z.string().min(32),
+    ADMIN_JWT_SECRET: z.string().min(32)
 });
 
 export function getDeviceDbFile(): string {
@@ -51,7 +51,7 @@ export function getDeviceOutboxConfig() {
         maxAttempts: parsed.DEVICE_OUTBOX_MAX_ATTEMPTS,
         leaseMs: parsed.DEVICE_OUTBOX_LEASE_MS,
         timeoutMs: parsed.DEVICE_OUTBOX_TIMEOUT_MS,
-        processingBy: parsed.DEVICE_OUTBOX_PROCESSING_BY ?? processingByDefault,
+        processingBy: parsed.DEVICE_OUTBOX_PROCESSING_BY ?? processingByDefault
     };
 }
 
@@ -68,6 +68,6 @@ export function getDeviceServiceConfig() {
         heartbeatIntervalMs: parsed.DEVICE_ADAPTER_HEARTBEAT_MS,
         batchLimit: parsed.DEVICE_ADAPTER_BATCH_LIMIT,
         deviceTtlMs: parsed.DEVICE_MONITORING_DEVICE_TTL_MS,
-        adminJwtSecret: parsed.ADMIN_JWT_SECRET,
+        adminJwtSecret: parsed.ADMIN_JWT_SECRET
     };
 }

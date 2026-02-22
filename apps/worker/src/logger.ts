@@ -10,6 +10,6 @@ export function createWorkerLogger(name: string) {
         level: loggingConfig.level,
         filePath: path.join(loggingConfig.dir, `${name}.log`),
         maxBytes: loggingConfig.maxBytes,
-        retentionDays: loggingConfig.retentionDays,
+        retentionDays: loggingConfig.retentionDays
     });
 }

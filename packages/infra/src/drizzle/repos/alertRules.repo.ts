@@ -1,7 +1,8 @@
 ﻿import { and, desc, eq } from "drizzle-orm";
 import type { Db } from "@school-gate/db/drizzle";
 import { alertRules } from "@school-gate/db/schema";
-import { AlertRulesRepo, AlertRuleType, UnknownAlertRule, parseAlertRuleConfig } from "@school-gate/core";
+import type { AlertRulesRepo, AlertRuleType, UnknownAlertRule } from "@school-gate/core";
+import { parseAlertRuleConfig } from "@school-gate/core";
 function toDate(value: unknown): Date {
     return value instanceof Date ? value : new Date(String(value));
 }
@@ -17,7 +18,7 @@ function mapRule(row: typeof alertRules.$inferSelect): UnknownAlertRule {
         isEnabled: Boolean(row.isEnabled),
         config,
         createdAt: toDate(row.createdAt),
-        updatedAt: toDate(row.updatedAt),
+        updatedAt: toDate(row.updatedAt)
     } as UnknownAlertRule;
 }
 
@@ -33,7 +34,7 @@ export function createAlertRulesRepo(db: Db): AlertRulesRepo {
                     isEnabled: input.isEnabled,
                     configJson: JSON.stringify(input.config),
                     createdAt: input.createdAt,
-                    updatedAt: input.updatedAt,
+                    updatedAt: input.updatedAt
                 })
                 .run();
         },
@@ -77,7 +78,7 @@ export function createAlertRulesRepo(db: Db): AlertRulesRepo {
         },
         withTx(tx) {
             return createAlertRulesRepo(tx as Db);
-        },
+        }
 
     };
 }

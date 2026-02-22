@@ -5,7 +5,7 @@ const positiveInt = z.number().int().positive();
 
 export const listAdminsQuerySchema = z.object({
     limit: z.coerce.number().int().positive().max(200).default(50),
-    offset: z.coerce.number().int().nonnegative().default(0),
+    offset: z.coerce.number().int().nonnegative().default(0)
 });
 
 export const adminStatusSchema = z.enum(["pending", "active", "disabled"]);
@@ -18,28 +18,28 @@ export const adminAdminDtoSchema = z.object({
     name: z.string().min(1).nullable(),
     tgUserId: z.string().min(1).nullable(),
     createdAt: z.string().datetime(),
-    updatedAt: z.string().datetime(),
+    updatedAt: z.string().datetime()
 });
 
 export const listAdminsResultSchema = z.object({
-    admins: z.array(adminAdminDtoSchema),
+    admins: z.array(adminAdminDtoSchema)
 });
 
 export const setAdminStatusSchema = z.object({
-    status: z.enum(["active", "disabled"]),
+    status: z.enum(["active", "disabled"])
 });
 
 export const setAdminRoleSchema = z.object({
-    roleId: z.string().min(1),
+    roleId: z.string().min(1)
 });
 
 export const createAdminPasswordResetSchema = z.object({
-    expiresInMs: positiveInt,
+    expiresInMs: positiveInt
 });
 
 export const createAdminPasswordResetResultSchema = z.object({
     token: z.string().min(1),
-    expiresAt: z.string().datetime(),
+    expiresAt: z.string().datetime()
 });
 
 export type ListAdminsQueryDto = z.infer<typeof listAdminsQuerySchema>;

@@ -1,6 +1,6 @@
 ﻿import type {
     AuditLogsRetentionService,
-    AuditLogsRetentionServiceDeps,
+    AuditLogsRetentionServiceDeps
 } from "./auditLogsRetention.types.js";
 
 export function createAuditLogsRetentionService(
@@ -10,7 +10,7 @@ export function createAuditLogsRetentionService(
         withTx(tx: unknown) {
             return createAuditLogsRetentionService({
                 ...deps,
-                auditLogsRetentionRepo: deps.auditLogsRetentionRepo.withTx(tx),
+                auditLogsRetentionRepo: deps.auditLogsRetentionRepo.withTx(tx)
             });
         },
 
@@ -18,7 +18,7 @@ export function createAuditLogsRetentionService(
 
         deleteBefore(input) {
             return deps.auditLogsRetentionRepo.deleteBefore(input);
-        },
+        }
     };
 }
 

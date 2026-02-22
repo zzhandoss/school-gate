@@ -43,7 +43,7 @@ export function createHttpApp(input: CreateHttpAppInput) {
         cors({
             origin: (origin) => (origin && corsAllowedOrigins.has(origin) ? origin : undefined),
             allowMethods: ["GET", "HEAD", "PUT", "POST", "PATCH", "DELETE", "OPTIONS"],
-            allowHeaders: ["Authorization", "Content-Type"],
+            allowHeaders: ["Authorization", "Content-Type"]
         })
     );
     app.use(
@@ -51,7 +51,7 @@ export function createHttpApp(input: CreateHttpAppInput) {
         cors({
             origin: (origin) => (origin && corsAllowedOrigins.has(origin) ? origin : undefined),
             allowMethods: ["GET", "HEAD", "PUT", "POST", "PATCH", "DELETE", "OPTIONS"],
-            allowHeaders: ["Authorization", "Content-Type"],
+            allowHeaders: ["Authorization", "Content-Type"]
         })
     );
 
@@ -59,25 +59,25 @@ export function createHttpApp(input: CreateHttpAppInput) {
         openapi: "3.0.0",
         info: {
             title: "School Gate Device Service API",
-            version: "1.0.0",
+            version: "1.0.0"
         },
         components: {
             securitySchemes: {
                 adminBearerAuth: {
                     type: "http",
                     scheme: "bearer",
-                    bearerFormat: "JWT",
+                    bearerFormat: "JWT"
                 },
                 deviceBearerAuth: {
                     type: "http",
-                    scheme: "bearer",
+                    scheme: "bearer"
                 },
                 internalBearerAuth: {
                     type: "http",
-                    scheme: "bearer",
-                },
-            },
-        },
+                    scheme: "bearer"
+                }
+            }
+        }
     };
 
     app.get("/openapi.json", (c) => {
@@ -88,7 +88,7 @@ export function createHttpApp(input: CreateHttpAppInput) {
             return c.json(
                 {
                     code: "openapi_generation_failed",
-                    message: "Failed to generate OpenAPI document",
+                    message: "Failed to generate OpenAPI document"
                 },
                 500
             );
@@ -104,7 +104,7 @@ export function createHttpApp(input: CreateHttpAppInput) {
             tags: ["System"],
             summary: "Healthcheck",
             success: { schema: z.object({ ok: z.literal(true) }) },
-            errors: [500],
+            errors: [500]
         }),
         handler(() => ({ ok: true }))
     );

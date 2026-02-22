@@ -7,8 +7,8 @@ export function unauthorized(c: Context) {
             success: false,
             error: {
                 code: "unauthorized",
-                message: "Unauthorized",
-            },
+                message: "Unauthorized"
+            }
         },
         401
     );

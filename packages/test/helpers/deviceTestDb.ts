@@ -3,7 +3,8 @@ import { tmpdir } from "node:os";
 import { join, resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import Database from "better-sqlite3";
-import { createDeviceDb, DeviceDb } from "@school-gate/device/device-db/drizzle";
+import type { DeviceDb } from "@school-gate/device/device-db/drizzle";
+import { createDeviceDb } from "@school-gate/device/device-db/drizzle";
 
 export type DeviceTestDb = {
     db: DeviceDb;
@@ -60,7 +61,7 @@ export function createDeviceTestDb(): DeviceTestDb {
             }
 
             rmSync(dir, { recursive: true, force: true });
-        },
+        }
     };
 }
 

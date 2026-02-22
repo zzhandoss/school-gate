@@ -108,14 +108,14 @@ export function createDeviceAdapterHttpClient(
                     method: "POST",
                     headers: {
                         "content-type": "application/json",
-                        authorization: `Bearer ${config.token}`,
+                        authorization: `Bearer ${config.token}`
                     },
                     body: JSON.stringify({
                         deviceId: input.deviceId,
                         sinceEventId: input.sinceEventId ?? null,
-                        limit: input.limit,
+                        limit: input.limit
                     }),
-                    signal,
+                    signal
                 });
             });
 
@@ -135,7 +135,7 @@ export function createDeviceAdapterHttpClient(
                 direction: event.direction,
                 occurredAt: new Date(event.occurredAt),
                 terminalPersonId: event.terminalPersonId ?? null,
-                rawPayload: event.rawPayload ?? null,
+                rawPayload: event.rawPayload ?? null
             }));
         },
         async findIdentity(input: FindIdentityRequest) {
@@ -144,15 +144,15 @@ export function createDeviceAdapterHttpClient(
                     method: "POST",
                     headers: {
                         "content-type": "application/json",
-                        authorization: `Bearer ${config.token}`,
+                        authorization: `Bearer ${config.token}`
                     },
                     body: JSON.stringify({
                         deviceId: input.deviceId,
                         identityKey: input.identityKey,
                         identityValue: input.identityValue,
-                        limit: input.limit && input.limit > 0 ? input.limit : 1,
+                        limit: input.limit && input.limit > 0 ? input.limit : 1
                     }),
-                    signal,
+                    signal
                 });
             });
             if (!response.ok) {
@@ -181,8 +181,8 @@ export function createDeviceAdapterHttpClient(
                 ...(first.rawPayload !== undefined ? { rawPayload: first.rawPayload } : {}),
                 ...(first.displayName !== undefined ? { displayName: first.displayName } : {}),
                 ...(first.source !== undefined ? { source: first.source } : {}),
-                ...(first.userType !== undefined ? { userType: first.userType } : {}),
+                ...(first.userType !== undefined ? { userType: first.userType } : {})
             };
-        },
+        }
     };
 }

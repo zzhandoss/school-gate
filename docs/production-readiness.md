@@ -14,8 +14,7 @@ Status legend: `todo` | `in_progress` | `blocked` | `done`
 
 ## Critical blockers (current baseline)
 
-- `blocked` Root repository is not yet pushed to GitHub.
-- `blocked` Quality gates are failing (`pnpm lint`, `pnpm typecheck`).
+- `blocked` Quality gates are failing (`pnpm typecheck`, `pnpm test`).
 - `blocked` Service deployment scripts and units are not fully wired to runtime paths.
 
 ## P0 Checklist
@@ -62,6 +61,6 @@ All four commands must pass before release tagging.
 
 ## Next actions
 
-1. Push repository to GitHub (`P0-11`).
-2. Resolve lint/typecheck baseline failures.
+1. Resolve `typecheck` failures in `apps/admin-ui`.
+2. Resolve `test` failures in `packages/test` import/export and API suites.
 3. Create first tag and verify release pipeline (`P0-12`).

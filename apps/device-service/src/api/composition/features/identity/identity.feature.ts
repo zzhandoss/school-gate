@@ -1,7 +1,7 @@
 import {
     deviceServiceIdentityFindResultSchema,
     type DeviceServiceIdentityFindDto,
-    type DeviceServiceIdentityFindResultDto,
+    type DeviceServiceIdentityFindResultDto
 } from "@school-gate/contracts";
 
 export type IdentityModule = {
@@ -19,9 +19,9 @@ export function createIdentityModule(input: {
                     identityKey: payload.identityKey,
                     identityValue: payload.identityValue,
                     ...(payload.deviceId ? { deviceId: payload.deviceId } : {}),
-                    limit,
+                    limit
                 })
             );
-        },
+        }
     };
 }

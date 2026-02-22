@@ -7,7 +7,7 @@ export type ProcessBatchResult = {
     claimed: number;
     processed: number;
     failed: number;
-}
+};
 
 export type ProcessOutputBatchInput = {
     limit: number;
@@ -22,11 +22,11 @@ export type ProcessOutputBatchInput = {
         parentMaxAgeMs?: number | undefined;
         alertMaxAgeMs?: number | undefined;
     } | undefined;
-}
+};
 
 export async function processOutboxBatch(
     db: Db,
-    { limit, maxAttempts, leaseMs, processingBy, now, newId, handlers, notificationSender, notificationFreshness }: ProcessOutputBatchInput,
+    { limit, maxAttempts, leaseMs, processingBy, now, newId, handlers, notificationSender, notificationFreshness }: ProcessOutputBatchInput
 ): Promise<ProcessBatchResult> {
     const outbox = createOutbox(db);
 
@@ -64,5 +64,5 @@ export async function processOutboxBatch(
         claimed: claimed.length,
         processed: processed,
         failed: failed
-    }
+    };
 }

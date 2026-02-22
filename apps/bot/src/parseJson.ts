@@ -18,8 +18,8 @@ export async function parseJson<T>(c: Context, schema: ZodSchema<T>, message: st
                 status: 400,
                 code: "validation_error",
                 message,
-                data: { issues: parsed.error.issues },
-            }),
+                data: { issues: parsed.error.issues }
+            })
         };
     }
 

@@ -2,7 +2,7 @@ import { OpenAPIHono } from "@hono/zod-openapi";
 import {
     deviceServiceIdentityFindResultSchema,
     deviceServiceIdentityFindSchema,
-    type DeviceServiceIdentityFindDto,
+    type DeviceServiceIdentityFindDto
 } from "@school-gate/contracts";
 import { requireBearer } from "../middleware/requireBearer.js";
 import { parseBody } from "../middleware/parseBody.js";
@@ -28,7 +28,7 @@ export function createIdentityRoutes(input: {
             request: { body: deviceServiceIdentityFindSchema },
             success: { schema: deviceServiceIdentityFindResultSchema },
             errors: [400, 401, 500],
-            security: [{ deviceBearerAuth: [] }],
+            security: [{ deviceBearerAuth: [] }]
         }),
         handler<DeviceServiceIdentityFindDto>(({ body }) => input.module.find(body!))
     );

@@ -2,7 +2,7 @@ import { eq } from "drizzle-orm";
 import type { Db } from "@school-gate/db/drizzle";
 import { rolePermissions, roles } from "@school-gate/db/schema";
 import type { Permission } from "@school-gate/core";
-import { Role, RolesRepo } from "@school-gate/core";
+import type { Role, RolesRepo } from "@school-gate/core";
 
 function toDate(v: unknown): Date {
     return v instanceof Date ? v : new Date(String(v));
@@ -13,7 +13,7 @@ function mapRole(row: typeof roles.$inferSelect): Role {
         id: row.id,
         name: row.name,
         createdAt: toDate(row.createdAt),
-        updatedAt: toDate(row.updatedAt),
+        updatedAt: toDate(row.updatedAt)
     };
 }
 
@@ -29,14 +29,14 @@ export function createRolesRepo(db: Db): RolesRepo {
                     id: input.id,
                     name: input.name,
                     createdAt: input.createdAt,
-                    updatedAt: input.updatedAt,
+                    updatedAt: input.updatedAt
                 })
                 .onConflictDoUpdate({
                     target: roles.id,
                     set: {
                         name: input.name,
-                        updatedAt: input.updatedAt,
-                    },
+                        updatedAt: input.updatedAt
+                    }
                 });
         },
 
@@ -72,11 +72,11 @@ export function createRolesRepo(db: Db): RolesRepo {
                     .values(
                         permissions.map((permission) => ({
                             roleId,
-                            permission,
+                            permission
                         }))
                     )
                     .run();
             });
-        },
+        }
     };
 }

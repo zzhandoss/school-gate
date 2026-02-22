@@ -9,14 +9,14 @@ export const accessEventsCountsSchema = z.object({
     PROCESSED: nonNegativeInt,
     FAILED_RETRY: nonNegativeInt,
     UNMATCHED: nonNegativeInt,
-    ERROR: nonNegativeInt,
+    ERROR: nonNegativeInt
 });
 
 export const outboxCountsSchema = z.object({
     new: nonNegativeInt,
     processing: nonNegativeInt,
     processed: nonNegativeInt,
-    error: nonNegativeInt,
+    error: nonNegativeInt
 });
 
 export const workerHeartbeatSchema = z.object({
@@ -28,18 +28,18 @@ export const workerHeartbeatSchema = z.object({
     lastError: z.string().nullable(),
     status: z.enum(["ok", "stale"]),
     ttlMs: nonNegativeInt,
-    meta: z.unknown().nullable(),
+    meta: z.unknown().nullable()
 });
 
 export const errorStatSchema = z.object({
     error: z.string().min(1),
     count: nonNegativeInt,
-    lastAt: datetimeNullable,
+    lastAt: datetimeNullable
 });
 
 export const topErrorsSchema = z.object({
     accessEvents: z.array(errorStatSchema),
-    outbox: z.array(errorStatSchema),
+    outbox: z.array(errorStatSchema)
 });
 
 export const componentHealthSchema = z.object({
@@ -47,7 +47,7 @@ export const componentHealthSchema = z.object({
     status: z.enum(["ok", "down"]),
     checkedAt: z.string().datetime(),
     responseTimeMs: nonNegativeInt.nullable(),
-    error: z.string().nullable(),
+    error: z.string().nullable()
 });
 
 export const adapterMonitoringSchema = z.object({
@@ -59,7 +59,7 @@ export const adapterMonitoringSchema = z.object({
     mode: z.enum(["active", "draining"]),
     lastSeenAt: z.string().datetime(),
     status: z.enum(["ok", "stale"]),
-    ttlMs: nonNegativeInt,
+    ttlMs: nonNegativeInt
 });
 
 export const deviceMonitoringSchema = z.object({
@@ -68,7 +68,7 @@ export const deviceMonitoringSchema = z.object({
     adapterKey: z.string().min(1),
     lastEventAt: datetimeNullable,
     status: z.enum(["ok", "stale"]),
-    ttlMs: nonNegativeInt,
+    ttlMs: nonNegativeInt
 });
 
 export const deviceServiceMonitoringSchema = z.object({
@@ -76,40 +76,40 @@ export const deviceServiceMonitoringSchema = z.object({
     devices: z.array(deviceMonitoringSchema),
     outbox: z.object({
         counts: outboxCountsSchema,
-        oldestNewCreatedAt: datetimeNullable,
-    }),
+        oldestNewCreatedAt: datetimeNullable
+    })
 });
 
 export const monitoringSnapshotSchema = z.object({
     now: z.string().datetime(),
     accessEvents: z.object({
         counts: accessEventsCountsSchema,
-        oldestUnprocessedOccurredAt: datetimeNullable,
+        oldestUnprocessedOccurredAt: datetimeNullable
     }),
     outbox: z.object({
         counts: outboxCountsSchema,
-        oldestNewCreatedAt: datetimeNullable,
+        oldestNewCreatedAt: datetimeNullable
     }),
     workers: z.array(workerHeartbeatSchema),
     topErrors: topErrorsSchema,
     components: z.array(componentHealthSchema),
-    deviceService: deviceServiceMonitoringSchema.nullable(),
+    deviceService: deviceServiceMonitoringSchema.nullable()
 });
 
 export const monitoringSnapshotRecordSchema = z.object({
     id: z.string().min(1),
     createdAt: z.string().datetime(),
-    snapshot: monitoringSnapshotSchema,
+    snapshot: monitoringSnapshotSchema
 });
 
 export const listMonitoringSnapshotsQuerySchema = z.object({
     from: z.string().datetime().optional(),
     to: z.string().datetime().optional(),
-    limit: z.coerce.number().int().positive().max(500).default(120),
+    limit: z.coerce.number().int().positive().max(500).default(120)
 });
 
 export const listMonitoringSnapshotsResultSchema = z.object({
-    snapshots: z.array(monitoringSnapshotRecordSchema),
+    snapshots: z.array(monitoringSnapshotRecordSchema)
 });
 
 export type MonitoringSnapshotDto = z.infer<typeof monitoringSnapshotSchema>;

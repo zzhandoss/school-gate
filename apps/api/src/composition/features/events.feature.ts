@@ -1,5 +1,4 @@
 import type {
-    ApplyPersonAutoIdentitiesDto,
     ApplyPersonAutoIdentitiesResultDto,
     AccessEventIngestBatchInput,
     AccessEventStatusDto,
@@ -11,7 +10,6 @@ import type {
     ListUnmatchedAccessEventsResultDto,
     ListPersonsResultDto,
     ListPersonIdentitiesResultDto,
-    PreviewPersonAutoIdentitiesByIinDto,
     PreviewPersonAutoIdentitiesByIinResultDto,
     PreviewPersonAutoIdentitiesResultDto,
     SearchPersonsByIinResultDto
@@ -528,7 +526,7 @@ export function createEventsFeature(runtime: ApiRuntime, deviceServiceGateway: D
                     identityValue: found.identityValue,
                     matches: found.matches.map((match) => ({
                         ...match,
-                        alreadyLinked: false,
+                        alreadyLinked: false
                     })),
                     diagnostics: found.diagnostics,
                     errors: found.errors
@@ -571,7 +569,7 @@ export function createEventsFeature(runtime: ApiRuntime, deviceServiceGateway: D
                             personId,
                             deviceId: identity.deviceId,
                             terminalPersonId: identity.terminalPersonId,
-                            adminId,
+                            adminId
                         });
                         if (mapped.status === "linked") {
                             linked += 1;
@@ -586,7 +584,7 @@ export function createEventsFeature(runtime: ApiRuntime, deviceServiceGateway: D
                             results.push({
                                 ...identity,
                                 status: "conflict",
-                                message: "Terminal identity is linked to another person",
+                                message: "Terminal identity is linked to another person"
                             });
                             continue;
                         }
@@ -594,7 +592,7 @@ export function createEventsFeature(runtime: ApiRuntime, deviceServiceGateway: D
                         results.push({
                             ...identity,
                             status: "error",
-                            message: error instanceof Error ? error.message : String(error),
+                            message: error instanceof Error ? error.message : String(error)
                         });
                     }
                 }
@@ -606,7 +604,7 @@ export function createEventsFeature(runtime: ApiRuntime, deviceServiceGateway: D
                     alreadyLinked,
                     conflicts,
                     errors,
-                    results,
+                    results
                 };
 
                 enqueueAuditRequested({
@@ -623,8 +621,8 @@ export function createEventsFeature(runtime: ApiRuntime, deviceServiceGateway: D
                         linked,
                         alreadyLinked,
                         conflicts,
-                        errors,
-                    },
+                        errors
+                    }
                 });
 
                 return data;

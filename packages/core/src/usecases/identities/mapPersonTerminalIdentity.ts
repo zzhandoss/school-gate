@@ -3,7 +3,7 @@ import { PersonNotFoundError, TerminalIdentityAlreadyMappedError } from "../../u
 import type {
     MapPersonTerminalIdentityDeps,
     MapPersonTerminalIdentityUC,
-    MapPersonTerminalIdentityResult,
+    MapPersonTerminalIdentityResult
 } from "./mapPersonTerminalIdentity.types.js";
 
 export function createMapPersonTerminalIdentityUC(
@@ -17,7 +17,7 @@ export function createMapPersonTerminalIdentityUC(
 
         const existing = await deps.personTerminalIdentitiesService.getByDeviceAndTerminalPersonId({
             deviceId: input.deviceId,
-            terminalPersonId: input.terminalPersonId,
+            terminalPersonId: input.terminalPersonId
         });
 
         if (existing && existing.personId !== input.personId) {
@@ -31,13 +31,13 @@ export function createMapPersonTerminalIdentityUC(
                 id: deps.idGen.nextId(),
                 personId: input.personId,
                 deviceId: input.deviceId,
-                terminalPersonId: input.terminalPersonId,
+                terminalPersonId: input.terminalPersonId
             });
         }
 
         const updatedEvents = await deps.accessEventsService.markReadyByTerminalIdentity({
             deviceId: input.deviceId,
-            terminalPersonId: input.terminalPersonId,
+            terminalPersonId: input.terminalPersonId
         });
 
         enqueueAuditRequested({
@@ -51,8 +51,8 @@ export function createMapPersonTerminalIdentityUC(
             meta: {
                 personId: input.personId,
                 status,
-                updatedEvents,
-            },
+                updatedEvents
+            }
         });
 
         return { status, updatedEvents };

@@ -12,12 +12,12 @@ export const evaluateBotDownRule: RuleEvaluator<"bot_down", BotDownConfig> = ({ 
     const details = {
         status: component?.status ?? "down",
         checkedAt: component?.checkedAt.toISOString() ?? null,
-        error: component?.error ?? null,
+        error: component?.error ?? null
     };
     return {
         condition,
         triggeredMessage: "bot health check is down",
         resolvedMessage: "bot health check is ok",
-        details,
+        details
     };
 };

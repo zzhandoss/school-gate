@@ -29,7 +29,7 @@ export function createUpdateDeviceUC(deps: { devicesRepo: DevicesRepo; clock: Cl
             settingsJson: input.settingsJson === undefined ? existing.settingsJson : input.settingsJson,
             enabled: input.enabled ?? existing.enabled,
             createdAt: existing.createdAt,
-            updatedAt: now,
+            updatedAt: now
         });
 
         return { updated: true };

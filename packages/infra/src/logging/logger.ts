@@ -29,16 +29,16 @@ export function createLogger(input: { name: string; level: string }): AppLogger 
         timestamp: pino.stdTimeFunctions.isoTime,
         ...(pretty
             ? {
-                  transport: {
-                      target: "pino-pretty",
-                      options: {
-                          colorize: true,
-                          translateTime: "SYS:yyyy-mm-dd HH:MM:ss.l",
-                          ignore: "pid,hostname",
-                          singleLine: false
-                      }
-                  }
-              }
+                transport: {
+                    target: "pino-pretty",
+                    options: {
+                        colorize: true,
+                        translateTime: "SYS:yyyy-mm-dd HH:MM:ss.l",
+                        ignore: "pid,hostname",
+                        singleLine: false
+                    }
+                }
+            }
             : {})
     });
 }
@@ -53,13 +53,13 @@ export function createFileLogger(input: {
     const stream = createRotatingFileStream({
         filePath: input.filePath,
         maxBytes: input.maxBytes,
-        retentionDays: input.retentionDays,
+        retentionDays: input.retentionDays
     });
     return pino(
         {
             name: input.name,
             level: input.level,
-            timestamp: pino.stdTimeFunctions.isoTime,
+            timestamp: pino.stdTimeFunctions.isoTime
         },
         stream
     );

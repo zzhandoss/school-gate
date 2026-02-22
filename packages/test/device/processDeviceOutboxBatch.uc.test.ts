@@ -37,28 +37,28 @@ describe("processDeviceOutboxBatch", () => {
                 eventId: "e1",
                 deviceId: "d1",
                 direction: "IN",
-                occurredAt: 1_700_000_000_000,
+                occurredAt: 1_700_000_000_000
             }),
             status: "new",
-            attempts: 0,
+            attempts: 0
         }).run();
 
         const sendEvent = vi.fn(async () => ({
             result: "inserted" as const,
             status: "NEW" as const,
             personId: null,
-            accessEventId: "ae1",
+            accessEventId: "ae1"
         }));
 
         const coreIngestClient: CoreIngestClient = {
             sendEvent,
-            sendBatch: async () => ({ results: [] }),
+            sendBatch: async () => ({ results: [] })
         };
 
         const uc = createProcessDeviceOutboxBatchUC({
             deviceOutboxRepo: createDeviceOutboxRepo(db),
             coreIngestClient,
-            deviceCursorsRepo: createDeviceCursorsRepo(db),
+            deviceCursorsRepo: createDeviceCursorsRepo(db)
         });
 
         const res = await uc({
@@ -66,7 +66,7 @@ describe("processDeviceOutboxBatch", () => {
             maxAttempts: 5,
             leaseMs: 60_000,
             processingBy: "tester",
-            now: () => new Date("2020-01-02T00:00:00.000Z"),
+            now: () => new Date("2020-01-02T00:00:00.000Z")
         });
 
         expect(res.claimed).toBe(1);
@@ -88,20 +88,20 @@ describe("processDeviceOutboxBatch", () => {
             type: "unknown",
             payloadJson: "{}",
             status: "new",
-            attempts: 0,
+            attempts: 0
         }).run();
 
         const coreIngestClient: CoreIngestClient = {
             sendEvent: async () => {
                 throw new Error("should not be called");
             },
-            sendBatch: async () => ({ results: [] }),
+            sendBatch: async () => ({ results: [] })
         };
 
         const uc = createProcessDeviceOutboxBatchUC({
             deviceOutboxRepo: createDeviceOutboxRepo(db),
             coreIngestClient,
-            deviceCursorsRepo: createDeviceCursorsRepo(db),
+            deviceCursorsRepo: createDeviceCursorsRepo(db)
         });
 
         await uc({
@@ -109,7 +109,7 @@ describe("processDeviceOutboxBatch", () => {
             maxAttempts: 1,
             leaseMs: 60_000,
             processingBy: "tester",
-            now: () => new Date(),
+            now: () => new Date()
         });
 
         const rows = db.select().from(deviceOutboxEvents).where(eq(deviceOutboxEvents.id, "o-unknown")).all();
@@ -124,23 +124,23 @@ describe("processDeviceOutboxBatch", () => {
                 eventId: "e2",
                 deviceId: "d2",
                 direction: "OUT",
-                occurredAt: 1_700_000_000_100,
+                occurredAt: 1_700_000_000_100
             }),
             status: "new",
-            attempts: 0,
+            attempts: 0
         }).run();
 
         const coreIngestClient: CoreIngestClient = {
             sendEvent: async () => {
                 throw new NonRetriableError("bad request");
             },
-            sendBatch: async () => ({ results: [] }),
+            sendBatch: async () => ({ results: [] })
         };
 
         const uc = createProcessDeviceOutboxBatchUC({
             deviceOutboxRepo: createDeviceOutboxRepo(db),
             coreIngestClient,
-            deviceCursorsRepo: createDeviceCursorsRepo(db),
+            deviceCursorsRepo: createDeviceCursorsRepo(db)
         });
 
         await uc({
@@ -148,7 +148,7 @@ describe("processDeviceOutboxBatch", () => {
             maxAttempts: 10,
             leaseMs: 60_000,
             processingBy: "tester",
-            now: () => new Date(),
+            now: () => new Date()
         });
 
         const rows = db.select().from(deviceOutboxEvents).where(eq(deviceOutboxEvents.id, "o-non-retriable")).all();
@@ -163,10 +163,10 @@ describe("processDeviceOutboxBatch", () => {
                 eventId: "e3",
                 deviceId: "d3",
                 direction: "IN",
-                occurredAt: 1_700_000_000_200,
+                occurredAt: 1_700_000_000_200
             }),
             status: "new",
-            attempts: 0,
+            attempts: 0
         }).run();
 
         const coreIngestClient: CoreIngestClient = {
@@ -175,13 +175,13 @@ describe("processDeviceOutboxBatch", () => {
                 err.status = 403;
                 throw err;
             },
-            sendBatch: async () => ({ results: [] }),
+            sendBatch: async () => ({ results: [] })
         };
 
         const uc = createProcessDeviceOutboxBatchUC({
             deviceOutboxRepo: createDeviceOutboxRepo(db),
             coreIngestClient,
-            deviceCursorsRepo: createDeviceCursorsRepo(db),
+            deviceCursorsRepo: createDeviceCursorsRepo(db)
         });
 
         await uc({
@@ -189,7 +189,7 @@ describe("processDeviceOutboxBatch", () => {
             maxAttempts: 10,
             leaseMs: 60_000,
             processingBy: "tester",
-            now: () => new Date(),
+            now: () => new Date()
         });
 
         const rows = db.select().from(deviceOutboxEvents).where(eq(deviceOutboxEvents.id, "o-http-err")).all();

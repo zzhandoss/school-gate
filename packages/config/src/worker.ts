@@ -5,7 +5,7 @@ import type {
     AccessEventsWorkerConfig,
     OutboxWorkerConfig,
     RetentionWorkerConfig,
-    WorkerConfig,
+    WorkerConfig
 } from "@school-gate/core";
 
 const processingByDefault = `${os.hostname()}:${process.pid}`;
@@ -15,13 +15,13 @@ const optionalNonEmptyString = z.preprocess(
 );
 
 const coreDbSchema = z.object({
-    DB_FILE: z.string().min(1).default("./data/app.db"),
+    DB_FILE: z.string().min(1).default("./data/app.db")
 });
 
 const workerSchema = z.object({
     WORKER_POLL_MS: z.coerce.number().int().positive().default(3_000),
     WORKER_BATCH: z.coerce.number().int().positive().default(20),
-    FEATURE_AUTO_RESOLVE_PERSON: z.enum(["true", "false"]).default("false"),
+    FEATURE_AUTO_RESOLVE_PERSON: z.enum(["true", "false"]).default("false")
 });
 
 const outboxWorkerSchema = z.object({
@@ -29,7 +29,7 @@ const outboxWorkerSchema = z.object({
     OUTBOX_BATCH: z.coerce.number().int().positive().default(50),
     OUTBOX_MAX_ATTEMPTS: z.coerce.number().int().positive().default(10),
     OUTBOX_LEASE_MS: z.coerce.number().int().positive().default(60_000),
-    OUTBOX_PROCESSING_BY: optionalNonEmptyString,
+    OUTBOX_PROCESSING_BY: optionalNonEmptyString
 });
 
 const accessEventsWorkerSchema = z.object({
@@ -38,14 +38,14 @@ const accessEventsWorkerSchema = z.object({
     ACCESS_EVENTS_RETRY_DELAY_MS: z.coerce.number().int().positive().default(5_000),
     ACCESS_EVENTS_LEASE_MS: z.coerce.number().int().positive().default(60_000),
     ACCESS_EVENTS_MAX_ATTEMPTS: z.coerce.number().int().positive().default(10),
-    ACCESS_EVENTS_PROCESSING_BY: optionalNonEmptyString,
+    ACCESS_EVENTS_PROCESSING_BY: optionalNonEmptyString
 });
 
 const retentionWorkerSchema = z.object({
     RETENTION_POLL_MS: z.coerce.number().int().positive().default(300_000),
     RETENTION_BATCH: z.coerce.number().int().positive().default(500),
     RETENTION_ACCESS_EVENTS_DAYS: z.coerce.number().int().positive().default(30),
-    RETENTION_AUDIT_LOGS_DAYS: z.coerce.number().int().positive().default(30),
+    RETENTION_AUDIT_LOGS_DAYS: z.coerce.number().int().positive().default(30)
 });
 
 function applyOverrides<T extends Record<string, unknown>>(base: T, overrides?: Partial<T>): T {
@@ -68,7 +68,7 @@ export function getWorkerConfig(overrides?: Partial<WorkerConfig>): WorkerConfig
     const base: WorkerConfig = {
         pollMs: parsed.WORKER_POLL_MS,
         batch: parsed.WORKER_BATCH,
-        autoResolvePersonByIin: parsed.FEATURE_AUTO_RESOLVE_PERSON === "true",
+        autoResolvePersonByIin: parsed.FEATURE_AUTO_RESOLVE_PERSON === "true"
     };
     return applyOverrides(base, overrides);
 }
@@ -80,7 +80,7 @@ export function getOutboxWorkerConfig(overrides?: Partial<OutboxWorkerConfig>): 
         batch: parsed.OUTBOX_BATCH,
         maxAttempts: parsed.OUTBOX_MAX_ATTEMPTS,
         leaseMs: parsed.OUTBOX_LEASE_MS,
-        processingBy: parsed.OUTBOX_PROCESSING_BY ?? processingByDefault,
+        processingBy: parsed.OUTBOX_PROCESSING_BY ?? processingByDefault
     };
     return applyOverrides(base, overrides);
 }
@@ -95,7 +95,7 @@ export function getAccessEventsWorkerConfig(
         retryDelayMs: parsed.ACCESS_EVENTS_RETRY_DELAY_MS,
         leaseMs: parsed.ACCESS_EVENTS_LEASE_MS,
         maxAttempts: parsed.ACCESS_EVENTS_MAX_ATTEMPTS,
-        processingBy: parsed.ACCESS_EVENTS_PROCESSING_BY ?? processingByDefault,
+        processingBy: parsed.ACCESS_EVENTS_PROCESSING_BY ?? processingByDefault
     };
     return applyOverrides(base, overrides);
 }
@@ -106,7 +106,7 @@ export function getRetentionWorkerConfig(overrides?: Partial<RetentionWorkerConf
         pollMs: parsed.RETENTION_POLL_MS,
         batch: parsed.RETENTION_BATCH,
         accessEventsDays: parsed.RETENTION_ACCESS_EVENTS_DAYS,
-        auditLogsDays: parsed.RETENTION_AUDIT_LOGS_DAYS,
+        auditLogsDays: parsed.RETENTION_AUDIT_LOGS_DAYS
     };
     return applyOverrides(base, overrides);
 }

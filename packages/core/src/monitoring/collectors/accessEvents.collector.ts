@@ -2,7 +2,7 @@ import type { AccessEventStatus } from "../../events/index.js";
 import type {
     MonitoringSnapshotCollector,
     MonitoringSnapshotCollectorInput,
-    MonitoringSnapshotSlice,
+    MonitoringSnapshotSlice
 } from "../pipeline/snapshotPipeline.js";
 
 const UNPROCESSED_ACCESS_STATUSES: AccessEventStatus[] = [
@@ -10,7 +10,7 @@ const UNPROCESSED_ACCESS_STATUSES: AccessEventStatus[] = [
     "PROCESSING",
     "FAILED_RETRY",
     "UNMATCHED",
-    "ERROR",
+    "ERROR"
 ];
 
 export const collectAccessEventsSnapshot: MonitoringSnapshotCollector = async (
@@ -18,13 +18,13 @@ export const collectAccessEventsSnapshot: MonitoringSnapshotCollector = async (
 ): Promise<MonitoringSnapshotSlice> => {
     const [counts, oldestUnprocessedOccurredAt] = await Promise.all([
         input.monitoringRepo.getAccessEventsStatusCounts(),
-        input.monitoringRepo.getOldestAccessEventsOccurredAt(UNPROCESSED_ACCESS_STATUSES),
+        input.monitoringRepo.getOldestAccessEventsOccurredAt(UNPROCESSED_ACCESS_STATUSES)
     ]);
 
     return {
         accessEvents: {
             counts,
-            oldestUnprocessedOccurredAt,
-        },
+            oldestUnprocessedOccurredAt
+        }
     };
 };

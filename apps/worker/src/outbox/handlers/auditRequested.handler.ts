@@ -14,6 +14,6 @@ export const auditRequestedHandler: OutboxEventHandler = async (event: OutboxEve
         ...payload,
         at: new Date(payload.at)
     });
-}
+};
 
 export const auditRequestedHandlerType = DomainEvents.AUDIT_REQUESTED;

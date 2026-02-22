@@ -1,7 +1,7 @@
 ﻿import type {
     AlertEvent,
     AlertEventDetails,
-    AlertEventStatus,
+    AlertEventStatus
 } from "../entities/alertEvents.types.js";
 import type { AlertSeverity } from "../entities/alertRules.types.js";
 

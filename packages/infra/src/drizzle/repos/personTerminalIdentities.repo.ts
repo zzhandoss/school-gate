@@ -13,7 +13,7 @@ function mapIdentity(row: typeof personTerminalIdentities.$inferSelect): PersonT
         personId: row.personId,
         deviceId: row.deviceId,
         terminalPersonId: row.terminalPersonId,
-        createdAt: toDate(row.createdAt),
+        createdAt: toDate(row.createdAt)
     } satisfies PersonTerminalIdentity;
 }
 
@@ -25,7 +25,7 @@ export function createPersonTerminalIdentitiesRepo(db: Db): PersonTerminalIdenti
                 .values({ id, personId, deviceId, terminalPersonId })
                 .onConflictDoUpdate({
                     target: [personTerminalIdentities.personId, personTerminalIdentities.deviceId],
-                    set: { terminalPersonId },
+                    set: { terminalPersonId }
                 });
         },
 
@@ -83,6 +83,6 @@ export function createPersonTerminalIdentitiesRepo(db: Db): PersonTerminalIdenti
 
         withTx(tx) {
             return createPersonTerminalIdentitiesRepo(tx as Db);
-        },
+        }
     };
 }

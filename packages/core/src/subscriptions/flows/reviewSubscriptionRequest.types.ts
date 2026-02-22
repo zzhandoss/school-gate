@@ -1,9 +1,7 @@
 ﻿import type { Clock, IdGenerator } from "../../utils/common.types.js";
-import type { Outbox, OutboxRepo } from "../../ports/outbox.js";
-import type { SubscriptionRequestsRepo } from "../repos/subscriptionRequests.repo.js";
-import type { SubscriptionsRepo } from "../repos/subscriptions.repo.js";
-import { SubscriptionsService } from "../services/subscriptions.types.js";
-import { SubscriptionRequestsService } from "../services/subscriptionRequests.types.js";
+import type { Outbox } from "../../ports/outbox.js";
+import type { SubscriptionsService } from "../services/subscriptions.types.js";
+import type { SubscriptionRequestsService } from "../services/subscriptionRequests.types.js";
 
 export type ReviewDecision = "approve" | "reject";
 

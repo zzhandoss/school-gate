@@ -3,7 +3,7 @@ import type { AlertEventsService } from "../services/alertEvents.types.js";
 import type { AlertRulesService } from "../services/alertRules.types.js";
 import type { AlertSubscriptionsService } from "../services/alertSubscriptions.types.js";
 import type { Clock, IdGenerator } from "../../utils/index.js";
-import { MonitoringSnapshotRecord } from "../../monitoring/entities/monitoringSnapshot.types.js";
+import type { MonitoringSnapshotRecord } from "../../monitoring/entities/monitoringSnapshot.types.js";
 
 export type ProcessMonitoringAlertsInput = {
     snapshot: MonitoringSnapshotRecord;

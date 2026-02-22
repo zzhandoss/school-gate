@@ -11,7 +11,7 @@ type WorkerStaleConfig = ReturnType<typeof parseWorkerStaleConfig>;
 
 export const evaluateWorkerStaleRule: RuleEvaluator<"worker_stale", WorkerStaleConfig> = ({
     rule,
-    context,
+    context
 }) => {
     const targetId = rule.config.workerId;
     const workers = context.snapshot.workers;
@@ -22,7 +22,7 @@ export const evaluateWorkerStaleRule: RuleEvaluator<"worker_stale", WorkerStaleC
     const details = {
         targetId: targetId ?? null,
         staleWorkers: stale.map((worker) => worker.workerId),
-        missingTarget,
+        missingTarget
     };
     return {
         condition,
@@ -30,6 +30,6 @@ export const evaluateWorkerStaleRule: RuleEvaluator<"worker_stale", WorkerStaleC
             ? `worker ${targetId} is missing from monitoring`
             : `stale workers: ${stale.map((worker) => worker.workerId).join(", ")}`,
         resolvedMessage: "all monitored workers are healthy",
-        details,
+        details
     };
 };

@@ -1,7 +1,7 @@
 import type {
     MonitoringSnapshotCollector,
     MonitoringSnapshotCollectorInput,
-    MonitoringSnapshotSlice,
+    MonitoringSnapshotSlice
 } from "../pipeline/snapshotPipeline.js";
 
 export const collectOutboxSnapshot: MonitoringSnapshotCollector = async (
@@ -9,13 +9,13 @@ export const collectOutboxSnapshot: MonitoringSnapshotCollector = async (
 ): Promise<MonitoringSnapshotSlice> => {
     const [counts, oldestNewCreatedAt] = await Promise.all([
         input.monitoringRepo.getOutboxStatusCounts(),
-        input.monitoringRepo.getOldestOutboxCreatedAt(["new"]),
+        input.monitoringRepo.getOldestOutboxCreatedAt(["new"])
     ]);
 
     return {
         outbox: {
             counts,
-            oldestNewCreatedAt,
-        },
+            oldestNewCreatedAt
+        }
     };
 };

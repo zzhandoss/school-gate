@@ -14,7 +14,7 @@ function mapCode(row: typeof adminTgCodes.$inferSelect): AdminTgCode {
         purpose: row.purpose,
         expiresAt: toDate(row.expiresAt),
         usedAt: row.usedAt ? toDate(row.usedAt) : null,
-        createdAt: toDate(row.createdAt),
+        createdAt: toDate(row.createdAt)
     };
 }
 
@@ -28,7 +28,7 @@ export function createAdminTgCodesRepo(db: Db): AdminTgCodesRepo {
                 codeHash: input.codeHash,
                 adminId: input.adminId,
                 purpose: input.purpose,
-                expiresAt: input.expiresAt,
+                expiresAt: input.expiresAt
             });
         },
 
@@ -46,6 +46,6 @@ export function createAdminTgCodesRepo(db: Db): AdminTgCodesRepo {
         async markUsed({ codeHash, usedAt }) {
             const res = db.update(adminTgCodes).set({ usedAt }).where(eq(adminTgCodes.codeHash, codeHash)).run();
             return res.changes > 0;
-        },
+        }
     };
 }

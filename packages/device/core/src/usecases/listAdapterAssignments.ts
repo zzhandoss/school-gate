@@ -28,9 +28,9 @@ export function createListAdapterAssignmentsUC(deps: {
                     deviceId: device.id,
                     direction: device.direction,
                     settingsJson: device.settingsJson,
-                    lastAckedEventId: cursor?.lastAckedEventId ?? null,
+                    lastAckedEventId: cursor?.lastAckedEventId ?? null
                 };
-            }),
+            })
         };
     };
 }

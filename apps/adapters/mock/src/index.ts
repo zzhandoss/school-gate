@@ -51,7 +51,7 @@ const runtime = createAdapterRuntime({
 });
 
 server.listen(config.port, () => {
-    // eslint-disable-next-line no-console
+     
     console.log(`[adapter-mock] listening on ${config.port}`);
 });
 

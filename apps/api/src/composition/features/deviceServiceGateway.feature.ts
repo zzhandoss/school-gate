@@ -9,7 +9,6 @@ import {
     upsertDeviceServiceDeviceSchema,
     updateDeviceServiceDeviceSchema,
     type GetDeviceServiceDeviceResultDto,
-    type DeviceServiceIdentityFindDto,
     type DeviceServiceIdentityFindResultDto,
     type ListDeviceServiceAdaptersResultDto,
     type ListDeviceServiceDevicesResultDto
@@ -276,13 +275,13 @@ function createGatewayModule(config: GatewayFeatureConfig): DeviceServiceGateway
                 method: "POST",
                 body: {
                     ...requestBody,
-                    limit: requestBody.limit ?? 1,
+                    limit: requestBody.limit ?? 1
                 },
                 authMode: "internal",
-                meta,
+                meta
             });
             return parseResult(deviceServiceIdentityFindResultSchema, data, "find_identity");
-        },
+        }
     };
 }
 

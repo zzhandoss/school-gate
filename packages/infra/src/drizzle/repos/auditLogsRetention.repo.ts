@@ -21,7 +21,7 @@ export function createAuditLogsRetentionRepo(db: Db): AuditLogsRetentionRepo {
         },
         withTx(tx) {
             return createAuditLogsRetentionRepo(tx as Db);
-        },
+        }
 
     };
 }

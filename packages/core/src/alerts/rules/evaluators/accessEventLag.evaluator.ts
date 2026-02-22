@@ -15,7 +15,7 @@ function calcAgeMs(now: Date, since: Date): number {
 
 export const evaluateAccessEventLagRule: RuleEvaluator<"access_event_lag", AccessEventLagConfig> = ({
     rule,
-    context,
+    context
 }) => {
     const maxOldestAgeMs = rule.config.maxOldestAgeMs;
     const oldest = context.snapshot.accessEvents.oldestUnprocessedOccurredAt;
@@ -24,7 +24,7 @@ export const evaluateAccessEventLagRule: RuleEvaluator<"access_event_lag", Acces
             condition: false,
             triggeredMessage: "access event lag threshold reached",
             resolvedMessage: "access event lag cleared",
-            details: { oldestUnprocessedOccurredAt: null, ageMs: null, maxOldestAgeMs },
+            details: { oldestUnprocessedOccurredAt: null, ageMs: null, maxOldestAgeMs }
         };
     }
     const ageMs = calcAgeMs(context.snapshot.now, oldest);
@@ -36,7 +36,7 @@ export const evaluateAccessEventLagRule: RuleEvaluator<"access_event_lag", Acces
         details: {
             oldestUnprocessedOccurredAt: oldest.toISOString(),
             ageMs,
-            maxOldestAgeMs,
-        },
+            maxOldestAgeMs
+        }
     };
 };

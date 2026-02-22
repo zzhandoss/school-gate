@@ -1,7 +1,7 @@
 ﻿import type { AlertRecipient, AlertSubscription } from "../entities/alertSubscriptions.types.js";
 import type {
     AlertSubscriptionsRepo,
-    ListAlertSubscriptionsInput,
+    ListAlertSubscriptionsInput
 } from "../repos/alertSubscriptions.repo.js";
 import type { Clock } from "../../utils/index.js";
 

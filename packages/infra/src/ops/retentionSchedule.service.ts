@@ -6,9 +6,10 @@ import { createAccessEventsRetentionRepo } from "../drizzle/repos/accessEventsRe
 import { createAuditLogsRetentionRepo } from "../drizzle/repos/auditLogsRetention.repo.js";
 import { createSettingsRepo } from "../drizzle/repos/settings.repo.js";
 import { createWorkerHeartbeatsRepo } from "../drizzle/repos/workerHeartbeats.repo.js";
-import {
+import type {
     AccessEventsRetentionRepo,
-    AuditLogsRetentionRepo, Clock,
+    AuditLogsRetentionRepo, Clock } from "@school-gate/core";
+import {
     createAccessEventsRetentionService, createAuditLogsRetentionService,
     createCleanupRetentionFlow, createSettingsService
 } from "@school-gate/core";
@@ -51,12 +52,12 @@ export type RunRetentionOnceResult = {
 function run(command: string, args: string[], options?: { input?: string }): CommandResult {
     const res = spawnSync(command, args, {
         encoding: "utf8",
-        input: options?.input,
+        input: options?.input
     });
     const base: CommandResult = {
         status: res.status,
         stdout: res.stdout ?? "",
-        stderr: res.stderr ?? "",
+        stderr: res.stderr ?? ""
     };
     if (res.error) {
         base.error = res.error;
@@ -108,7 +109,7 @@ function applyWindowsSchedule(cwd: string, intervalMinutes: number) {
         String(intervalMinutes),
         "/TR",
         taskCommand,
-        "/F",
+        "/F"
     ]);
 
     ensureSuccess(result, "Failed to apply Windows schedule");
@@ -142,7 +143,7 @@ function removeWindowsSchedule(): boolean {
         "/Delete",
         "/TN",
         TASK_NAME,
-        "/F",
+        "/F"
     ]);
 
     if (result.error) {
@@ -175,7 +176,7 @@ function resolveRetentionConfig(db: Db, clock: Clock) {
         settingsRepo,
         clock,
         runtimeConfigProvider: createRuntimeConfigProvider()
-    })
+    });
     const overrides = settingsService.getRuntimeSettings();
     return getRetentionWorkerConfig(overrides.retention);
 }
@@ -199,7 +200,7 @@ export function applyRetentionSchedule(
         taskName: TASK_NAME,
         platform,
         pollMs: retentionCfg.pollMs,
-        intervalMinutes,
+        intervalMinutes
     };
 }
 
@@ -216,7 +217,7 @@ export function removeRetentionSchedule(
     return {
         taskName: TASK_NAME,
         platform,
-        removed,
+        removed
     };
 }
 
@@ -227,7 +228,7 @@ const cleanUpRetention = (eventsRetentionRepo: AccessEventsRetentionRepo, auditL
         accessEventsRetentionService,
         auditLogsRetentionService
     });
-}
+};
 
 export async function runRetentionOnce(db: Db, clock: Clock): Promise<RunRetentionOnceResult> {
     const retentionCfg = resolveRetentionConfig(db, clock);
@@ -240,7 +241,7 @@ export async function runRetentionOnce(db: Db, clock: Clock): Promise<RunRetenti
     heartbeats.startSync({
         workerId: "retention",
         at: startedAt,
-        meta: { mode: "run-once" },
+        meta: { mode: "run-once" }
     });
 
     try {
@@ -248,7 +249,7 @@ export async function runRetentionOnce(db: Db, clock: Clock): Promise<RunRetenti
             now: startedAt,
             batch: retentionCfg.batch,
             accessEventsDays: retentionCfg.accessEventsDays,
-            auditLogsDays: retentionCfg.auditLogsDays,
+            auditLogsDays: retentionCfg.auditLogsDays
         });
         heartbeats.successSync({
             workerId: "retention",
@@ -256,8 +257,8 @@ export async function runRetentionOnce(db: Db, clock: Clock): Promise<RunRetenti
             meta: {
                 mode: "run-once",
                 accessEventsDeleted: result.accessEventsDeleted,
-                auditLogsDeleted: result.auditLogsDeleted,
-            },
+                auditLogsDeleted: result.auditLogsDeleted
+            }
         });
 
         return {
@@ -267,7 +268,7 @@ export async function runRetentionOnce(db: Db, clock: Clock): Promise<RunRetenti
             auditLogsCutoff: result.auditLogsCutoff,
             batch: retentionCfg.batch,
             accessEventsDays: retentionCfg.accessEventsDays,
-            auditLogsDays: retentionCfg.auditLogsDays,
+            auditLogsDays: retentionCfg.auditLogsDays
         };
     } catch (error) {
         const message = error instanceof Error ? error.message : String(error);
@@ -275,7 +276,7 @@ export async function runRetentionOnce(db: Db, clock: Clock): Promise<RunRetenti
             workerId: "retention",
             at: new Date(),
             error: message,
-            meta: { mode: "run-once" },
+            meta: { mode: "run-once" }
         });
         throw error;
     }

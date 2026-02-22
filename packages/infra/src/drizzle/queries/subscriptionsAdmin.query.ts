@@ -2,9 +2,9 @@ import { and, desc, eq } from "drizzle-orm";
 import type { SQL } from "drizzle-orm";
 import type { Db } from "@school-gate/db/drizzle";
 import { parents, persons, subscriptions } from "@school-gate/db/schema";
-import {
+import type {
     SubscriptionAdminView,
-    SubscriptionsAdminQueryPort,
+    SubscriptionsAdminQueryPort
 } from "@school-gate/core";
 
 function toDate(v: unknown): Date {
@@ -30,12 +30,12 @@ export function createSubscriptionsAdminQuery(db: Db): SubscriptionsAdminQueryPo
                         id: persons.id,
                         iin: persons.iin,
                         firstName: persons.firstName,
-                        lastName: persons.lastName,
+                        lastName: persons.lastName
                     },
                     parent: {
                         tgUserId: parents.tgUserId,
-                        chatId: parents.chatId,
-                    },
+                        chatId: parents.chatId
+                    }
                 })
                 .from(subscriptions)
                 .innerJoin(persons, eq(subscriptions.personId, persons.id))
@@ -56,13 +56,13 @@ export function createSubscriptionsAdminQuery(db: Db): SubscriptionsAdminQueryPo
                     id: row.person.id,
                     iin: row.person.iin,
                     firstName: row.person.firstName ?? null,
-                    lastName: row.person.lastName ?? null,
+                    lastName: row.person.lastName ?? null
                 },
                 parent: {
                     tgUserId: row.parent.tgUserId,
-                    chatId: row.parent.chatId,
-                },
+                    chatId: row.parent.chatId
+                }
             })) satisfies SubscriptionAdminView[];
-        },
+        }
     };
 }

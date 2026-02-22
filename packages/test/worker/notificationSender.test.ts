@@ -10,7 +10,7 @@ const basePayload: AccessNotification = {
     personId: "p1",
     firstName: "Иван",
     lastName: "Иванов",
-    tgUserId: "100",
+    tgUserId: "100"
 };
 
 describe("notificationSender", () => {

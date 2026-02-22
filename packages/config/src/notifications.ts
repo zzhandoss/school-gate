@@ -8,7 +8,7 @@ const notificationsSchema = z.object({
         .min(1)
         .default("{{firstName}} {{lastName}} {{directionWord}} школу. Время: {{time}}"),
     NOTIFICATIONS_PARENT_MAX_AGE_MS: z.coerce.number().int().positive().default(600_000),
-    NOTIFICATIONS_ALERT_MAX_AGE_MS: z.coerce.number().int().positive().default(300_000),
+    NOTIFICATIONS_ALERT_MAX_AGE_MS: z.coerce.number().int().positive().default(300_000)
 });
 
 function applyOverrides<T extends Record<string, unknown>>(base: T, overrides?: Partial<T>): T {
@@ -27,7 +27,7 @@ export function getNotificationsConfig(overrides?: NotificationsRuntimeOverrides
     const base: NotificationsConfig = {
         parentTemplate: parsed.NOTIFICATIONS_PARENT_TEMPLATE,
         parentMaxAgeMs: parsed.NOTIFICATIONS_PARENT_MAX_AGE_MS,
-        alertMaxAgeMs: parsed.NOTIFICATIONS_ALERT_MAX_AGE_MS,
+        alertMaxAgeMs: parsed.NOTIFICATIONS_ALERT_MAX_AGE_MS
     };
     return applyOverrides(base, overrides);
 }

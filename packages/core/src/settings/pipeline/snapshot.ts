@@ -8,7 +8,7 @@ function buildField<T>(key: string, envValue: T, effectiveValue: T, parsed: Pars
     const field: RuntimeSettingField<T> = {
         key,
         env: envValue,
-        effective: effectiveValue,
+        effective: effectiveValue
     };
     if (parsed.value !== undefined) {
         field.db = parsed.value;

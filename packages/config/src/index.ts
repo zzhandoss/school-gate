@@ -6,7 +6,7 @@ export {
     getWorkerConfig,
     getOutboxWorkerConfig,
     getAccessEventsWorkerConfig,
-    getRetentionWorkerConfig,
+    getRetentionWorkerConfig
 } from "./worker.js";
 export { getMonitoringConfig } from "./monitoring.js";
 export { getMonitoringOpsConfig } from "./monitoringOps.js";
@@ -18,7 +18,7 @@ export type {
     AccessEventsWorkerConfig,
     RetentionWorkerConfig,
     MonitoringConfig,
-    NotificationsConfig,
+    NotificationsConfig
 } from "@school-gate/core";
 export { getDeviceDbFile, getDeviceOutboxConfig, getDeviceServiceConfig } from "./deviceService.js";
 export { getAdapterMockConfig } from "./adapterMock.js";

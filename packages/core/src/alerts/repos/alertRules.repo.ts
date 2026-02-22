@@ -2,7 +2,7 @@
     AlertRuleConfig,
     AlertRuleType,
     AlertSeverity,
-    UnknownAlertRule,
+    UnknownAlertRule
 } from "../entities/alertRules.types.js";
 
 export type CreateAlertRuleInput<K extends AlertRuleType> = {

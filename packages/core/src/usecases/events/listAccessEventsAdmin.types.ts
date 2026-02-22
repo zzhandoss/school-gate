@@ -1,7 +1,7 @@
 import type {
     AccessEventAdminView,
     AccessEventsAdminQueryPort,
-    ListAccessEventsAdminInput,
+    ListAccessEventsAdminInput
 } from "../../ports/index.js";
 
 export type ListAccessEventsAdminDeps = {

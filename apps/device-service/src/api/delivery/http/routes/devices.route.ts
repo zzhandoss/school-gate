@@ -4,12 +4,12 @@ import {
     listDeviceServiceDevicesResultSchema,
     setDeviceServiceDeviceEnabledSchema,
     upsertDeviceServiceDeviceSchema,
-    updateDeviceServiceDeviceSchema,
+    updateDeviceServiceDeviceSchema
 } from "@school-gate/contracts";
 import type {
     SetDeviceServiceDeviceEnabledDto,
     UpdateDeviceServiceDeviceDto,
-    UpsertDeviceServiceDeviceDto,
+    UpsertDeviceServiceDeviceDto
 } from "@school-gate/contracts";
 import { parseBody } from "../middleware/parseBody.js";
 import { useResponse } from "../middleware/response.js";
@@ -39,7 +39,7 @@ export function createDevicesRoutes(input: {
             middleware: [input.auth.requirePermissions(["devices.read"]), useResponse(listDeviceServiceDevicesResultSchema)],
             success: { schema: listDeviceServiceDevicesResultSchema },
             errors: [401, 403, 500],
-            security: [{ adminBearerAuth: [] }],
+            security: [{ adminBearerAuth: [] }]
         }),
         handler(() => input.module.list())
     );
@@ -54,7 +54,7 @@ export function createDevicesRoutes(input: {
             middleware: [input.auth.requirePermissions(["devices.read"]), useResponse(getDeviceServiceDeviceResultSchema)],
             success: { schema: getDeviceServiceDeviceResultSchema },
             errors: [401, 403, 404, 500],
-            security: [{ adminBearerAuth: [] }],
+            security: [{ adminBearerAuth: [] }]
         }),
         handler<unknown, unknown, { deviceId: string }>(({ params }) => input.module.get(params.deviceId))
     );
@@ -69,11 +69,11 @@ export function createDevicesRoutes(input: {
             middleware: [
                 input.auth.requirePermissions(["devices.write"]),
                 parseBody(upsertDeviceServiceDeviceSchema),
-                useResponse(okSchema),
+                useResponse(okSchema)
             ],
             success: { schema: okSchema },
             errors: [400, 401, 403, 500],
-            security: [{ adminBearerAuth: [] }],
+            security: [{ adminBearerAuth: [] }]
         }),
         handler<UpsertDeviceServiceDeviceDto>(({ body }) => input.module.upsert(body!))
     );
@@ -88,11 +88,11 @@ export function createDevicesRoutes(input: {
             middleware: [
                 input.auth.requirePermissions(["devices.write"]),
                 parseBody(updateDeviceServiceDeviceSchema),
-                useResponse(okSchema),
+                useResponse(okSchema)
             ],
             success: { schema: okSchema },
             errors: [400, 401, 403, 404, 500],
-            security: [{ adminBearerAuth: [] }],
+            security: [{ adminBearerAuth: [] }]
         }),
         handler<UpdateDeviceServiceDeviceDto, unknown, { deviceId: string }>(({ body, params }) =>
             input.module.update(params.deviceId, body!)
@@ -109,11 +109,11 @@ export function createDevicesRoutes(input: {
             middleware: [
                 input.auth.requirePermissions(["devices.write"]),
                 parseBody(setDeviceServiceDeviceEnabledSchema),
-                useResponse(okSchema),
+                useResponse(okSchema)
             ],
             success: { schema: okSchema },
             errors: [400, 401, 403, 404, 500],
-            security: [{ adminBearerAuth: [] }],
+            security: [{ adminBearerAuth: [] }]
         }),
         handler<SetDeviceServiceDeviceEnabledDto, unknown, { deviceId: string }>(({ body, params }) =>
             input.module.setEnabled({ deviceId: params.deviceId, enabled: body!.enabled })
@@ -130,7 +130,7 @@ export function createDevicesRoutes(input: {
             middleware: [input.auth.requirePermissions(["devices.write"]), useResponse(okSchema)],
             success: { schema: okSchema },
             errors: [401, 403, 404, 500],
-            security: [{ adminBearerAuth: [] }],
+            security: [{ adminBearerAuth: [] }]
         }),
         handler<unknown, unknown, { deviceId: string }>(({ params }) => input.module.delete(params.deviceId))
     );

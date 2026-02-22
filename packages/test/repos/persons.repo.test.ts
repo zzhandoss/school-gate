@@ -26,7 +26,7 @@ describe("PersonsRepo", () => {
             id: "p1",
             iin: "030512550123",
             firstName: "Alihan",
-            lastName: "Erzhanov",
+            lastName: "Erzhanov"
         });
 
         const p = await repo.getByIin("030512550123");
@@ -42,7 +42,7 @@ describe("PersonsRepo", () => {
         await repo.create({
             id: "p1",
             iin: "030512550123",
-            terminalPersonId: "T-777",
+            terminalPersonId: "T-777"
         });
 
         const p = await repo.getByTerminalPersonId("T-777");
@@ -55,14 +55,14 @@ describe("PersonsRepo", () => {
 
         await repo.create({
             id: "p1",
-            iin: "030512550123",
+            iin: "030512550123"
         });
 
         await repo.updateById({
             id: "p1",
             firstName: "A",
             lastName: "B",
-            terminalPersonId: "T-1",
+            terminalPersonId: "T-1"
         });
 
         const p = await repo.getByIin("030512550123");

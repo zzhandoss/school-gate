@@ -29,27 +29,27 @@ describe("listAdapterAssignments", () => {
                 direction: "IN",
                 adapterKey: "dahua",
                 settingsJson: "{\"ip\":\"1.1.1.1\"}",
-                enabled: 1,
+                enabled: 1
             },
             {
                 id: "dev-2",
                 direction: "OUT",
                 adapterKey: "dahua",
                 settingsJson: null,
-                enabled: 0,
-            },
+                enabled: 0
+            }
         ]).run();
 
         db.insert(deviceCursors).values({
             deviceId: "dev-1",
             lastAckedEventId: "evt-9",
             lastAckedAt: new Date("2026-01-01T00:00:00.000Z"),
-            updatedAt: new Date("2026-01-01T00:00:00.000Z"),
+            updatedAt: new Date("2026-01-01T00:00:00.000Z")
         }).run();
 
         const uc = createListAdapterAssignmentsUC({
             devicesRepo: createDevicesRepo(db),
-            deviceCursorsRepo: createDeviceCursorsRepo(db),
+            deviceCursorsRepo: createDeviceCursorsRepo(db)
         });
 
         const res = uc("dahua");
@@ -59,8 +59,8 @@ describe("listAdapterAssignments", () => {
                 deviceId: "dev-1",
                 direction: "IN",
                 settingsJson: "{\"ip\":\"1.1.1.1\"}",
-                lastAckedEventId: "evt-9",
-            },
+                lastAckedEventId: "evt-9"
+            }
         ]);
     });
 });

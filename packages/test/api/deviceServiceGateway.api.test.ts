@@ -243,18 +243,18 @@ describe("API device-service gateway routes", () => {
                             {
                                 deviceId: "dev-1",
                                 adapterKey: "dahua",
-                                terminalPersonId: "T-1",
-                            },
+                                terminalPersonId: "T-1"
+                            }
                         ],
                         diagnostics: {
                             adaptersScanned: 1,
                             devicesScanned: 2,
                             devicesEligible: 1,
                             requestsSent: 1,
-                            errors: 0,
+                            errors: 0
                         },
-                        errors: [],
-                    },
+                        errors: []
+                    }
                 }),
                 { status: 200, headers: { "content-type": "application/json" } }
             )
@@ -263,7 +263,7 @@ describe("API device-service gateway routes", () => {
         const response = await app.request("/api/ds/identity/find", {
             method: "POST",
             headers: { "content-type": "application/json" },
-            body: JSON.stringify({ identityKey: "iin", identityValue: "900101000001" }),
+            body: JSON.stringify({ identityKey: "iin", identityValue: "900101000001" })
         });
         expect(response.status).toBe(200);
 
@@ -277,7 +277,7 @@ describe("API device-service gateway routes", () => {
         expect(JSON.parse(String(init.body))).toEqual({
             identityKey: "iin",
             identityValue: "900101000001",
-            limit: 1,
+            limit: 1
         });
     });
 
@@ -337,16 +337,16 @@ describe("API device-service gateway routes", () => {
                                 deviceSettingsSchema: {
                                     type: "object",
                                     properties: {
-                                        host: { type: "string" },
+                                        host: { type: "string" }
                                     },
-                                    required: ["host"],
+                                    required: ["host"]
                                 },
                                 mode: "active",
                                 registeredAt: "2026-01-01T00:00:00.000Z",
-                                lastSeenAt: "2026-01-01T00:00:00.000Z",
-                            },
-                        ],
-                    },
+                                lastSeenAt: "2026-01-01T00:00:00.000Z"
+                            }
+                        ]
+                    }
                 }),
                 { status: 200, headers: { "content-type": "application/json" } }
             )
@@ -359,9 +359,9 @@ describe("API device-service gateway routes", () => {
         expect(json.data.adapters[0].deviceSettingsSchema).toEqual({
             type: "object",
             properties: {
-                host: { type: "string" },
+                host: { type: "string" }
             },
-            required: ["host"],
+            required: ["host"]
         });
     });
 

@@ -10,21 +10,21 @@ function isUniqueConstraintError(e: unknown): boolean {
 
 export function createDeviceEventsRepo(db: DeviceDb): DeviceEventsRepo {
     const insertIdempotent: DeviceEventsRepo["insertIdempotent"] = (input) => {
-            try {
-                db.insert(deviceEvents).values({
-                    id: input.id,
-                    deviceId: input.deviceId,
-                    eventId: input.eventId,
-                    direction: input.direction,
-                    occurredAt: input.occurredAt,
-                    terminalPersonId: input.terminalPersonId ?? null,
-                    rawPayload: input.rawPayload ?? null,
-                }).run();
-                return "inserted";
-            } catch (e) {
-                if (isUniqueConstraintError(e)) return "duplicate";
-                throw e;
-            }
+        try {
+            db.insert(deviceEvents).values({
+                id: input.id,
+                deviceId: input.deviceId,
+                eventId: input.eventId,
+                direction: input.direction,
+                occurredAt: input.occurredAt,
+                terminalPersonId: input.terminalPersonId ?? null,
+                rawPayload: input.rawPayload ?? null
+            }).run();
+            return "inserted";
+        } catch (e) {
+            if (isUniqueConstraintError(e)) return "duplicate";
+            throw e;
+        }
     };
 
     const listLastSeenByDeviceIds: DeviceEventsRepo["listLastSeenByDeviceIds"] = (deviceIds) => {
@@ -32,7 +32,7 @@ export function createDeviceEventsRepo(db: DeviceDb): DeviceEventsRepo {
         const rows = db
             .select({
                 deviceId: deviceEvents.deviceId,
-                lastEventAt: max(deviceEvents.occurredAt),
+                lastEventAt: max(deviceEvents.occurredAt)
             })
             .from(deviceEvents)
             .where(inArray(deviceEvents.deviceId, deviceIds))
@@ -42,13 +42,13 @@ export function createDeviceEventsRepo(db: DeviceDb): DeviceEventsRepo {
         return rows
             .map((row) => ({
                 deviceId: row.deviceId,
-                lastEventAt: row.lastEventAt ? new Date(row.lastEventAt) : null,
+                lastEventAt: row.lastEventAt ? new Date(row.lastEventAt) : null
             }))
             .filter((row): row is { deviceId: string; lastEventAt: Date } => row.lastEventAt !== null);
     };
 
     return {
         insertIdempotent,
-        listLastSeenByDeviceIds,
+        listLastSeenByDeviceIds
     };
 }

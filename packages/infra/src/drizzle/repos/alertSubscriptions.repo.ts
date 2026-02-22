@@ -1,7 +1,7 @@
 ﻿import { and, desc, eq, inArray, isNotNull } from "drizzle-orm";
 import type { Db } from "@school-gate/db/drizzle";
 import { admins, alertSubscriptions } from "@school-gate/db/schema";
-import { AlertSubscriptionsRepo, AlertRecipient, AlertSubscription } from "@school-gate/core";
+import type { AlertSubscriptionsRepo, AlertRecipient, AlertSubscription } from "@school-gate/core";
 
 function toDate(value: unknown): Date {
     return value instanceof Date ? value : new Date(String(value));
@@ -13,7 +13,7 @@ function mapSubscription(row: typeof alertSubscriptions.$inferSelect): AlertSubs
         ruleId: row.ruleId,
         isEnabled: Boolean(row.isEnabled),
         createdAt: toDate(row.createdAt),
-        updatedAt: toDate(row.updatedAt),
+        updatedAt: toDate(row.updatedAt)
     };
 }
 
@@ -26,14 +26,14 @@ export function createAlertSubscriptionsRepo(db: Db): AlertSubscriptionsRepo {
                     ruleId: input.ruleId,
                     isEnabled: input.isEnabled,
                     createdAt: input.createdAt,
-                    updatedAt: input.updatedAt,
+                    updatedAt: input.updatedAt
                 })
                 .onConflictDoUpdate({
                     target: [alertSubscriptions.adminId, alertSubscriptions.ruleId],
                     set: {
                         isEnabled: input.isEnabled,
-                        updatedAt: input.updatedAt,
-                    },
+                        updatedAt: input.updatedAt
+                    }
                 })
                 .run();
         },
@@ -65,7 +65,7 @@ export function createAlertSubscriptionsRepo(db: Db): AlertSubscriptionsRepo {
             const conditions = [
                 inArray(alertSubscriptions.ruleId, input.ruleIds),
                 isNotNull(admins.tgUserId),
-                eq(admins.status, "active"),
+                eq(admins.status, "active")
             ];
             if (input.onlyEnabled !== undefined) {
                 conditions.push(eq(alertSubscriptions.isEnabled, input.onlyEnabled));
@@ -75,7 +75,7 @@ export function createAlertSubscriptionsRepo(db: Db): AlertSubscriptionsRepo {
                 .select({
                     adminId: alertSubscriptions.adminId,
                     ruleId: alertSubscriptions.ruleId,
-                    tgUserId: admins.tgUserId,
+                    tgUserId: admins.tgUserId
                 })
                 .from(alertSubscriptions)
                 .innerJoin(admins, eq(alertSubscriptions.adminId, admins.id))
@@ -85,12 +85,12 @@ export function createAlertSubscriptionsRepo(db: Db): AlertSubscriptionsRepo {
             return rows.map((row) => ({
                 adminId: row.adminId,
                 ruleId: row.ruleId,
-                tgUserId: row.tgUserId as string,
+                tgUserId: row.tgUserId as string
             })) satisfies AlertRecipient[];
         },
         withTx(tx) {
             return createAlertSubscriptionsRepo(tx as Db);
-        },
+        }
 
     };
 }

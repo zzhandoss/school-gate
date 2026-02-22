@@ -2,7 +2,7 @@ import type { WorkerStatus } from "../entities/monitoring.types.js";
 import type {
     MonitoringSnapshotCollector,
     MonitoringSnapshotCollectorInput,
-    MonitoringSnapshotSlice,
+    MonitoringSnapshotSlice
 } from "../pipeline/snapshotPipeline.js";
 
 function buildWorkerStatus(
@@ -24,7 +24,7 @@ export const collectWorkersSnapshot: MonitoringSnapshotCollector = async (
         return {
             ...worker,
             status,
-            ttlMs: input.workerTtlMs,
+            ttlMs: input.workerTtlMs
         };
     });
 

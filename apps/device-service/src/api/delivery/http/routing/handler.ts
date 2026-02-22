@@ -61,7 +61,7 @@ export function handler<TBody = unknown, TQuery = unknown, TParams = Record<stri
             c,
             body: resolveBody(c) as TBody | undefined,
             query: resolveQuery(c) as TQuery,
-            params: resolveParams(c) as TParams,
+            params: resolveParams(c) as TParams
         });
 
         const schema = c.get("responseSchema");

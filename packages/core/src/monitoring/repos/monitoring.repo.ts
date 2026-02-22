@@ -2,7 +2,7 @@
     AccessEventsStatusCounts,
     ErrorStat,
     OutboxStatus,
-    OutboxStatusCounts,
+    OutboxStatusCounts
 } from "../entities/monitoring.types.js";
 import type { WorkerHeartbeat } from "../../ports/index.js";
 import type { AccessEventStatus } from "../../events/index.js";

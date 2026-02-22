@@ -34,7 +34,7 @@ async function main() {
         repo: createWorkerHeartbeatsRepo(client.db),
         workerId: "access-events",
         clock,
-        baseMeta: { pollMs: accessCfg.pollMs, batch: accessCfg.batch },
+        baseMeta: { pollMs: accessCfg.pollMs, batch: accessCfg.batch }
     });
     heartbeat.onStart();
 
@@ -42,7 +42,7 @@ async function main() {
 
     const tx = createUnitOfWork(client.db, {
         accessEventsService: (db) => accessEventsService.withTx(db),
-        outbox: createOutbox,
+        outbox: createOutbox
     });
 
     const uc = createProcessAccessEventsUC({
@@ -52,7 +52,7 @@ async function main() {
         subscriptionsRepo: createSubscriptionsRepo(client.db),
         tx,
         idGen: { nextId: () => crypto.randomUUID() },
-        clock,
+        clock
     });
 
     let stopped = false;
@@ -67,13 +67,13 @@ async function main() {
                 retryDelayMs: accessCfg.retryDelayMs,
                 leaseMs: accessCfg.leaseMs,
                 processingBy: accessCfg.processingBy,
-                maxAttempts: accessCfg.maxAttempts,
+                maxAttempts: accessCfg.maxAttempts
             });
             heartbeat.onSuccess({
                 processed: res.processed,
                 unmatched: res.unmatched,
                 failed: res.failed,
-                notifications: res.notifications,
+                notifications: res.notifications
             });
 
             if (res.processed + res.unmatched + res.failed > 0) {
@@ -82,7 +82,7 @@ async function main() {
                         processed: res.processed,
                         unmatched: res.unmatched,
                         failed: res.failed,
-                        notifications: res.notifications,
+                        notifications: res.notifications
                     },
                     "access-events batch processed"
                 );

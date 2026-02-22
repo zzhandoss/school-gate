@@ -22,7 +22,7 @@ export function createCreateAdminInviteFlow(deps: CreateAdminInviteDeps): Create
             createdBy: input.createdBy,
             expiresAt: input.expiresAt,
             usedAt: null,
-            createdAt: now,
+            createdAt: now
         });
 
         enqueueAuditRequested({
@@ -33,7 +33,7 @@ export function createCreateAdminInviteFlow(deps: CreateAdminInviteDeps): Create
             entityType: "admin_invite",
             entityId: tokenHash,
             at: now,
-            meta: { roleId: input.roleId, email, expiresAt: input.expiresAt.toISOString() },
+            meta: { roleId: input.roleId, email, expiresAt: input.expiresAt.toISOString() }
         });
 
         return { token, tokenHash, roleId: input.roleId, email, expiresAt: input.expiresAt };

@@ -5,7 +5,7 @@ import {
     type UpdateDeviceServiceDeviceDto,
     type DeviceServiceDeviceDto,
     type GetDeviceServiceDeviceResultDto,
-    type ListDeviceServiceDevicesResultDto,
+    type ListDeviceServiceDevicesResultDto
 } from "@school-gate/contracts";
 import type { Device } from "@school-gate/device/core/repos/devices.repo";
 import { notFoundError } from "../../../delivery/http/errors/httpError.js";
@@ -37,7 +37,7 @@ function toDto(device: Device): DeviceServiceDeviceDto {
         enabled: device.enabled,
         settingsJson: device.settingsJson,
         createdAt: device.createdAt.toISOString(),
-        updatedAt: device.updatedAt.toISOString(),
+        updatedAt: device.updatedAt.toISOString()
     };
 }
 
@@ -46,7 +46,7 @@ export function createDevicesModule(input: CreateDevicesModuleInput): DevicesMod
         list: async () => {
             const result = await input.list();
             return listDeviceServiceDevicesResultSchema.parse({
-                devices: result.devices.map(toDto),
+                devices: result.devices.map(toDto)
             });
         },
         get: async (id) => {
@@ -80,6 +80,6 @@ export function createDevicesModule(input: CreateDevicesModuleInput): DevicesMod
                 throw notFoundError("device_not_found", "Device was not found");
             }
             return { ok: true as const };
-        },
+        }
     };
 }

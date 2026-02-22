@@ -13,15 +13,15 @@ describe("adapter backfill runner", () => {
         capabilities: ["fetchEvents"],
         mode: "active",
         registeredAt: new Date("2026-01-01T00:00:00.000Z"),
-        lastSeenAt: new Date("2026-01-01T00:00:00.000Z"),
+        lastSeenAt: new Date("2026-01-01T00:00:00.000Z")
     };
 
     it("runs backfill once and throttles within interval", async () => {
         const listAssignments = vi.fn(() => ({
             devices: [
                 { deviceId: "d1", direction: "IN", settingsJson: null, lastAckedEventId: null },
-                { deviceId: "d2", direction: "OUT", settingsJson: null, lastAckedEventId: "e1" },
-            ],
+                { deviceId: "d2", direction: "OUT", settingsJson: null, lastAckedEventId: "e1" }
+            ]
         }));
 
         const backfillCalls: Array<{ deviceId: string; limit: number }> = [];
@@ -33,7 +33,7 @@ describe("adapter backfill runner", () => {
         const times = [
             new Date("2026-01-01T00:00:00.000Z"),
             new Date("2026-01-01T00:00:10.000Z"),
-            new Date("2026-01-01T00:01:00.000Z"),
+            new Date("2026-01-01T00:01:00.000Z")
         ];
         let idx = 0;
 
@@ -42,7 +42,7 @@ describe("adapter backfill runner", () => {
             createBackfillForAdapter,
             now: () => times[Math.min(idx, times.length - 1)]!,
             minIntervalMs: 30_000,
-            limit: 500,
+            limit: 500
         });
 
         const first = await runner(baseSession);
@@ -62,7 +62,7 @@ describe("adapter backfill runner", () => {
             { deviceId: "d1", limit: 500 },
             { deviceId: "d2", limit: 500 },
             { deviceId: "d1", limit: 500 },
-            { deviceId: "d2", limit: 500 },
+            { deviceId: "d2", limit: 500 }
         ]);
     });
 
@@ -72,7 +72,7 @@ describe("adapter backfill runner", () => {
             createBackfillForAdapter: () => async () => ({ fetched: 0, inserted: 0, duplicates: 0, lastEventId: null }),
             now: () => new Date("2026-01-01T00:00:00.000Z"),
             minIntervalMs: 30_000,
-            limit: 100,
+            limit: 100
         });
 
         const inactive = await runner({ ...baseSession, mode: "draining" });

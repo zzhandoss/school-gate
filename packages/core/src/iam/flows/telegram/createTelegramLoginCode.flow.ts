@@ -28,7 +28,7 @@ export function createCreateTelegramLoginCodeFlow(
             codeHash,
             adminId: admin.id,
             purpose: "login",
-            expiresAt: input.expiresAt,
+            expiresAt: input.expiresAt
         });
 
         enqueueAuditRequested({
@@ -39,7 +39,7 @@ export function createCreateTelegramLoginCodeFlow(
             entityType: "admin",
             entityId: admin.id,
             at: createdAt,
-            meta: { expiresAt: input.expiresAt.toISOString(), tgUserId: admin.tgUserId },
+            meta: { expiresAt: input.expiresAt.toISOString(), tgUserId: admin.tgUserId }
         });
 
         return { code, expiresAt: input.expiresAt };

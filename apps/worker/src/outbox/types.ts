@@ -5,7 +5,7 @@ export type OutboxEventRecord = {
     type: string;
     payloadJson: string;
     attempts: number;
-}
+};
 
 export type OutboxHandlersDeps = {
     db?: any;
@@ -16,6 +16,6 @@ export type OutboxHandlersDeps = {
         parentMaxAgeMs?: number | undefined;
         alertMaxAgeMs?: number | undefined;
     } | undefined;
-}
+};
 
 export type OutboxEventHandler = (event: OutboxEventRecord, deps: OutboxHandlersDeps) => Promise<void>;

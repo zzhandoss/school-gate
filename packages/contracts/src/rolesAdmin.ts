@@ -4,20 +4,20 @@ export const adminRoleSchema = z.object({
     id: z.string().min(1),
     name: z.string().min(1),
     createdAt: z.string().datetime(),
-    updatedAt: z.string().datetime(),
+    updatedAt: z.string().datetime()
 });
 
 export const listAdminRolesResultSchema = z.object({
-    roles: z.array(adminRoleSchema),
+    roles: z.array(adminRoleSchema)
 });
 
 export const listAdminRolePermissionsResultSchema = z.object({
     roleId: z.string().min(1),
-    permissions: z.array(z.string().min(1)),
+    permissions: z.array(z.string().min(1))
 });
 
 export const listAdminPermissionsResultSchema = z.object({
-    permissions: z.array(z.string().min(1)),
+    permissions: z.array(z.string().min(1))
 });
 
 export type AdminRoleDto = z.infer<typeof adminRoleSchema>;

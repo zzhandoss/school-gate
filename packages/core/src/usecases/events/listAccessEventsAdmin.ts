@@ -1,6 +1,6 @@
 import type {
     ListAccessEventsAdminDeps,
-    ListAccessEventsAdminUC,
+    ListAccessEventsAdminUC
 } from "./listAccessEventsAdmin.types.js";
 
 export function createListAccessEventsAdminUC(

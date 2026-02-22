@@ -1,6 +1,6 @@
 ﻿import type {
     MonitoringSnapshotInsert,
-    MonitoringSnapshotRecord,
+    MonitoringSnapshotRecord
 } from "../entities/monitoring.types.js";
 import type { MonitoringSnapshotsRepo } from "../repos/monitoringSnapshots.repo.js";
 

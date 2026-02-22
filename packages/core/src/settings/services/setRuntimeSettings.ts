@@ -55,8 +55,8 @@ export function setRuntimeSettings(
             at: updatedAt,
             meta: {
                 updated: entries.length,
-                keys: entries.map((entry) => entry.key),
-            },
+                keys: entries.map((entry) => entry.key)
+            }
         });
     }
 

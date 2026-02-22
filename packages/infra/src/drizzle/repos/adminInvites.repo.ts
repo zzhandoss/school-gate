@@ -15,7 +15,7 @@ function mapInvite(row: typeof adminInvites.$inferSelect): AdminInvite {
         createdBy: row.createdBy,
         expiresAt: toDate(row.expiresAt),
         usedAt: row.usedAt ? toDate(row.usedAt) : null,
-        createdAt: toDate(row.createdAt),
+        createdAt: toDate(row.createdAt)
     };
 }
 
@@ -32,7 +32,7 @@ export function createAdminInvitesRepo(db: Db): AdminInvitesRepo {
                 createdBy: input.createdBy,
                 expiresAt: input.expiresAt,
                 usedAt: input.usedAt ?? null,
-                createdAt: input.createdAt,
+                createdAt: input.createdAt
             });
         },
 
@@ -54,6 +54,6 @@ export function createAdminInvitesRepo(db: Db): AdminInvitesRepo {
                 .where(eq(adminInvites.tokenHash, tokenHash))
                 .run();
             return res.changes > 0;
-        },
+        }
     };
 }

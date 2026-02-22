@@ -3,11 +3,10 @@ import type { UnknownAlertRule } from "../entities/alertRules.types.js";
 import type {
     ProcessMonitoringAlertsFlowDeps,
     ProcessMonitoringAlertsInput,
-    ProcessMonitoringAlertsResult,
+    ProcessMonitoringAlertsResult
 } from "./processMonitoringAlerts.types.js";
 import { DomainEvents } from "../../events/domain.js";
 import { evaluateAlertRule } from "../rules/registry.js";
-import { createAlertEventsService } from "../services/alertEvents.service.js";
 
 function buildMessage(rule: UnknownAlertRule, status: AlertEventStatus, body: string): string {
     const prefix = status === "triggered" ? "Alert triggered" : "Alert resolved";
@@ -30,7 +29,7 @@ export function createProcessMonitoringAlertsFlow(deps: ProcessMonitoringAlertsF
 
         const recipients = await deps.subscriptionsService.listRecipientsByRuleIds({
             ruleIds,
-            onlyEnabled: true,
+            onlyEnabled: true
         });
         const recipientsByRule = new Map<string, typeof recipients>();
         for (const recipient of recipients) {
@@ -48,7 +47,7 @@ export function createProcessMonitoringAlertsFlow(deps: ProcessMonitoringAlertsF
             evaluated++;
             const evaluation = evaluateAlertRule(rule, {
                 snapshot: input.snapshot.snapshot,
-                previousSnapshot: input.previousSnapshot?.snapshot,
+                previousSnapshot: input.previousSnapshot?.snapshot
             });
             if (evaluation.skipReason) {
                 skipped++;
@@ -72,7 +71,7 @@ export function createProcessMonitoringAlertsFlow(deps: ProcessMonitoringAlertsF
                         severity: rule.severity,
                         message,
                         details: evaluation.details,
-                        createdAt,
+                        createdAt
                     });
 
                     for (const recipient of ruleRecipients) {
@@ -88,9 +87,9 @@ export function createProcessMonitoringAlertsFlow(deps: ProcessMonitoringAlertsF
                                     status: "triggered",
                                     message,
                                     createdAt: createdAt.toISOString(),
-                                    tgUserId: recipient.tgUserId,
-                                },
-                            },
+                                    tgUserId: recipient.tgUserId
+                                }
+                            }
                         });
                     }
                 });
@@ -112,7 +111,7 @@ export function createProcessMonitoringAlertsFlow(deps: ProcessMonitoringAlertsF
                         severity: rule.severity,
                         message,
                         details: evaluation.details,
-                        createdAt,
+                        createdAt
                     });
 
                     for (const recipient of ruleRecipients) {
@@ -128,9 +127,9 @@ export function createProcessMonitoringAlertsFlow(deps: ProcessMonitoringAlertsF
                                     status: "resolved",
                                     message,
                                     createdAt: createdAt.toISOString(),
-                                    tgUserId: recipient.tgUserId,
-                                },
-                            },
+                                    tgUserId: recipient.tgUserId
+                                }
+                            }
                         });
                     }
                 });

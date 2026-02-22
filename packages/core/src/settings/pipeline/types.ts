@@ -1,7 +1,7 @@
 import type {
     SettingsGroup,
     SettingsRegistry,
-    SettingsRegistryEntry,
+    SettingsRegistryEntry
 } from "../registry/settings.registry.js";
 import type { SettingEntryValue } from "../registry/types.js";
 

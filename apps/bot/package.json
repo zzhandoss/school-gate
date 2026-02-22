@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "set NODE_ENV=development&& tsx src/main.ts",
+    "typecheck": "tsc -p tsconfig.json --noEmit --incremental false",
     "start": "node dist/main.js",
     "build": "tsc -p tsconfig.json",
     "build:watch": "tsc -p tsconfig.json --watch"

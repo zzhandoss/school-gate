@@ -25,11 +25,11 @@ function sleep(ms: number) {
 }
 
 const idGen = {
-    nextId: () => crypto.randomUUID(),
+    nextId: () => crypto.randomUUID()
 };
 
 const clock = {
-    now: () => new Date(),
+    now: () => new Date()
 };
 
 const createPreprocessPendingRequests = (
@@ -57,8 +57,8 @@ const createPreprocessPendingRequests = (
         flags: flags,
         idGen: idGen,
         clock: clock
-    })
-}
+    });
+};
 
 async function main() {
     const client = createDb(DB_FILE);
@@ -68,10 +68,10 @@ async function main() {
     const personResolver = createDeviceServicePersonResolver({
         baseUrl: monitoringOpsConfig.deviceServiceUrl,
         token: monitoringOpsConfig.deviceServiceToken,
-        timeoutMs: monitoringOpsConfig.httpTimeoutMs,
+        timeoutMs: monitoringOpsConfig.httpTimeoutMs
     });
     const flags = {
-        autoResolvePersonByIin: workerConfig.autoResolvePersonByIin,
+        autoResolvePersonByIin: workerConfig.autoResolvePersonByIin
     };
     const pollMs = workerConfig.pollMs;
     const batch = workerConfig.batch;
@@ -79,7 +79,7 @@ async function main() {
         repo: createWorkerHeartbeatsRepo(client.db),
         workerId: "preprocess",
         clock,
-        baseMeta: { pollMs, batch },
+        baseMeta: { pollMs, batch }
     });
     heartbeat.onStart();
 
@@ -100,7 +100,7 @@ async function main() {
                 processed: res.processed,
                 ready: res.ready,
                 needsPerson: res.needsPerson,
-                errors: res.errors,
+                errors: res.errors
             });
             if (res.processed > 0) {
                 logger.info(
@@ -108,7 +108,7 @@ async function main() {
                         processed: res.processed,
                         ready: res.ready,
                         needsPerson: res.needsPerson,
-                        errors: res.errors,
+                        errors: res.errors
                     },
                     "worker batch processed"
                 );

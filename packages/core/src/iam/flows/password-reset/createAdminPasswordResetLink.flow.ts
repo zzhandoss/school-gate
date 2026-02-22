@@ -2,7 +2,7 @@ import { enqueueAuditRequested } from "../../../audit/events/auditRequested.js";
 import { AdminNotFoundError } from "../../../utils/errors.js";
 import type {
     CreateAdminPasswordResetLinkDeps,
-    CreateAdminPasswordResetLinkFlow,
+    CreateAdminPasswordResetLinkFlow
 } from "./createAdminPasswordResetLink.types.js";
 
 export function createCreateAdminPasswordResetLinkFlow(
@@ -23,7 +23,7 @@ export function createCreateAdminPasswordResetLinkFlow(
             adminId: admin.id,
             expiresAt: input.expiresAt,
             usedAt: null,
-            createdAt,
+            createdAt
         });
 
         enqueueAuditRequested({
@@ -34,7 +34,7 @@ export function createCreateAdminPasswordResetLinkFlow(
             entityType: "admin",
             entityId: admin.id,
             at: createdAt,
-            meta: { expiresAt: input.expiresAt.toISOString() },
+            meta: { expiresAt: input.expiresAt.toISOString() }
         });
 
         return { token, expiresAt: input.expiresAt };

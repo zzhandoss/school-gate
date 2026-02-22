@@ -1,7 +1,7 @@
 export type DeviceMapping = {
     terminalPersonId?: string;
     deviceId: string;
-}
+};
 
 export type ResolvePersonResult =
     | {
@@ -9,7 +9,7 @@ export type ResolvePersonResult =
         firstName?: string | null;
         lastName?: string | null;
         mappings: DeviceMapping[];
-      }
+    }
     | { kind: "not_found" }
     | { kind: "error"; message: string };
 

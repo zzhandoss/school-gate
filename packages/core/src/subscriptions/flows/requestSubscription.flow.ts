@@ -15,7 +15,7 @@ export function createRequestSubscriptionFlow(deps: RequestSubscriptionDeps): Re
 
         const existing = await deps.subscriptionRequestsService.getPendingByTgUserAndIin({
             tgUserId: input.tgUserId,
-            iin,
+            iin
         });
 
         if (existing) {
@@ -28,7 +28,7 @@ export function createRequestSubscriptionFlow(deps: RequestSubscriptionDeps): Re
             await deps.subscriptionRequestsService.createPending({
                 id: requestId,
                 tgUserId: input.tgUserId,
-                iin,
+                iin
             });
         } catch (e: any) {
             if (String(e?.message) === "SUBSCRIPTION_REQUEST_PENDING_ALREADY_EXISTS") {
@@ -45,7 +45,7 @@ export function createRequestSubscriptionFlow(deps: RequestSubscriptionDeps): Re
             entityType: "subscription_request",
             entityId: requestId,
             at: deps.clock.now(),
-            meta: { iin, chatId: input.chatId },
+            meta: { iin, chatId: input.chatId }
         });
 
         return { requestId, status: "pending", iin };

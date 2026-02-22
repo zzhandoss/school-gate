@@ -10,6 +10,7 @@
     "start:api": "node dist/api/main.js",
     "start:outbox": "node dist/outbox/main.js",
     "start:all": "pnpm -C ../.. exec concurrently -n api,outbox -c blue,green \"pnpm --filter @school-gate/device-service start:api\" \"pnpm --filter @school-gate/device-service start:outbox\"",
+    "typecheck": "tsc -p tsconfig.json --noEmit --incremental false",
     "build": "tsc -p tsconfig.json",
     "build:watch": "tsc -p tsconfig.json --watch"
   },

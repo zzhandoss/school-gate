@@ -35,10 +35,10 @@ export const alertNotificationRequestedHandler: OutboxEventHandler = async (
                         notificationType: DomainEvents.ALERT_NOTIFICATION_REQUESTED,
                         ageMs,
                         maxAgeMs,
-                        sourceTimestamp: payload.createdAt,
-                    },
-                },
-            },
+                        sourceTimestamp: payload.createdAt
+                    }
+                }
+            }
         });
         return;
     }

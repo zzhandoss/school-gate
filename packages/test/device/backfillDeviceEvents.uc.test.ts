@@ -35,7 +35,7 @@ describe("backfillDeviceEvents", () => {
             deviceId: "d1",
             eventId: "e1",
             occurredAt: cursorTime,
-            updatedAt: cursorTime,
+            updatedAt: cursorTime
         });
 
         db.insert(deviceEvents).values({
@@ -45,7 +45,7 @@ describe("backfillDeviceEvents", () => {
             direction: "IN",
             occurredAt: new Date("2026-01-01T00:01:00.000Z"),
             terminalPersonId: null,
-            rawPayload: null,
+            rawPayload: null
         }).run();
 
         const fetchEvents = vi.fn(async (input) => {
@@ -59,7 +59,7 @@ describe("backfillDeviceEvents", () => {
                     direction: "IN" as const,
                     occurredAt: new Date("2026-01-01T00:01:00.000Z"),
                     terminalPersonId: null,
-                    rawPayload: null,
+                    rawPayload: null
                 },
                 {
                     deviceId: "d1",
@@ -67,8 +67,8 @@ describe("backfillDeviceEvents", () => {
                     direction: "OUT" as const,
                     occurredAt: new Date("2026-01-01T00:02:00.000Z"),
                     terminalPersonId: "tp-1",
-                    rawPayload: "{\"x\":1}",
-                },
+                    rawPayload: "{\"x\":1}"
+                }
             ];
         });
 
@@ -78,14 +78,14 @@ describe("backfillDeviceEvents", () => {
         const idGen = { nextId: () => `id-${++seq}` };
         const tx = createDeviceUnitOfWork(db, {
             deviceEventsRepo: createDeviceEventsRepo,
-            deviceOutboxRepo: createDeviceOutboxRepo,
+            deviceOutboxRepo: createDeviceOutboxRepo
         });
         const recordAccessEvent = createRecordDeviceAccessEventUC({ tx, idGen });
 
         const backfill = createBackfillDeviceEventsUC({
             adapterClient,
             deviceCursorsRepo: cursorsRepo,
-            recordAccessEvent,
+            recordAccessEvent
         });
 
         const res = await backfill({ deviceId: "d1", limit: 10 });

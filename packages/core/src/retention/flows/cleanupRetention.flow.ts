@@ -32,7 +32,7 @@ function daysToCutoff(now: Date, days: number): Date {
 function buildCutoffs(input: CleanupRetentionInput): CleanupCutoffs {
     return {
         accessEvents: daysToCutoff(input.now, input.accessEventsDays),
-        auditLogs: daysToCutoff(input.now, input.auditLogsDays),
+        auditLogs: daysToCutoff(input.now, input.auditLogsDays)
     };
 }
 
@@ -41,7 +41,7 @@ function buildInitialResult(input: CleanupRetentionInput, cutoffs: CleanupCutoff
         accessEventsDeleted: 0,
         auditLogsDeleted: 0,
         accessEventsCutoff: cutoffs.accessEvents,
-        auditLogsCutoff: cutoffs.auditLogs,
+        auditLogsCutoff: cutoffs.auditLogs
     };
 }
 
@@ -64,7 +64,7 @@ function buildAccessEventsStep(service: AccessEventsRetentionService): CleanupSt
     return async ({ input, cutoffs }) => {
         const accessEventsDeleted = await service.deleteTerminalBefore({
             cutoff: cutoffs.accessEvents,
-            limit: input.batch,
+            limit: input.batch
         });
         return { accessEventsDeleted };
     };
@@ -74,7 +74,7 @@ function buildAuditLogsStep(service: AuditLogsRetentionService): CleanupStep {
     return async ({ input, cutoffs }) => {
         const auditLogsDeleted = await service.deleteBefore({
             cutoff: cutoffs.auditLogs,
-            limit: input.batch,
+            limit: input.batch
         });
         return { auditLogsDeleted };
     };
@@ -83,7 +83,7 @@ function buildAuditLogsStep(service: AuditLogsRetentionService): CleanupStep {
 export function createCleanupRetentionFlow(deps: CleanupRetentionFlowDeps) {
     const steps: CleanupStep[] = [
         buildAccessEventsStep(deps.accessEventsRetentionService),
-        buildAuditLogsStep(deps.auditLogsRetentionService),
+        buildAuditLogsStep(deps.auditLogsRetentionService)
     ];
 
     return async function cleanupRetention(
@@ -111,8 +111,8 @@ export function createCleanupRetentionFlow(deps: CleanupRetentionFlowDeps) {
                     accessEventsDeleted: result.accessEventsDeleted,
                     auditLogsDeleted: result.auditLogsDeleted,
                     accessEventsCutoff: result.accessEventsCutoff.toISOString(),
-                    auditLogsCutoff: result.auditLogsCutoff.toISOString(),
-                },
+                    auditLogsCutoff: result.auditLogsCutoff.toISOString()
+                }
             });
         }
 

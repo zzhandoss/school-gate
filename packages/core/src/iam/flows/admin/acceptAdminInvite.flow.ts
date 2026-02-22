@@ -6,7 +6,7 @@ import {
     AdminInviteExpiredError,
     AdminInviteNotFoundError,
     AdminInviteUsedError,
-    RoleNotFoundError,
+    RoleNotFoundError
 } from "../../../utils/errors.js";
 import type { AcceptAdminInviteDeps, AcceptAdminInviteFlow } from "./acceptAdminInvite.types.js";
 
@@ -54,7 +54,7 @@ export function createAcceptAdminInviteFlow(deps: AcceptAdminInviteDeps): Accept
             name: input.name ?? null,
             tgUserId: null,
             createdAt: now,
-            updatedAt: now,
+            updatedAt: now
         });
 
         await deps.adminInvitesService.markUsed({ tokenHash, usedAt: now });
@@ -67,7 +67,7 @@ export function createAcceptAdminInviteFlow(deps: AcceptAdminInviteDeps): Accept
             entityType: "admin_invite",
             entityId: tokenHash,
             at: now,
-            meta: { adminId, roleId: invite.roleId, email },
+            meta: { adminId, roleId: invite.roleId, email }
         });
 
         return { adminId, roleId: invite.roleId };

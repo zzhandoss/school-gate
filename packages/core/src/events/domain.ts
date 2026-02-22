@@ -4,7 +4,7 @@ import type { AlertSeverity } from "../alerts/index.js";
 export const DomainEvents = {
     AUDIT_REQUESTED: "audit.requested",
     PARENT_NOTIFICATION_REQUESTED: "parent.notification.requested",
-    ALERT_NOTIFICATION_REQUESTED: "alert.notification.requested",
+    ALERT_NOTIFICATION_REQUESTED: "alert.notification.requested"
 } as const;
 
 export type DomainEvents = typeof DomainEvents;

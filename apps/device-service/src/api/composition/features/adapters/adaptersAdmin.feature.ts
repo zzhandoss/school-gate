@@ -1,7 +1,7 @@
 import {
     listDeviceServiceAdaptersResultSchema,
     type ListDeviceServiceAdaptersResultDto,
-    type DeviceServiceAdapterDto,
+    type DeviceServiceAdapterDto
 } from "@school-gate/contracts";
 import type { AdapterRegistry } from "../../../adapterRegistry.js";
 
@@ -22,7 +22,7 @@ function toDto(adapter: ReturnType<AdapterRegistry["list"]>[number]): DeviceServ
         version: adapter.version,
         mode: adapter.mode,
         registeredAt: adapter.registeredAt.toISOString(),
-        lastSeenAt: adapter.lastSeenAt.toISOString(),
+        lastSeenAt: adapter.lastSeenAt.toISOString()
     };
 }
 
@@ -30,8 +30,8 @@ export function createAdaptersAdminModule(input: { registry: AdapterRegistry }):
     return {
         list: () => {
             return listDeviceServiceAdaptersResultSchema.parse({
-                adapters: input.registry.list().map(toDto),
+                adapters: input.registry.list().map(toDto)
             });
-        },
+        }
     };
 }

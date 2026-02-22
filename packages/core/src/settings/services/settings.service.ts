@@ -8,7 +8,7 @@ export function createSettingsService(deps: SettingsServiceDeps): SettingsServic
         withTx(tx: unknown) {
             return createSettingsService({
                 ...deps,
-                settingsRepo: deps.settingsRepo.withTx(tx),
+                settingsRepo: deps.settingsRepo.withTx(tx)
             });
         },
 
@@ -24,8 +24,8 @@ export function createSettingsService(deps: SettingsServiceDeps): SettingsServic
             return setRuntimeSettings(deps.settingsRepo, deps.clock, input, {
                 outbox: deps.outbox,
                 idGen: deps.idGen,
-                actorId: options?.actorId,
+                actorId: options?.actorId
             });
-        },
+        }
     };
 }

@@ -9,7 +9,7 @@ import {
     type ListDeviceServiceDevicesResultDto,
     type SetDeviceServiceDeviceEnabledDto,
     type UpsertDeviceServiceDeviceDto,
-    type UpdateDeviceServiceDeviceDto,
+    type UpdateDeviceServiceDeviceDto
 } from "@school-gate/contracts";
 import type { Device } from "@school-gate/device/core/repos/devices.repo";
 import type { AdminAuth } from "../adminAuth.js";
@@ -31,7 +31,7 @@ export function createDeviceServiceDevicesRoutes(input: {
 }) {
     return createDevicesRoutes({
         module: createDevicesModule(input.handlers),
-        auth: input.auth,
+        auth: input.auth
     });
 }
 
@@ -41,12 +41,12 @@ export type {
     ListDeviceServiceDevicesResultDto,
     SetDeviceServiceDeviceEnabledDto,
     UpsertDeviceServiceDeviceDto,
-    UpdateDeviceServiceDeviceDto,
+    UpdateDeviceServiceDeviceDto
 };
 export {
     getDeviceServiceDeviceResultSchema,
     listDeviceServiceDevicesResultSchema,
     setDeviceServiceDeviceEnabledSchema,
     upsertDeviceServiceDeviceSchema,
-    updateDeviceServiceDeviceSchema,
+    updateDeviceServiceDeviceSchema
 };

@@ -56,8 +56,8 @@ async function main() {
             batch: retentionCfg.batch,
             accessEventsDays: retentionCfg.accessEventsDays,
             auditLogsDays: retentionCfg.auditLogsDays,
-            mode: "worker",
-        },
+            mode: "worker"
+        }
     });
     heartbeat.onStart();
 
@@ -73,18 +73,18 @@ async function main() {
                 now: startedAt,
                 batch: retentionCfg.batch,
                 accessEventsDays: retentionCfg.accessEventsDays,
-                auditLogsDays: retentionCfg.auditLogsDays,
+                auditLogsDays: retentionCfg.auditLogsDays
             });
             heartbeat.onSuccess({
                 accessEventsDeleted: result.accessEventsDeleted,
-                auditLogsDeleted: result.auditLogsDeleted,
+                auditLogsDeleted: result.auditLogsDeleted
             });
 
             if (result.accessEventsDeleted + result.auditLogsDeleted > 0) {
                 logger.info(
                     {
                         accessEventsDeleted: result.accessEventsDeleted,
-                        auditLogsDeleted: result.auditLogsDeleted,
+                        auditLogsDeleted: result.auditLogsDeleted
                     },
                     "retention batch processed"
                 );

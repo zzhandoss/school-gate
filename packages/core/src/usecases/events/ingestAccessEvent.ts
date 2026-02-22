@@ -5,7 +5,7 @@ import type { AccessEventStatus } from "../../events/index.js";
 import type {
     IngestAccessEventDeps,
     IngestAccessEventInput,
-    IngestAccessEventResult,
+    IngestAccessEventResult
 } from "./ingestAccessEvent.types.js";
 
 export function createIngestAccessEventUC(deps: IngestAccessEventDeps) {
@@ -20,7 +20,7 @@ export function createIngestAccessEventUC(deps: IngestAccessEventDeps) {
         const existingMapping = terminalPersonId
             ? await deps.personTerminalIdentitiesService.getByDeviceAndTerminalPersonId({
                 deviceId: input.deviceId,
-                terminalPersonId,
+                terminalPersonId
             })
             : null;
 
@@ -45,7 +45,7 @@ export function createIngestAccessEventUC(deps: IngestAccessEventDeps) {
                     id: deps.idGen.nextId(),
                     personId,
                     deviceId: input.deviceId,
-                    terminalPersonId,
+                    terminalPersonId
                 });
             }
         }
@@ -62,7 +62,7 @@ export function createIngestAccessEventUC(deps: IngestAccessEventDeps) {
             terminalPersonId,
             idempotencyKey: `${input.deviceId}:${input.eventId}`,
             rawPayload: input.rawPayload ?? null,
-            status,
+            status
         });
 
         if (result === "inserted" && status === "NEW") {
@@ -78,7 +78,7 @@ export function createIngestAccessEventUC(deps: IngestAccessEventDeps) {
                 entityType: "person",
                 entityId: personId,
                 at: deps.clock.now(),
-                meta: { iin, deviceId: input.deviceId, accessEventId },
+                meta: { iin, deviceId: input.deviceId, accessEventId }
             });
         }
 

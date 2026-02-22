@@ -41,7 +41,7 @@ describe("PreprocessPendingRequestsUC", () => {
             personResolver: { resolveByIin: async () => ({ kind: "not_found" as const }) },
             flags: { autoResolvePersonByIin: true },
             idGen: { nextId: () => "x" },
-            clock: { now: () => new Date("2020-01-01T00:00:00.000Z") },
+            clock: { now: () => new Date("2020-01-01T00:00:00.000Z") }
         });
 
         const res = await uc({ limit: 10 });
@@ -66,7 +66,7 @@ describe("PreprocessPendingRequestsUC", () => {
             personResolver: { resolveByIin: async () => ({ kind: "not_found" as const }) },
             flags: { autoResolvePersonByIin: false },
             idGen: { nextId: () => "x" },
-            clock: { now: () => new Date() },
+            clock: { now: () => new Date() }
         });
 
         const res = await uc({ limit: 10 });
@@ -95,13 +95,13 @@ describe("PreprocessPendingRequestsUC", () => {
                     lastName: "B",
                     mappings: [
                         { deviceId: "dev1", terminalPersonId: "T-1" },
-                        { deviceId: "dev2", terminalPersonId: "T-2" },
-                    ],
-                }),
+                        { deviceId: "dev2", terminalPersonId: "T-2" }
+                    ]
+                })
             },
             flags: { autoResolvePersonByIin: true },
             idGen: { nextId: () => ids.shift()! },
-            clock: { now: () => new Date() },
+            clock: { now: () => new Date() }
         });
 
         const res = await uc({ limit: 10 });

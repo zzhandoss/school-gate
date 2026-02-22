@@ -51,7 +51,7 @@ export function createAccessEventsAdminQuery(db: Db) {
                     personId: persons.id,
                     personIin: persons.iin,
                     personFirstName: persons.firstName,
-                    personLastName: persons.lastName,
+                    personLastName: persons.lastName
                 })
                 .from(accessEvents)
                 .leftJoin(
@@ -97,11 +97,11 @@ export function createAccessEventsAdminQuery(db: Db) {
                         id: row.personId,
                         iin: row.personIin,
                         firstName: row.personFirstName ?? null,
-                        lastName: row.personLastName ?? null,
-                    } : null,
+                        lastName: row.personLastName ?? null
+                    } : null
                 })),
-                total: Number(totalRows[0]?.count ?? 0),
+                total: Number(totalRows[0]?.count ?? 0)
             };
-        },
+        }
     };
 }

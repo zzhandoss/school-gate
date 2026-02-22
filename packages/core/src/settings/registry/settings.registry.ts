@@ -11,7 +11,7 @@ export const settingsRegistry = {
     accessEvents: accessEventsRegistry,
     retention: retentionRegistry,
     monitoring: monitoringRegistry,
-    notifications: notificationsRegistry,
+    notifications: notificationsRegistry
 } as const;
 
 export type SettingsRegistry = typeof settingsRegistry;
@@ -26,7 +26,7 @@ export const settingsRegistryGroups: SettingsRegistryGroup[] = [
     accessEventsRegistry,
     retentionRegistry,
     monitoringRegistry,
-    notificationsRegistry,
+    notificationsRegistry
 ];
 
 export const settingsRegistryEntries: SettingsRegistryEntry[] = settingsRegistryGroups.map(

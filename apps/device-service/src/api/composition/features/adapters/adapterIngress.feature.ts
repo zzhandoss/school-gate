@@ -2,7 +2,7 @@ import type { AppLogger } from "@school-gate/infra";
 import type { AdapterAssignment } from "@school-gate/device/core/usecases/listAdapterAssignments";
 import type {
     RecordDeviceAccessEventInput,
-    RecordDeviceAccessEventResult,
+    RecordDeviceAccessEventResult
 } from "@school-gate/device/core/usecases/recordAccessEvent";
 import { AdapterInstanceActiveError } from "../../../adapterRegistry.js";
 import type { AdapterRegistry, AdapterSession } from "../../../adapterRegistry.js";
@@ -72,7 +72,7 @@ function toAssignmentsResponse(
             mode,
             heartbeatIntervalMs: config.heartbeatIntervalMs,
             batchLimit: config.batchLimit,
-            devices: [],
+            devices: []
         };
     }
 
@@ -84,7 +84,7 @@ function toAssignmentsResponse(
             mode: "draining" as const,
             heartbeatIntervalMs: config.heartbeatIntervalMs,
             batchLimit: config.batchLimit,
-            devices: [],
+            devices: []
         };
     }
 
@@ -95,7 +95,7 @@ function toAssignmentsResponse(
         mode,
         heartbeatIntervalMs: config.heartbeatIntervalMs,
         batchLimit: config.batchLimit,
-        devices: listAssignments(session.vendorKey).devices,
+        devices: listAssignments(session.vendorKey).devices
     };
 }
 
@@ -127,7 +127,7 @@ export function createAdapterIngressModule(input: CreateAdapterIngressModuleInpu
                 baseUrl: payload.baseUrl,
                 retentionMs: payload.retentionMs,
                 capabilities,
-                ...(deviceSettingsSchema === undefined ? {} : { deviceSettingsSchema }),
+                ...(deviceSettingsSchema === undefined ? {} : { deviceSettingsSchema })
             };
 
             let session: AdapterSession;
@@ -185,7 +185,7 @@ export function createAdapterIngressModule(input: CreateAdapterIngressModuleInpu
                     throw new HttpError({
                         status: 403,
                         code: "device_not_assigned",
-                        message: "Device not assigned",
+                        message: "Device not assigned"
                     });
                 }
                 if (direction !== event.direction) {
@@ -201,16 +201,16 @@ export function createAdapterIngressModule(input: CreateAdapterIngressModuleInpu
                         direction: event.direction,
                         occurredAt: new Date(event.occurredAt),
                         terminalPersonId: event.terminalPersonId ?? null,
-                        rawPayload: event.rawPayload ?? null,
+                        rawPayload: event.rawPayload ?? null
                     });
 
                     return {
                         eventId: event.eventId,
                         result: result.result,
-                        deviceEventId: result.deviceEventId,
+                        deviceEventId: result.deviceEventId
                     };
-                }),
+                })
             };
-        },
+        }
     };
 }

@@ -8,7 +8,7 @@ import {
     createStubAdminAuthHandlers,
     createStubAlertsHandlers,
     createStubAdminsHandlers,
-    createStubAuditLogsHandlers,
+    createStubAuditLogsHandlers
 } from "../helpers/adminAuth.js";
 import { createTestDb } from "../helpers/testDb.js";
 
@@ -26,12 +26,12 @@ describe("API subscriptions admin routes", () => {
             id: "person-1",
             iin: "123456789012",
             firstName: "Ivan",
-            lastName: "Ivanov",
+            lastName: "Ivanov"
         },
         parent: {
             tgUserId: "tg-1",
-            chatId: "chat-1",
-        },
+            chatId: "chat-1"
+        }
     };
 
     beforeAll(() => {
@@ -54,26 +54,26 @@ describe("API subscriptions admin routes", () => {
                         result: "duplicate",
                         status: "NEW",
                         personId: null,
-                        accessEventId: null,
-                    }),
-                },
+                        accessEventId: null
+                    })
+                }
             },
             accessEventsAdmin: {
                 listUnmatched: async () => [],
-                mapTerminalIdentity: async () => ({ status: "already_linked", updatedEvents: 0 }),
+                mapTerminalIdentity: async () => ({ status: "already_linked", updatedEvents: 0 })
             },
             persons: {
-                searchByIin: async () => [],
+                searchByIin: async () => []
             },
             subscriptionRequests: {
                 listPending: async () => ({ requests: [], page: { limit: 50, offset: 0, total: 0 } }),
-                review: async () => ({ requestId: "r1", status: "rejected", personId: null }),
+                review: async () => ({ requestId: "r1", status: "rejected", personId: null })
             },
             alerts: createStubAlertsHandlers(),
             subscriptions: {
                 list: async () => [sampleSubscription],
                 activate: async ({ subscriptionId }) => subscriptionId !== "missing",
-                deactivate: async ({ subscriptionId }) => subscriptionId !== "missing",
+                deactivate: async ({ subscriptionId }) => subscriptionId !== "missing"
             },
             auditLogs: createStubAuditLogsHandlers(),
             retention: {
@@ -81,12 +81,12 @@ describe("API subscriptions admin routes", () => {
                     taskName: "school-gate-retention",
                     platform: process.platform,
                     pollMs: 300000,
-                    intervalMinutes: 5,
+                    intervalMinutes: 5
                 }),
                 removeSchedule: async () => ({
                     taskName: "school-gate-retention",
                     platform: process.platform,
-                    removed: true,
+                    removed: true
                 }),
                 runOnce: async () => ({
                     accessEventsDeleted: 0,
@@ -95,8 +95,8 @@ describe("API subscriptions admin routes", () => {
                     auditLogsCutoff: new Date("2026-01-01T00:00:00.000Z"),
                     batch: 500,
                     accessEventsDays: 30,
-                    auditLogsDays: 30,
-                }),
+                    auditLogsDays: 30
+                })
             },
             monitoring: {
                 getSnapshot: async () => ({
@@ -108,21 +108,21 @@ describe("API subscriptions admin routes", () => {
                             PROCESSED: 0,
                             FAILED_RETRY: 0,
                             UNMATCHED: 0,
-                            ERROR: 0,
+                            ERROR: 0
                         },
-                        oldestUnprocessedOccurredAt: null,
+                        oldestUnprocessedOccurredAt: null
                     },
                     outbox: {
                         counts: { new: 0, processing: 0, processed: 0, error: 0 },
-                        oldestNewCreatedAt: null,
+                        oldestNewCreatedAt: null
                     },
                     workers: [],
                     topErrors: { accessEvents: [], outbox: [] },
                     components: [],
-                    deviceService: null,
+                    deviceService: null
                 }),
-                listSnapshots: async () => [],
-            },
+                listSnapshots: async () => []
+            }
         });
     });
 

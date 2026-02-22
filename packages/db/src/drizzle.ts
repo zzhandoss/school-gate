@@ -5,7 +5,7 @@ export type DbClient = {
     sqlite: Database.Database;
     db: ReturnType<typeof drizzle>;
     close: () => void;
-}
+};
 
 export function createDb(dbFilePath: string): DbClient {
     const sqlite = new Database(dbFilePath);
@@ -19,7 +19,7 @@ export function createDb(dbFilePath: string): DbClient {
         sqlite,
         db,
         close: () => sqlite.close()
-    }
+    };
 }
 
 export type Db = ReturnType<typeof createDb>["db"];

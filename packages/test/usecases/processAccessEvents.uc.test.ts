@@ -44,12 +44,12 @@ describe("ProcessAccessEventsUC", () => {
             direction: "IN",
             occurredAt: new Date("2020-01-01T00:00:00.000Z"),
             iin: "030512550123",
-            idempotencyKey: "dev1:ev1",
+            idempotencyKey: "dev1:ev1"
         });
 
         const tx = createUnitOfWork(db, {
             accessEventsRepo: createAccessEventsRepo,
-            outbox: createOutboxRepo,
+            outbox: createOutboxRepo
         });
 
         const uc = createProcessAccessEventsUC({
@@ -59,7 +59,7 @@ describe("ProcessAccessEventsUC", () => {
             subscriptionsRepo: subsRepo,
             tx,
             idGen: { nextId: () => "out-1" },
-            clock: { now: () => new Date("2020-01-01T00:01:00.000Z") },
+            clock: { now: () => new Date("2020-01-01T00:01:00.000Z") }
         });
 
         const res = await uc({
@@ -67,7 +67,7 @@ describe("ProcessAccessEventsUC", () => {
             retryDelayMs: 1000,
             leaseMs: 60_000,
             processingBy: "worker-1",
-            maxAttempts: 3,
+            maxAttempts: 3
         });
         expect(res.processed).toBe(1);
         expect(res.notifications).toBe(1);
@@ -95,12 +95,12 @@ describe("ProcessAccessEventsUC", () => {
             direction: "OUT",
             occurredAt: new Date("2020-01-01T00:00:00.000Z"),
             terminalPersonId: "T-404",
-            idempotencyKey: "dev1:ev2",
+            idempotencyKey: "dev1:ev2"
         });
 
         const tx = createUnitOfWork(db, {
             accessEventsRepo: createAccessEventsRepo,
-            outbox: createOutboxRepo,
+            outbox: createOutboxRepo
         });
 
         const uc = createProcessAccessEventsUC({
@@ -110,7 +110,7 @@ describe("ProcessAccessEventsUC", () => {
             subscriptionsRepo: subsRepo,
             tx,
             idGen: { nextId: () => "out-2" },
-            clock: { now: () => new Date("2020-01-01T00:01:00.000Z") },
+            clock: { now: () => new Date("2020-01-01T00:01:00.000Z") }
         });
 
         const res = await uc({
@@ -118,7 +118,7 @@ describe("ProcessAccessEventsUC", () => {
             retryDelayMs: 1000,
             leaseMs: 60_000,
             processingBy: "worker-1",
-            maxAttempts: 3,
+            maxAttempts: 3
         });
         expect(res.unmatched).toBe(1);
 
@@ -140,12 +140,12 @@ describe("ProcessAccessEventsUC", () => {
             direction: "IN",
             occurredAt: new Date("2020-01-01T00:00:00.000Z"),
             iin: "030512550123",
-            idempotencyKey: "dev1:ev3",
+            idempotencyKey: "dev1:ev3"
         });
 
         const tx = createUnitOfWork(db, {
             accessEventsRepo: createAccessEventsRepo,
-            outbox: createOutboxRepo,
+            outbox: createOutboxRepo
         });
 
         const uc = createProcessAccessEventsUC({
@@ -155,7 +155,7 @@ describe("ProcessAccessEventsUC", () => {
             subscriptionsRepo: subsRepo,
             tx,
             idGen: { nextId: () => "out-3" },
-            clock: { now: () => new Date("2020-01-01T00:01:00.000Z") },
+            clock: { now: () => new Date("2020-01-01T00:01:00.000Z") }
         });
 
         const res = await uc({
@@ -163,7 +163,7 @@ describe("ProcessAccessEventsUC", () => {
             retryDelayMs: 1000,
             leaseMs: 60_000,
             processingBy: "worker-1",
-            maxAttempts: 3,
+            maxAttempts: 3
         });
 
         expect(res.processed).toBe(1);

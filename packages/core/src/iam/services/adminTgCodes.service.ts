@@ -6,7 +6,7 @@ export function createAdminTgCodesService(deps: AdminTgCodesServiceDeps): AdminT
         withTx(tx: unknown) {
             return createAdminTgCodesService({
                 ...deps,
-                adminTgCodesRepo: deps.adminTgCodesRepo.withTx(tx),
+                adminTgCodesRepo: deps.adminTgCodesRepo.withTx(tx)
             });
         },
 
@@ -20,12 +20,12 @@ export function createAdminTgCodesService(deps: AdminTgCodesServiceDeps): AdminT
         async markUsed(input) {
             const updated = await deps.adminTgCodesRepo.markUsed({
                 codeHash: input.codeHash,
-                usedAt: input.usedAt,
+                usedAt: input.usedAt
             });
             if (!updated) {
                 throw new AdminTgLinkNotFoundError();
             }
-        },
+        }
     };
 }
 

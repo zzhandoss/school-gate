@@ -93,6 +93,6 @@ export function loadEnv(options: LoadEnvOptions = {}): LoadEnvResult {
     return {
         envPath: lastLoadedEnvPath,
         baseDir,
-        loadedPaths,
+        loadedPaths
     };
 }

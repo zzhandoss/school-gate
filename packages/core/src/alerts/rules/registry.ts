@@ -11,32 +11,32 @@ import { parseAdapterDownConfig, evaluateAdapterDownRule } from "./evaluators/ad
 export const alertRuleRegistry = {
     worker_stale: {
         parse: parseWorkerStaleConfig,
-        evaluate: evaluateWorkerStaleRule,
+        evaluate: evaluateWorkerStaleRule
     },
     outbox_backlog: {
         parse: parseOutboxBacklogConfig,
-        evaluate: evaluateOutboxBacklogRule,
+        evaluate: evaluateOutboxBacklogRule
     },
     bot_down: {
         parse: parseBotDownConfig,
-        evaluate: evaluateBotDownRule,
+        evaluate: evaluateBotDownRule
     },
     access_event_lag: {
         parse: parseAccessEventLagConfig,
-        evaluate: evaluateAccessEventLagRule,
+        evaluate: evaluateAccessEventLagRule
     },
     error_spike: {
         parse: parseErrorSpikeConfig,
-        evaluate: evaluateErrorSpikeRule,
+        evaluate: evaluateErrorSpikeRule
     },
     device_service_down: {
         parse: parseDeviceServiceDownConfig,
-        evaluate: evaluateDeviceServiceDownRule,
+        evaluate: evaluateDeviceServiceDownRule
     },
     adapter_down: {
         parse: parseAdapterDownConfig,
-        evaluate: evaluateAdapterDownRule,
-    },
+        evaluate: evaluateAdapterDownRule
+    }
 } as const;
 
 export type AlertRuleType = keyof typeof alertRuleRegistry;

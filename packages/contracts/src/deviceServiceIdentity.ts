@@ -4,7 +4,7 @@ export const deviceServiceIdentityFindSchema = z.object({
     identityKey: z.string().min(1),
     identityValue: z.string().min(1),
     deviceId: z.string().min(1).optional(),
-    limit: z.coerce.number().int().positive().default(1).optional(),
+    limit: z.coerce.number().int().positive().default(1).optional()
 });
 
 export const deviceServiceIdentityMatchSchema = z.object({
@@ -17,13 +17,13 @@ export const deviceServiceIdentityMatchSchema = z.object({
     rawPayload: z.string().min(1).nullable().optional(),
     displayName: z.string().min(1).nullable().optional(),
     source: z.string().min(1).nullable().optional(),
-    userType: z.string().min(1).nullable().optional(),
+    userType: z.string().min(1).nullable().optional()
 });
 
 export const deviceServiceIdentityErrorSchema = z.object({
     adapterKey: z.string().min(1),
     deviceId: z.string().min(1),
-    message: z.string().min(1),
+    message: z.string().min(1)
 });
 
 export const deviceServiceIdentityFindResultSchema = z.object({
@@ -35,9 +35,9 @@ export const deviceServiceIdentityFindResultSchema = z.object({
         devicesScanned: z.number().int().nonnegative(),
         devicesEligible: z.number().int().nonnegative(),
         requestsSent: z.number().int().nonnegative(),
-        errors: z.number().int().nonnegative(),
+        errors: z.number().int().nonnegative()
     }),
-    errors: z.array(deviceServiceIdentityErrorSchema),
+    errors: z.array(deviceServiceIdentityErrorSchema)
 });
 
 export type DeviceServiceIdentityFindDto = z.infer<typeof deviceServiceIdentityFindSchema>;

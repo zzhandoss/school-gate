@@ -1,6 +1,6 @@
 ﻿import type {
     AccessEventsRetentionService,
-    AccessEventsRetentionServiceDeps,
+    AccessEventsRetentionServiceDeps
 } from "./accessEventsRetention.types.js";
 
 export function createAccessEventsRetentionService(
@@ -10,7 +10,7 @@ export function createAccessEventsRetentionService(
         withTx(tx: unknown) {
             return createAccessEventsRetentionService({
                 ...deps,
-                accessEventsRetentionRepo: deps.accessEventsRetentionRepo.withTx(tx),
+                accessEventsRetentionRepo: deps.accessEventsRetentionRepo.withTx(tx)
             });
         },
 
@@ -18,7 +18,7 @@ export function createAccessEventsRetentionService(
 
         deleteTerminalBefore(input) {
             return deps.accessEventsRetentionRepo.deleteTerminalBefore(input);
-        },
+        }
     };
 }
 

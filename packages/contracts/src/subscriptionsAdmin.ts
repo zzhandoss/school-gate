@@ -10,12 +10,12 @@ export const subscriptionAdminSchema = z.object({
         id: z.string().min(1),
         iin: z.string().min(1),
         firstName: z.string().nullable(),
-        lastName: z.string().nullable(),
+        lastName: z.string().nullable()
     }),
     parent: z.object({
         tgUserId: z.string().min(1),
-        chatId: z.string().min(1),
-    }),
+        chatId: z.string().min(1)
+    })
 });
 
 export const listSubscriptionsQuerySchema = z.object({
@@ -23,16 +23,16 @@ export const listSubscriptionsQuerySchema = z.object({
     offset: z.coerce.number().int().nonnegative().default(0),
     personId: z.string().min(1).optional(),
     tgUserId: z.string().min(1).optional(),
-    onlyActive: z.coerce.boolean().optional(),
+    onlyActive: z.coerce.boolean().optional()
 });
 
 export const listSubscriptionsResultSchema = z.object({
-    subscriptions: z.array(subscriptionAdminSchema),
+    subscriptions: z.array(subscriptionAdminSchema)
 });
 
 export const subscriptionActionResultSchema = z.object({
     subscriptionId: z.string().min(1),
-    isActive: z.boolean(),
+    isActive: z.boolean()
 });
 
 export type SubscriptionAdminDto = z.infer<typeof subscriptionAdminSchema>;

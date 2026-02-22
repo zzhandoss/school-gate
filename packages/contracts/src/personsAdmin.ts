@@ -7,18 +7,18 @@ export const personAdminSchema = z.object({
     hasDeviceIdentities: z.boolean().optional(),
     firstName: z.string().min(1).nullable(),
     lastName: z.string().min(1).nullable(),
-    createdAt: z.string().min(1),
+    createdAt: z.string().min(1)
 });
 
 export const listPersonsQuerySchema = z.object({
     iin: z.string().regex(/^\d{0,12}$/).optional(),
     query: z.string().trim().min(1).max(128).optional(),
     limit: z.coerce.number().int().positive().max(200).default(50),
-    offset: z.coerce.number().int().nonnegative().default(0),
+    offset: z.coerce.number().int().nonnegative().default(0)
 });
 
 export const searchPersonsByIinResultSchema = z.object({
-    persons: z.array(personAdminSchema),
+    persons: z.array(personAdminSchema)
 });
 
 export const listPersonsResultSchema = z.object({
@@ -26,24 +26,24 @@ export const listPersonsResultSchema = z.object({
     page: z.object({
         limit: z.number().int().positive(),
         offset: z.number().int().nonnegative(),
-        total: z.number().int().nonnegative(),
-    }),
+        total: z.number().int().nonnegative()
+    })
 });
 
 export const getPersonResultSchema = z.object({
-    person: personAdminSchema,
+    person: personAdminSchema
 });
 
 export const createPersonSchema = z.object({
     iin: z.string().regex(/^\d{12}$/),
     firstName: z.string().trim().min(1).max(128).nullable().optional(),
-    lastName: z.string().trim().min(1).max(128).nullable().optional(),
+    lastName: z.string().trim().min(1).max(128).nullable().optional()
 });
 
 export const updatePersonSchema = z.object({
     iin: z.string().regex(/^\d{12}$/).optional(),
     firstName: z.string().trim().min(1).max(128).nullable().optional(),
-    lastName: z.string().trim().min(1).max(128).nullable().optional(),
+    lastName: z.string().trim().min(1).max(128).nullable().optional()
 });
 
 export const personIdentityAdminSchema = z.object({
@@ -51,25 +51,25 @@ export const personIdentityAdminSchema = z.object({
     personId: z.string().min(1),
     deviceId: z.string().min(1),
     terminalPersonId: z.string().min(1),
-    createdAt: z.string().min(1),
+    createdAt: z.string().min(1)
 });
 
 export const listPersonIdentitiesResultSchema = z.object({
-    identities: z.array(personIdentityAdminSchema),
+    identities: z.array(personIdentityAdminSchema)
 });
 
 export const createPersonIdentitySchema = z.object({
     deviceId: z.string().min(1),
-    terminalPersonId: z.string().min(1),
+    terminalPersonId: z.string().min(1)
 });
 
 export const updatePersonIdentitySchema = z.object({
     deviceId: z.string().min(1),
-    terminalPersonId: z.string().min(1),
+    terminalPersonId: z.string().min(1)
 });
 
 export const previewPersonAutoIdentitiesByIinSchema = z.object({
-    iin: z.string().regex(/^\d{12}$/),
+    iin: z.string().regex(/^\d{12}$/)
 });
 
 export const personAutoIdentityMatchSchema = z.object({
@@ -83,7 +83,7 @@ export const personAutoIdentityMatchSchema = z.object({
     displayName: z.string().min(1).nullable().optional(),
     source: z.string().min(1).nullable().optional(),
     userType: z.string().min(1).nullable().optional(),
-    alreadyLinked: z.boolean(),
+    alreadyLinked: z.boolean()
 });
 
 export const personAutoIdentityDiagnosticsSchema = z.object({
@@ -91,13 +91,13 @@ export const personAutoIdentityDiagnosticsSchema = z.object({
     devicesScanned: z.number().int().nonnegative(),
     devicesEligible: z.number().int().nonnegative(),
     requestsSent: z.number().int().nonnegative(),
-    errors: z.number().int().nonnegative(),
+    errors: z.number().int().nonnegative()
 });
 
 export const personAutoIdentityErrorSchema = z.object({
     adapterKey: z.string().min(1),
     deviceId: z.string().min(1),
-    message: z.string().min(1),
+    message: z.string().min(1)
 });
 
 export const previewPersonAutoIdentitiesResultSchema = z.object({
@@ -106,7 +106,7 @@ export const previewPersonAutoIdentitiesResultSchema = z.object({
     identityValue: z.string().min(1),
     matches: z.array(personAutoIdentityMatchSchema),
     diagnostics: personAutoIdentityDiagnosticsSchema,
-    errors: z.array(personAutoIdentityErrorSchema),
+    errors: z.array(personAutoIdentityErrorSchema)
 });
 
 export const previewPersonAutoIdentitiesByIinResultSchema = z.object({
@@ -115,7 +115,7 @@ export const previewPersonAutoIdentitiesByIinResultSchema = z.object({
     identityValue: z.string().min(1),
     matches: z.array(personAutoIdentityMatchSchema),
     diagnostics: personAutoIdentityDiagnosticsSchema,
-    errors: z.array(personAutoIdentityErrorSchema),
+    errors: z.array(personAutoIdentityErrorSchema)
 });
 
 export const applyPersonAutoIdentitiesSchema = z.object({
@@ -123,10 +123,10 @@ export const applyPersonAutoIdentitiesSchema = z.object({
         .array(
             z.object({
                 deviceId: z.string().min(1),
-                terminalPersonId: z.string().min(1),
+                terminalPersonId: z.string().min(1)
             })
         )
-        .min(1),
+        .min(1)
 });
 
 export const applyPersonAutoIdentitiesResultSchema = z.object({
@@ -141,9 +141,9 @@ export const applyPersonAutoIdentitiesResultSchema = z.object({
             deviceId: z.string().min(1),
             terminalPersonId: z.string().min(1),
             status: z.enum(["linked", "already_linked", "conflict", "error"]),
-            message: z.string().min(1).nullable().optional(),
+            message: z.string().min(1).nullable().optional()
         })
-    ),
+    )
 });
 
 export type PersonAdminDto = z.infer<typeof personAdminSchema>;

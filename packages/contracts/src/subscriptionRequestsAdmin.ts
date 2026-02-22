@@ -14,7 +14,7 @@ export const subscriptionRequestAdminSchema = z.object({
     resolvedAt: z.string().datetime().nullable(),
     createdAt: z.string().datetime(),
     reviewedAt: z.string().datetime().nullable(),
-    reviewedBy: z.string().min(1).nullable(),
+    reviewedBy: z.string().min(1).nullable()
 });
 
 export const listPendingSubscriptionRequestsQuerySchema = z.object({
@@ -22,7 +22,7 @@ export const listPendingSubscriptionRequestsQuerySchema = z.object({
     offset: nonNegativeInt.optional(),
     status: z.enum(["all", "pending", "approved", "rejected", "not_pending"]).optional(),
     only: z.enum(["all", "ready_for_review", "needs_person", "new"]).optional(),
-    order: z.enum(["oldest", "newest"]).optional(),
+    order: z.enum(["oldest", "newest"]).optional()
 });
 
 export const listPendingSubscriptionRequestsResultSchema = z.object({
@@ -30,19 +30,19 @@ export const listPendingSubscriptionRequestsResultSchema = z.object({
     page: z.object({
         limit: positiveInt,
         offset: nonNegativeInt,
-        total: nonNegativeInt,
-    }),
+        total: nonNegativeInt
+    })
 });
 
 export const reviewSubscriptionRequestSchema = z.object({
     decision: z.enum(["approve", "reject"]),
-    adminTgUserId: z.string().min(1),
+    adminTgUserId: z.string().min(1)
 });
 
 export const reviewSubscriptionRequestResultSchema = z.object({
     requestId: z.string().min(1),
     status: z.enum(["approved", "rejected"]),
-    personId: z.string().min(1).nullable(),
+    personId: z.string().min(1).nullable()
 });
 
 export const resolveSubscriptionRequestPersonSchema = z.object({

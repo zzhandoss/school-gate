@@ -5,7 +5,7 @@ import {
     getCoreDbFile,
     getMonitoringConfig,
     getMonitoringOpsConfig,
-    loadEnv,
+    loadEnv
 } from "@school-gate/config";
 import {
     createCaptureMonitoringSnapshotFlow,
@@ -14,16 +14,11 @@ import {
 } from "@school-gate/core";
 import { createMonitoringRepo } from "@school-gate/infra";
 import { createMonitoringSnapshotsRepo } from "@school-gate/infra";
-import { createAlertEventsRepo } from "@school-gate/infra";
-import { createAlertRulesRepo } from "@school-gate/infra";
-import { createAlertSubscriptionsRepo } from "@school-gate/infra";
 import { createWorkerHeartbeatsRepo } from "@school-gate/infra";
-import { createOutbox } from "@school-gate/infra";
 import {
     createDeviceServiceMonitoringHttpClient,
-    createMonitoringComponentsProvider,
+    createMonitoringComponentsProvider
 } from "@school-gate/infra";
-import { createUnitOfWork } from "@school-gate/infra";
 import { createHeartbeatWriter } from "../heartbeat.js";
 import { createWorkerLogger } from "../logger.js";
 import { loadRuntimeSettings } from "../runtimeSettings.js";
@@ -57,28 +52,28 @@ async function main() {
             {
                 componentId: "device-service",
                 url: `${deviceServiceBaseUrl}/health`,
-                timeoutMs: opsCfg.httpTimeoutMs,
+                timeoutMs: opsCfg.httpTimeoutMs
             },
             {
                 componentId: "bot",
                 url: `${botBaseUrl}/api/health`,
                 timeoutMs: opsCfg.httpTimeoutMs,
-                headers: { authorization: `Bearer ${botClientCfg.internalToken}` },
-            },
+                headers: { authorization: `Bearer ${botClientCfg.internalToken}` }
+            }
         ],
         deviceServiceClient: createDeviceServiceMonitoringHttpClient({
             baseUrl: opsCfg.deviceServiceUrl,
             token: opsCfg.deviceServiceToken,
-            timeoutMs: opsCfg.httpTimeoutMs,
+            timeoutMs: opsCfg.httpTimeoutMs
         }),
-        clock: clock.now,
+        clock: clock.now
     });
 
     const monitoringService = createMonitoringService({
         monitoringRepo: createMonitoringRepo(client.db),
         componentsProvider,
         clock,
-        workerTtlMs: monitoringCfg.workerTtlMs,
+        workerTtlMs: monitoringCfg.workerTtlMs
     });
 
     const snapshotsRepo = createMonitoringSnapshotsRepo(client.db);
@@ -89,7 +84,7 @@ async function main() {
     const captureSnapshot = createCaptureMonitoringSnapshotFlow({
         monitoringService,
         snapshotsService: monitoringSnapshotService,
-        idGen: { nextId: () => crypto.randomUUID() },
+        idGen: { nextId: () => crypto.randomUUID() }
     });
 
     const processAlerts = processMonitoringAlerts(client.db, idGen, clock);
@@ -100,8 +95,8 @@ async function main() {
         clock,
         baseMeta: {
             intervalMs: opsCfg.snapshotIntervalMs,
-            retentionDays: opsCfg.snapshotRetentionDays,
-        },
+            retentionDays: opsCfg.snapshotRetentionDays
+        }
     });
     heartbeat.onStart();
 
@@ -117,13 +112,13 @@ async function main() {
             const record = await captureSnapshot();
             const retentionMs = opsCfg.snapshotRetentionDays * 24 * 60 * 60 * 1000;
             const deleted = monitoringSnapshotService.deleteOlderThan({
-                before: new Date(record.createdAt.getTime() - retentionMs),
+                before: new Date(record.createdAt.getTime() - retentionMs)
             });
             const recent = snapshotsRepo.list({ limit: 2 });
             const previous = recent.find((entry) => entry.id !== record.id);
             const alertsResult = await processAlerts({
                 snapshot: record,
-                previousSnapshot: previous,
+                previousSnapshot: previous
             });
             heartbeat.onSuccess({ snapshotId: record.id, deleted, alerts: alertsResult });
             logger.info(

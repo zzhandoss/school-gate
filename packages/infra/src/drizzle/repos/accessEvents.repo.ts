@@ -1,7 +1,7 @@
 import { and, asc, desc, eq, gte, inArray, isNull, like, lte, lt, or, sql } from "drizzle-orm";
 import { accessEvents } from "@school-gate/db/schema";
 import type { Db } from "@school-gate/db/drizzle";
-import { AccessEvent, AccessEventsRepo } from "@school-gate/core";
+import type { AccessEvent, AccessEventsRepo } from "@school-gate/core";
 
 function toDate(v: unknown): Date {
     // drizzle sqlite timestamp mode returns Date already, but пусть будет безопасно
@@ -124,7 +124,7 @@ export function createAccessEventsRepo(db: Db): AccessEventsRepo {
                     status: "PROCESSING",
                     attempts: sql`${accessEvents.attempts} + 1`,
                     processingAt: now,
-                    processingBy,
+                    processingBy
                 })
                 .where(and(inArray(accessEvents.id, ids), eligible));
 
@@ -155,7 +155,7 @@ export function createAccessEventsRepo(db: Db): AccessEventsRepo {
                     status: "PROCESSING",
                     attempts: sql`${accessEvents.attempts} + 1`,
                     processingAt: now,
-                    processingBy,
+                    processingBy
                 })
                 .where(eligible);
 
@@ -177,7 +177,7 @@ export function createAccessEventsRepo(db: Db): AccessEventsRepo {
                     nextAttemptAt: null,
                     processingAt: null,
                     processingBy: null,
-                    lastError: null,
+                    lastError: null
                 })
                 .where(eq(accessEvents.id, id));
         },
@@ -191,7 +191,7 @@ export function createAccessEventsRepo(db: Db): AccessEventsRepo {
                     nextAttemptAt: null,
                     processingAt: null,
                     processingBy: null,
-                    lastError: null,
+                    lastError: null
                 })
                 .where(eq(accessEvents.id, id))
                 .run();
@@ -203,7 +203,7 @@ export function createAccessEventsRepo(db: Db): AccessEventsRepo {
                 processingAt: null,
                 processingBy: null,
                 nextAttemptAt: null,
-                lastError: null,
+                lastError: null
             }).where(eq(accessEvents.id, id));
         },
 
@@ -217,7 +217,7 @@ export function createAccessEventsRepo(db: Db): AccessEventsRepo {
                     lastError: error,
                     nextAttemptAt: nextAttemptAtValue,
                     processingAt: null,
-                    processingBy: null,
+                    processingBy: null
                 })
                 .where(eq(accessEvents.id, id));
         },
@@ -244,7 +244,7 @@ export function createAccessEventsRepo(db: Db): AccessEventsRepo {
                     nextAttemptAt: null,
                     processingAt: null,
                     processingBy: null,
-                    lastError: null,
+                    lastError: null
                 })
                 .where(
                     and(
@@ -271,7 +271,7 @@ export function createAccessEventsRepo(db: Db): AccessEventsRepo {
 
         withTx(tx) {
             return createAccessEventsRepo(tx as Db);
-        },
+        }
 
     };
 }

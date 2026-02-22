@@ -46,6 +46,6 @@ export function createInlineAccessEventQueue(deps: {
         },
         inFlight() {
             return active;
-        },
+        }
     };
 }

@@ -63,7 +63,7 @@ export async function collectSnapshot(input: {
         monitoringRepo: input.monitoringRepo,
         componentsProvider: input.componentsProvider,
         workerTtlMs: input.workerTtlMs,
-        workerStatusResolver: input.workerStatusResolver,
+        workerStatusResolver: input.workerStatusResolver
     };
 
     const slices = await Promise.all(

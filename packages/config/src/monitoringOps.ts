@@ -12,7 +12,7 @@ const monitoringOpsSchema = z.object({
     MONITORING_DEVICE_SERVICE_URL: urlSchema.default("http://localhost:4010"),
     MONITORING_BOT_URL: urlSchema.default("http://localhost:4100"),
     DEVICE_SERVICE_INTERNAL_TOKEN: z.string().min(1),
-    MONITORING_DEVICE_TTL_MS: z.coerce.number().int().positive().default(5 * 60 * 1000),
+    MONITORING_DEVICE_TTL_MS: z.coerce.number().int().positive().default(5 * 60 * 1000)
 });
 
 export type MonitoringOpsConfig = {
@@ -36,6 +36,6 @@ export function getMonitoringOpsConfig(): MonitoringOpsConfig {
         deviceServiceUrl: parsed.MONITORING_DEVICE_SERVICE_URL,
         botUrl: parsed.MONITORING_BOT_URL,
         deviceServiceToken: parsed.DEVICE_SERVICE_INTERNAL_TOKEN,
-        deviceTtlMs: parsed.MONITORING_DEVICE_TTL_MS,
+        deviceTtlMs: parsed.MONITORING_DEVICE_TTL_MS
     };
 }

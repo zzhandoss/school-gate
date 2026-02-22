@@ -1,39 +1,39 @@
-import { useSyncExternalStore } from 'react'
+import { useSyncExternalStore } from "react";
 
-import type { SessionState } from './types'
+import type { SessionState } from "./types";
 
-type Listener = () => void
+type Listener = () => void;
 
-let currentSession: SessionState | null = null
-const listeners = new Set<Listener>()
+let currentSession: SessionState | null = null;
+const listeners = new Set<Listener>();
 
 function notify() {
-  for (const listener of listeners) {
-    listener()
-  }
+    for (const listener of listeners) {
+        listener();
+    }
 }
 
 export function getSession() {
-  return currentSession
+    return currentSession;
 }
 
 export function setSession(session: SessionState) {
-  currentSession = session
-  notify()
+    currentSession = session;
+    notify();
 }
 
 export function clearSession() {
-  currentSession = null
-  notify()
+    currentSession = null;
+    notify();
 }
 
 export function subscribeSession(listener: Listener) {
-  listeners.add(listener)
-  return () => {
-    listeners.delete(listener)
-  }
+    listeners.add(listener);
+    return () => {
+        listeners.delete(listener);
+    };
 }
 
 export function useSession() {
-  return useSyncExternalStore(subscribeSession, getSession, () => null)
+    return useSyncExternalStore(subscribeSession, getSession, () => null);
 }

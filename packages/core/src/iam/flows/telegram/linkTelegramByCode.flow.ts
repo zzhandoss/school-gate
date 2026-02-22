@@ -4,7 +4,7 @@ import {
     AdminTgLinkExpiredError,
     AdminTgLinkNotFoundError,
     AdminTgLinkUsedError,
-    AdminTgCodePurposeMismatchError,
+    AdminTgCodePurposeMismatchError
 } from "../../../utils/errors.js";
 import type { LinkTelegramByCodeDeps, LinkTelegramByCodeFlow } from "./linkTelegramByCode.types.js";
 
@@ -33,7 +33,7 @@ export function createLinkTelegramByCodeFlow(deps: LinkTelegramByCodeDeps): Link
         await deps.adminsService.setTgUserId({
             adminId: admin.id,
             tgUserId: input.tgUserId,
-            updatedAt: now,
+            updatedAt: now
         });
 
         await deps.adminTgCodesService.markUsed({ codeHash, usedAt: now });
@@ -46,7 +46,7 @@ export function createLinkTelegramByCodeFlow(deps: LinkTelegramByCodeDeps): Link
             entityType: "admin",
             entityId: admin.id,
             at: now,
-            meta: { tgUserId: input.tgUserId },
+            meta: { tgUserId: input.tgUserId }
         });
 
         return { adminId: admin.id };

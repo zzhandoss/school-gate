@@ -19,7 +19,7 @@ export function createRequestPasswordResetFlow(deps: RequestPasswordResetDeps): 
             adminId: admin.id,
             expiresAt: input.expiresAt,
             usedAt: null,
-            createdAt,
+            createdAt
         });
 
         enqueueAuditRequested({
@@ -30,7 +30,7 @@ export function createRequestPasswordResetFlow(deps: RequestPasswordResetDeps): 
             entityType: "admin",
             entityId: admin.id,
             at: createdAt,
-            meta: { expiresAt: input.expiresAt.toISOString() },
+            meta: { expiresAt: input.expiresAt.toISOString() }
         });
 
         return { token };

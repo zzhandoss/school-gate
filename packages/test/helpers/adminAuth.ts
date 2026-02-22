@@ -11,11 +11,11 @@ export function createAllowAllAdminAuth(): AdminAuth {
             c.set("admin", {
                 adminId: "admin-1",
                 roleId: "role-1",
-                permissions: ["admin.manage"],
+                permissions: ["admin.manage"]
             });
             return next();
         },
-        requirePermissions: () => async (_c, next) => next(),
+        requirePermissions: () => async (_c, next) => next()
     };
 }
 
@@ -115,8 +115,8 @@ export function createStubAdminsHandlers(): AdminsModule {
         setRole: async () => {},
         createPasswordReset: async () => ({
             token: "reset-token",
-            expiresAt: new Date("2026-01-01T00:00:00.000Z"),
-        }),
+            expiresAt: new Date("2026-01-01T00:00:00.000Z")
+        })
     };
 }
 
@@ -124,7 +124,7 @@ export function createStubSubscriptionsHandlers(): SubscriptionsModule {
     return {
         list: async () => [],
         activate: async () => true,
-        deactivate: async () => true,
+        deactivate: async () => true
     };
 }
 
@@ -137,7 +137,7 @@ export function createStubAuditLogsHandlers(): AuditLogsModule {
                 offset: input.offset,
                 total: 0
             }
-        }),
+        })
     };
 }
 
@@ -148,7 +148,7 @@ export function createStubAlertsHandlers(): AlertsModule {
         updateRule: async () => {},
         listSubscriptions: async () => [],
         setSubscription: async () => {},
-        listEvents: async () => [],
+        listEvents: async () => []
     };
 }
 
