@@ -1,0 +1,21 @@
+{
+  "name": "@school-gate/core",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./usecases": {
+      "import": "./dist/usecases/index.js",
+      "types": "./dist/usecases/index.d.ts"
+    }
+  },
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsc -b tsconfig.json --verbose",
+    "build:watch": "tsc -b tsconfig.json --watch"
+  }
+}

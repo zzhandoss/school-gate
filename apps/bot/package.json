@@ -1,0 +1,21 @@
+{
+  "name": "@school-gate/bot",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "set NODE_ENV=development&& tsx src/main.ts",
+    "start": "node dist/main.js",
+    "build": "tsc -p tsconfig.json",
+    "build:watch": "tsc -p tsconfig.json --watch"
+  },
+  "dependencies": {
+    "@hono/node-server": "^1.19.9",
+    "@school-gate/config": "workspace:*",
+    "@school-gate/core": "workspace:*",
+    "@school-gate/db": "workspace:*",
+    "@school-gate/infra": "workspace:*",
+    "hono": "^4.11.6",
+    "telegraf": "^4.16.3"
+  }
+}

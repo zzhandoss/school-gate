@@ -1,0 +1,14 @@
+[Unit]
+Description=School Gate Device Service
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/school-gate/current
+EnvironmentFile=/opt/school-gate/current/.env
+ExecStart=/usr/bin/pnpm start:device-service
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

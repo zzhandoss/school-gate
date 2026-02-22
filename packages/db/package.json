@@ -1,0 +1,26 @@
+{
+  "name": "@school-gate/db",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "dependencies": {
+    "better-sqlite3": "^12.6.2",
+    "drizzle-orm": "^0.45.1"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/drizzle.js"
+    },
+    "./drizzle": {
+      "import": "./dist/drizzle.js"
+    },
+    "./schema": {
+      "import": "./dist/schema/index.js"
+    }
+  },
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsc -b tsconfig.json",
+    "build:watch": "tsc -b tsconfig.json --watch"
+  }
+}

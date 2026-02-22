@@ -1,0 +1,3 @@
+display_name: Backend BC Architecture
+short_description: Backend business-logic BC rules
+default_prompt: Apply backend BC architecture rules for services, repos, UCs, and read-only query ports. Do not apply to frontend or library-only work.

@@ -1,0 +1,14 @@
+{
+  "name": "@school-gate/test",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "dependencies": {
+    "@school-gate/infra": "workspace: *",
+    "@school-gate/core": "workspace: *",
+    "@school-gate/config": "workspace: *",
+    "@school-gate/contracts": "workspace: *",
+    "@school-gate/db": "workspace: *",
+    "@school-gate/device": "workspace: *"
+  }
+}

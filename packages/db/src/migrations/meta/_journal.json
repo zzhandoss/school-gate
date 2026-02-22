@@ -1,0 +1,13 @@
+{
+  "version": "7",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "6",
+      "when": 1770387437911,
+      "tag": "0000_whole_senator_kelly",
+      "breakpoints": true
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+[Unit]
+Description=School Gate API
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/school-gate/current
+EnvironmentFile=/opt/school-gate/current/.env
+ExecStart=/usr/bin/pnpm --filter @school-gate/api start
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

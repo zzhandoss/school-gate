@@ -1,0 +1,39 @@
+# Environment and secrets
+.env
+.env.local
+.env.*.local
+
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+coverage/
+.output/
+.tanstack/
+apps/admin-ui/.output/
+
+# Runtime data
+data/*.db
+data/*.sqlite
+data/logs/
+
+# Tooling and IDE
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Temporary files
+*.tmp
+*.temp
+*.log
+pnpm-debug.log*
+npm-debug.log*
+yarn-error.log*
+
+# Release artifacts
+release/
+artifacts/
+*.zip
+SHA256SUMS

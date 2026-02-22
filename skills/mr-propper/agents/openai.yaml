@@ -1,0 +1,4 @@
+interface:
+  display_name: "Mr Propper"
+  short_description: "Make code cleaner, clearer, and testable"
+  default_prompt: "Use $mr-propper to improve readability, naming, SRP, and testability."

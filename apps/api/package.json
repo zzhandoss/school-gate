@@ -1,0 +1,26 @@
+{
+  "name": "@school-gate/api",
+  "type": "module",
+  "scripts": {
+    "dev": "set NODE_ENV=development&& tsx watch src/index.ts",
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/index.js"
+  },
+  "dependencies": {
+    "@hono/node-server": "^1.19.9",
+    "@hono/zod-openapi": "^1.2.1",
+    "@scalar/hono-api-reference": "^0.9.40",
+    "@school-gate/config": "workspace:*",
+    "@school-gate/contracts": "workspace:*",
+    "@school-gate/core": "workspace:*",
+    "@school-gate/db": "workspace:*",
+    "@school-gate/infra": "workspace:*",
+    "hono": "^4.11.6"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.17",
+    "pino-pretty": "^13.1.3",
+    "tsx": "^4.7.1",
+    "typescript": "^5.8.3"
+  }
+}

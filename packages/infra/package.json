@@ -1,0 +1,29 @@
+{
+  "name": "@school-gate/infra",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "dependencies": {
+    "drizzle-orm": "^0.45.1",
+    "@school-gate/core": "workspace:*",
+    "@school-gate/config": "workspace:*",
+    "@school-gate/db": "workspace:*"
+  },
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./admin/runtimeSettings.service": {
+      "import": "./dist/admin/runtimeSettings.service.js",
+      "types": "./dist/admin/runtimeSettings.service.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "build:watch": "tsc -p tsconfig.json --watch"
+  }
+}

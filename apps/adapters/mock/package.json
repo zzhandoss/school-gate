@@ -1,0 +1,16 @@
+{
+  "name": "@school-gate/adapter-mock",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx ./src/index.ts",
+    "dev:all": "pnpm --filter @school-gate/adapter-mock dev",
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/index.js",
+    "start:all": "pnpm --filter @school-gate/adapter-mock start"
+  },
+  "dependencies": {
+    "@school-gate/config": "workspace:*"
+  }
+}

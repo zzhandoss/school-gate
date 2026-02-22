@@ -1,0 +1,40 @@
+{
+  "name": "@school-gate/device",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "exports": {
+    "./core/ports/*": {
+      "import": "./dist/core/src/ports/*.js"
+    },
+    "./core/repos/*": {
+      "import": "./dist/core/src/repos/*.js"
+    },
+    "./core/usecases/*": {
+      "import": "./dist/core/src/usecases/*.js"
+    },
+    "./infra/drizzle/*": {
+      "import": "./dist/infra/src/drizzle/*.js"
+    },
+    "./infra/drizzle/repos/*": {
+      "import": "./dist/infra/src/drizzle/repos/*.js"
+    },
+    "./infra/http/*": {
+      "import": "./dist/infra/src/http/*.js"
+    },
+    "./infra/identity/*": {
+      "import": "./dist/infra/src/identity/*.js"
+    },
+    "./device-db/*": {
+      "import": "./dist/device-db/src/*.js"
+    },
+    "./device-db/schema": {
+      "import": "./dist/device-db/src/schema/index.js"
+    }
+  },
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsc -b tsconfig.json",
+    "build:watch": "tsc -b tsconfig.json -w"
+  }
+}

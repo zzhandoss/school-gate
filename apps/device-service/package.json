@@ -1,0 +1,33 @@
+{
+  "name": "@school-gate/device-service",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev:api": "set NODE_ENV=development&& tsx src/api/main.ts",
+    "dev:outbox": "set NODE_ENV=development&& tsx src/outbox/main.ts",
+    "dev:all": "concurrently -n api,outbox -c blue,green \"pnpm --filter @school-gate/device-service dev:api\" \"pnpm --filter @school-gate/device-service dev:outbox\"",
+    "start:api": "node dist/api/main.js",
+    "start:outbox": "node dist/outbox/main.js",
+    "start:all": "pnpm -C ../.. exec concurrently -n api,outbox -c blue,green \"pnpm --filter @school-gate/device-service start:api\" \"pnpm --filter @school-gate/device-service start:outbox\"",
+    "build": "tsc -p tsconfig.json",
+    "build:watch": "tsc -p tsconfig.json --watch"
+  },
+  "dependencies": {
+    "@hono/node-server": "^1.19.9",
+    "@hono/zod-openapi": "^1.2.1",
+    "@scalar/hono-api-reference": "^0.9.40",
+    "ajv": "^8.17.1",
+    "ajv-formats": "^3.0.1",
+    "hono": "^4.11.6",
+    "@school-gate/config": "workspace:*",
+    "@school-gate/contracts": "workspace:*",
+    "@school-gate/device": "workspace:*",
+    "@school-gate/infra": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.17",
+    "tsx": "^4.7.1",
+    "typescript": "^5.8.3"
+  }
+}
