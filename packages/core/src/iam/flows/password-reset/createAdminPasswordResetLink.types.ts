@@ -22,7 +22,7 @@ export type CreateAdminPasswordResetLinkFlow = (
 export type CreateAdminPasswordResetLinkDeps = {
     adminsService: AdminsService;
     passwordResetsService: PasswordResetsService;
-    outbox: OutboxRepo;
+    outbox?: OutboxRepo;
     tokenHasher: TokenHasher;
     idGen: IdGenerator;
     clock: Clock;

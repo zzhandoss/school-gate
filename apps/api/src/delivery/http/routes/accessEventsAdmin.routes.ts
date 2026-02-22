@@ -26,7 +26,7 @@ const limitSchema = z.object({
 
 export type AccessEventsAdminModule = {
     list?: (input: ListAccessEventsQueryDto) => Promise<ListAccessEventsResultDto>;
-    listUnmatched: (input: { limit: number }) => Promise<ListUnmatchedAccessEventsResultDto>;
+    listUnmatched: (input: { limit: number }) => Promise<ListUnmatchedAccessEventsResultDto | ListUnmatchedAccessEventsResultDto["events"]>;
     mapTerminalIdentity: (input: MapTerminalIdentityDto & { adminId?: string }) => Promise<{ status: "linked" | "already_linked"; updatedEvents: number }>;
 };
 
@@ -86,7 +86,13 @@ export function createAccessEventsAdminRoutes(input: { module: AccessEventsAdmin
             success: { schema: listUnmatchedAccessEventsResultSchema },
             security: [{ adminBearerAuth: [] }]
         }),
-        handler<unknown, z.infer<typeof limitSchema>>(({ query }) => input.module.listUnmatched({ limit: query.limit }))
+        handler<unknown, z.infer<typeof limitSchema>>(async ({ query }) => {
+            const result = await input.module.listUnmatched({ limit: query.limit });
+            if (Array.isArray(result)) {
+                return { events: result };
+            }
+            return result;
+        })
     );
 
     app.openapi(

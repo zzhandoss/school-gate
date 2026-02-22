@@ -24,7 +24,7 @@ export type CreateAdminInviteFlow = (input: CreateAdminInviteInput) => Promise<C
 export type CreateAdminInviteDeps = {
     rolesService: RolesService;
     adminInvitesService: AdminInvitesService;
-    outbox: OutboxRepo;
+    outbox?: OutboxRepo | undefined;
     tokenHasher: TokenHasher;
     idGen: IdGenerator;
     clock: Clock;

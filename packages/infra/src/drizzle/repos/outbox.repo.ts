@@ -84,3 +84,5 @@ export function createOutbox(db: Db): Outbox {
     };
 }
 
+export const createOutboxRepo = createOutbox;
+

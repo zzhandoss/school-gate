@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 
 import { AccessEventsMapPanel } from './access-events-map-panel'
 import { formatDateTime } from './access-events-format'
-import type { AccessEventItem } from '@/lib/access-events/types'
+import type { AccessEventItem, UnmatchedAccessEventItem } from '@/lib/access-events/types'
 import {
   accessEventStatusLabel,
   directionLabel
@@ -224,7 +224,7 @@ export function AccessEventsTable({ events, loading = false, canMap, onMapped }:
 
               <TableCell className="text-right">
                 {event.status === 'UNMATCHED' ? (
-                  <AccessEventsMapPanel event={event} canMap={canMap} onMapped={onMapped} />
+                  <AccessEventsMapPanel event={event as UnmatchedAccessEventItem} canMap={canMap} onMapped={onMapped} />
                 ) : (
                   <Tooltip>
                     <TooltipTrigger asChild>

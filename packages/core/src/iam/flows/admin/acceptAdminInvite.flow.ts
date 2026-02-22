@@ -59,16 +59,18 @@ export function createAcceptAdminInviteFlow(deps: AcceptAdminInviteDeps): Accept
 
         await deps.adminInvitesService.markUsed({ tokenHash, usedAt: now });
 
-        enqueueAuditRequested({
-            outbox: deps.outbox,
-            id: deps.idGen.nextId(),
-            actorId: `admin:${adminId}`,
-            action: "admin_invite_accepted",
-            entityType: "admin_invite",
-            entityId: tokenHash,
-            at: now,
-            meta: { adminId, roleId: invite.roleId, email }
-        });
+        if (deps.outbox) {
+            enqueueAuditRequested({
+                outbox: deps.outbox,
+                id: deps.idGen.nextId(),
+                actorId: `admin:${adminId}`,
+                action: "admin_invite_accepted",
+                entityType: "admin_invite",
+                entityId: tokenHash,
+                at: now,
+                meta: { adminId, roleId: invite.roleId, email }
+            });
+        }
 
         return { adminId, roleId: invite.roleId };
     };

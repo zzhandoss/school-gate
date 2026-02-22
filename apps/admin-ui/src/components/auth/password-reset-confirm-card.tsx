@@ -108,7 +108,6 @@ export function PasswordResetConfirmCard({ token }: PasswordResetConfirmCardProp
             <Input
               id="password"
               type="password"
-              name="new-password"
               autoComplete="new-password"
               {...form.register('password')}
             />
@@ -124,7 +123,6 @@ export function PasswordResetConfirmCard({ token }: PasswordResetConfirmCardProp
             <Input
               id="confirmPassword"
               type="password"
-              name="confirm-password"
               autoComplete="new-password"
               {...form.register('confirmPassword')}
             />

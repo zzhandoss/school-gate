@@ -246,3 +246,9 @@ This file provides a high-level overview of the project and the expected product
 [2026-02-17 20:48:25] - New feature: Implemented Admin UI i18n foundation with react-i18next (RU/EN), language detection + persistence, language switchers in app shell and settings, localized navigation/breadcrumb shell strings, localized fallback routes/pages, localized auth error mapping, and locale-aware date/time formatting helpers adopted by major format modules.
 
 [2026-02-17 22:11:36] - New feature: Admin UI i18n expansion: localized access-events, subscription-requests, and device-monitoring modules with enum label helpers, interpolation/plural keys, and validated build/tests.
+
+- Compatibility layer for legacy core test imports: added backward-compatible @school-gate/core/usecases/* and @school-gate/core/auth/* paths to keep historical suites runnable while new clean-architecture module layout is in place.
+[2026-02-23 02:22:10] - New feature: Stabilized workspace typecheck, restored broad test import compatibility, and reduced failing tests by adding legacy compatibility adapters for core usecases and test aliasing; remaining blockers are API/usecase regression failures causing 500s in test suites.
+
+- Production-readiness stabilization: compatibility layer + response normalization keep legacy modules/tests operable while preserving current API contracts, enabling stable CI quality gates for release prep.
+[2026-02-23 02:35:56] - New feature: Production-readiness stabilization: fixed legacy compatibility regressions, added backward-compatible HTTP response normalization, restored outbox/tx adapters, and achieved green lint/typecheck/test/build gates.

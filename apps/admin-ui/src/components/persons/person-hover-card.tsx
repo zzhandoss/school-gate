@@ -42,11 +42,11 @@ export function PersonHoverCard({ person, children, align = 'start' }: PersonHov
         {person.terminalPersonId !== undefined ? (
           <p className="text-muted-foreground">Terminal: {person.terminalPersonId ?? '-'}</p>
         ) : null}
-        <Button type="button" size="sm" variant="outline" asChild>
-          <Link to="/persons/$personId" params={{ personId: person.id }}>
+        <Link to="/persons/$personId" params={{ personId: person.id }}>
+          <Button type="button" size="sm" variant="outline">
             Open profile
-          </Link>
-        </Button>
+          </Button>
+        </Link>
       </HoverCardContent>
     </HoverCard>
   )

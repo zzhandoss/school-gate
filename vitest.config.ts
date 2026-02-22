@@ -39,6 +39,10 @@ export default defineConfig({
                 find: "@school-gate/device/device-db",
                 replacement: resolve(rootDir, "packages/device/device-db/src"),
             },
+            {
+                find: /^@\//,
+                replacement: resolve(rootDir, "apps/admin-ui/src") + "/",
+            },
         ],
     },
     test: {

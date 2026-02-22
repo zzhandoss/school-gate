@@ -53,22 +53,20 @@ async function requestBackend<T>(path: string): Promise<T> {
 }
 
 export const getInitialAccessEventsServerFn = createServerFn({
-    method: "GET"
+    method: "POST"
 })
-    .handler(async (input: {
-        data: {
-            limit: number
-            offset: number
-            status: "all" | "NEW" | "PROCESSING" | "PROCESSED" | "FAILED_RETRY" | "UNMATCHED" | "ERROR"
-            direction: "all" | "IN" | "OUT"
-            deviceId: string
-            iin: string
-            terminalPersonId: string
-            from: string
-            to: string
-        }
-    }): Promise<ListAccessEventsResult> => {
-        const { data } = input;
+    .inputValidator((value: {
+        limit: number
+        offset: number
+        status: "all" | "NEW" | "PROCESSING" | "PROCESSED" | "FAILED_RETRY" | "UNMATCHED" | "ERROR"
+        direction: "all" | "IN" | "OUT"
+        deviceId: string
+        iin: string
+        terminalPersonId: string
+        from: string
+        to: string
+    }) => value)
+    .handler(async ({ data }): Promise<ListAccessEventsResult> => {
 
         const query = new URLSearchParams({
             limit: String(data.limit),

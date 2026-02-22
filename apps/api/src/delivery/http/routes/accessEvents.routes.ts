@@ -18,7 +18,7 @@ import { defineRoute } from "../openapi/defineRoute.js";
 
 export type AccessEventsModule = {
     ingest: (input: AccessEventIngestInput) => Promise<AccessEventIngestResult>;
-    ingestBatch: (input: AccessEventIngestBatchInput) => Promise<{ results: Array<AccessEventIngestResult & { eventId: string }> }>;
+    ingestBatch?: (input: AccessEventIngestBatchInput) => Promise<{ results: Array<AccessEventIngestResult & { eventId: string }> }>;
 };
 
 export type AccessEventsRoutesInput = {
@@ -74,7 +74,21 @@ export function createAccessEventsRoutes(input: AccessEventsRoutesInput) {
             success: { schema: accessEventIngestBatchResultSchema },
             security: [{ ingestBearerAuth: [] }]
         }),
-        handler<AccessEventIngestBatchInput>(({ body }) => input.module.ingestBatch(body as AccessEventIngestBatchInput))
+        handler<AccessEventIngestBatchInput>(async ({ body }) => {
+            const inputBody = body as AccessEventIngestBatchInput;
+            if (input.module.ingestBatch) {
+                return input.module.ingestBatch(inputBody);
+            }
+
+            const results = await Promise.all(
+                inputBody.events.map(async (event) => ({
+                    ...(await input.module.ingest(event)),
+                    eventId: event.eventId
+                }))
+            );
+
+            return { results };
+        })
     );
 
     return app;

@@ -355,3 +355,9 @@ This file tracks the project's current status, including recent changes, current
 - [2026-02-23 01:28:59] - 📈 Progress update: Implemented production-readiness baseline with git bootstrap, release automation, changesets setup, and deployment/runbook scaffolding for Ubuntu 22.04 + Windows 10/11. Current blockers: first secure push to GitHub and first tag smoke test after quality-gate stabilization.
 
 - [2026-02-23 01:33:00] - 📈 Progress update: First secure push completed to https://github.com/zzhandoss/school-gate.git (main). Remaining P0 blocker: release smoke test on first vX.Y.Z tag after quality-gate stabilization.
+
+- [2026-02-23 02:22:10] - 🚀 Feature completed: Stabilized workspace typecheck, restored broad test import compatibility, and reduced failing tests by adding legacy compatibility adapters for core usecases and test aliasing; remaining blockers are API/usecase regression failures causing 500s in test suites.
+- [2026-02-23 02:22:10] - Current focus update: Eliminate remaining API/usecase regressions in test suites and finalize release smoke (P0-12) once pnpm test is green.
+
+- [2026-02-23 02:35:56] - 🚀 Feature completed: Production-readiness stabilization done; restored legacy compatibility paths, added Date-safe response normalization in HTTP handler, fixed legacy flow outbox optionality, and brought all quality gates to green (lint/typecheck/test/build).
+- [2026-02-23 02:35:56] - Current focus update: run tag-based release smoke (P0-12) and validate ZIP deploy/restart/health runbook on Windows/Linux baselines.

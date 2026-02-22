@@ -46,16 +46,18 @@ export function createCreateFirstAdminFlow(deps: CreateFirstAdminDeps): CreateFi
             updatedAt: now
         });
 
-        enqueueAuditRequested({
-            outbox: deps.outbox,
-            id: deps.idGen.nextId(),
-            actorId: "system:first_admin_bootstrap",
-            action: "first_admin_created",
-            entityType: "admin",
-            entityId: adminId,
-            at: now,
-            meta: { roleId, email }
-        });
+        if (deps.outbox) {
+            enqueueAuditRequested({
+                outbox: deps.outbox,
+                id: deps.idGen.nextId(),
+                actorId: "system:first_admin_bootstrap",
+                action: "first_admin_created",
+                entityType: "admin",
+                entityId: adminId,
+                at: now,
+                meta: { roleId, email }
+            });
+        }
 
         return { adminId, roleId };
     };

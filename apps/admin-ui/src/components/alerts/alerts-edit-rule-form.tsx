@@ -68,7 +68,7 @@ export function AlertsEditRuleForm({ rule, onUpdated, onClose }: AlertsEditRuleF
       adapterVendorKey
     })
     if ('error' in built) {
-      setError(built.error)
+      setError(built.error ?? 'Invalid rule config.')
       return
     }
 

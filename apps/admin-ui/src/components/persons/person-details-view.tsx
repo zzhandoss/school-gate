@@ -185,9 +185,11 @@ export function PersonDetailsView({ personId }: PersonDetailsViewProps) {
             <p className="text-sm text-muted-foreground">IIN: {person.iin}</p>
           </div>
           <div className="flex items-center gap-2">
-            <Button type="button" variant="outline" asChild>
-              <Link to="/persons">Back</Link>
-            </Button>
+            <Link to="/persons" search={{ limit: 20, offset: 0, iin: '', query: '' }}>
+              <Button type="button" variant="outline">
+                Back
+              </Button>
+            </Link>
             <PersonsUpsertPanel
               mode="edit"
               person={person}

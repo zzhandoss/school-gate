@@ -25,16 +25,18 @@ export function createCreateAdminInviteFlow(deps: CreateAdminInviteDeps): Create
             createdAt: now
         });
 
-        enqueueAuditRequested({
-            outbox: deps.outbox,
-            id: deps.idGen.nextId(),
-            actorId: input.createdBy,
-            action: "admin_invite_created",
-            entityType: "admin_invite",
-            entityId: tokenHash,
-            at: now,
-            meta: { roleId: input.roleId, email, expiresAt: input.expiresAt.toISOString() }
-        });
+        if (deps.outbox) {
+            enqueueAuditRequested({
+                outbox: deps.outbox,
+                id: deps.idGen.nextId(),
+                actorId: input.createdBy,
+                action: "admin_invite_created",
+                entityType: "admin_invite",
+                entityId: tokenHash,
+                at: now,
+                meta: { roleId: input.roleId, email, expiresAt: input.expiresAt.toISOString() }
+            });
+        }
 
         return { token, tokenHash, roleId: input.roleId, email, expiresAt: input.expiresAt };
     };

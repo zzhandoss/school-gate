@@ -246,3 +246,16 @@ This file tracks the project's progress using a task list format.
 - [2026-02-23 01:28:59] - Completed: Implemented production-readiness baseline: initialized git with remote, added CI/release workflows (source+prebuilt zip + SHA256SUMS), configured changesets, added cross-platform runbook and ops scripts, and created docs/production-readiness.md tracker with P0/P1 statuses and blockers.
 
 - [2026-02-23 01:33:00] - Completed: Performed first secure push to GitHub remote (main branch tracking origin/main), closing production-readiness tracker item P0-11.
+
+- [2026-02-23 02:22:10] - ✅ Completed: Stabilized workspace typecheck, restored broad test import compatibility, and reduced failing tests by adding legacy compatibility adapters for core usecases and test aliasing; remaining blockers are API/usecase regression failures causing 500s in test suites.
+
+## Next Steps (2026-02-23)
+- Diagnose common 500 root causes in API test suites (dmins, subscriptions, monitoring, udit-logs, ccess-events) and restore expected handler contracts.
+- Finish compatibility for legacy IAM/admin flows still requiring outbox in tests (cceptAdminInvite, password reset flow path wrappers).
+- Re-run pnpm test, then execute release smoke with a fresh tag.
+
+- [2026-02-23 02:35:56] - ✅ Completed: Production-readiness stabilization completed: legacy compatibility regressions fixed, backward-compatible HTTP response normalization added, outbox/tx adapters restored, and lint+typecheck+test+build are green.
+
+## Next Steps (2026-02-23)
+- Create and push fresh release tag vX.Y.Z, then verify GitHub Release artifacts (source zip + prebuilt zip + SHA256SUMS).
+- Execute ZIP-based deployment smoke checks on Windows/Linux targets and record evidence in runbook/tracker.

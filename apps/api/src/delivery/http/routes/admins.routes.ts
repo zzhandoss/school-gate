@@ -21,7 +21,7 @@ import { handler } from "../routing/route.js";
 import { defineRoute, okSchema } from "../openapi/defineRoute.js";
 
 export type AdminsModule = {
-    list: (input: { limit: number; offset: number }) => Promise<ListAdminsResultDto>;
+    list: (input: { limit: number; offset: number }) => Promise<ListAdminsResultDto | ListAdminsResultDto["admins"]>;
     setStatus: (input: { adminId: string; status: "active" | "disabled"; actorId?: string }) => Promise<void>;
     setRole: (input: { adminId: string; roleId: string; actorId?: string }) => Promise<void>;
     createPasswordReset: (input: { adminId: string; expiresAt: Date; actorId?: string }) => Promise<{ token: string; expiresAt: string }>;
@@ -52,7 +52,13 @@ export function createAdminsRoutes(input: { module: AdminsModule; auth: AdminAut
             success: { schema: listAdminsResultSchema },
             security: [{ adminBearerAuth: [] }]
         }),
-        handler<unknown, { limit: number; offset: number }>(({ query }) => input.module.list(query))
+        handler<unknown, { limit: number; offset: number }>(async ({ query }) => {
+            const result = await input.module.list(query);
+            if (Array.isArray(result)) {
+                return { admins: result };
+            }
+            return result;
+        })
     );
 
     app.openapi(

@@ -47,7 +47,7 @@ const identityParamsSchema = z.object({
 });
 
 export type PersonsModule = {
-    searchByIin: (input: { iin: string; limit: number }) => Promise<SearchPersonsByIinResultDto>;
+    searchByIin: (input: { iin: string; limit: number }) => Promise<SearchPersonsByIinResultDto | SearchPersonsByIinResultDto["persons"]>;
     list?: (input: z.infer<typeof listPersonsQuerySchema>) => Promise<ListPersonsResultDto>;
     getById?: (input: { personId: string }) => Promise<GetPersonResultDto>;
     create?: (input: CreatePersonDto) => Promise<GetPersonResultDto>;
@@ -102,13 +102,14 @@ export function createPersonsRoutes(input: { module: PersonsModule; auth: AdminA
                 iin: query.iin,
                 limit: query.limit + query.offset
             });
-            const pagePersons = data.persons.slice(query.offset, query.offset + query.limit);
+            const persons = Array.isArray(data) ? data : data.persons;
+            const pagePersons = persons.slice(query.offset, query.offset + query.limit);
             return {
                 persons: pagePersons,
                 page: {
                     limit: query.limit,
                     offset: query.offset,
-                    total: data.persons.length
+                    total: persons.length
                 }
             };
         })

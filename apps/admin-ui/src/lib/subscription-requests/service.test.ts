@@ -34,8 +34,10 @@ describe("subscription requests service", () => {
 
         expect(result.page).toEqual({ limit: 20, offset: 40, total: 100 });
         expect(fetchMock).toHaveBeenCalledTimes(1);
-        expect(fetchMock.mock.calls[0]?.[0]).toBe(
-            "http://localhost:3000/api/subscription-requests?limit=20&offset=40&status=not_pending&only=all&order=newest"
+        expect(fetchMock).toHaveBeenNthCalledWith(
+            1,
+            "http://localhost:3000/api/subscription-requests?limit=20&offset=40&status=not_pending&only=all&order=newest",
+            expect.any(Object)
         );
     });
 });

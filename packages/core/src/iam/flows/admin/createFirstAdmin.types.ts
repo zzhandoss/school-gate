@@ -21,7 +21,7 @@ export type CreateFirstAdminDeps = {
     adminsService: AdminsService;
     rolesService: RolesService;
     passwordHasher: PasswordHasher;
-    outbox: OutboxRepo;
+    outbox?: OutboxRepo;
     idGen: IdGenerator;
     clock: Clock;
 };

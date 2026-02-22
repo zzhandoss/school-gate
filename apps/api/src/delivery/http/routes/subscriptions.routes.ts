@@ -10,6 +10,7 @@ import {
 } from "@school-gate/contracts";
 import type { ApiEnv } from "../context.js";
 import type { AdminAuth } from "../middleware/adminAuth.js";
+import { HttpError } from "../errors/httpError.js";
 import { parseQuery } from "../middleware/parseQuery.js";
 import { requireAdmin } from "../middleware/requireAdmin.js";
 import { useResponse } from "../middleware/response.js";
@@ -17,9 +18,9 @@ import { handler } from "../routing/route.js";
 import { defineRoute } from "../openapi/defineRoute.js";
 
 export type SubscriptionsModule = {
-    list: (input: ListSubscriptionsQueryDto) => Promise<ListSubscriptionsResultDto>;
-    activate: (input: { subscriptionId: string; adminId: string }) => Promise<SubscriptionActionResultDto>;
-    deactivate: (input: { subscriptionId: string; adminId: string }) => Promise<SubscriptionActionResultDto>;
+    list: (input: ListSubscriptionsQueryDto) => Promise<ListSubscriptionsResultDto | ListSubscriptionsResultDto["subscriptions"]>;
+    activate: (input: { subscriptionId: string; adminId: string }) => Promise<SubscriptionActionResultDto | boolean>;
+    deactivate: (input: { subscriptionId: string; adminId: string }) => Promise<SubscriptionActionResultDto | boolean>;
 };
 
 export function createSubscriptionsRoutes(input: { module: SubscriptionsModule; auth: AdminAuth }) {
@@ -47,7 +48,13 @@ export function createSubscriptionsRoutes(input: { module: SubscriptionsModule; 
             success: { schema: listSubscriptionsResultSchema },
             security: [{ adminBearerAuth: [] }]
         }),
-        handler<unknown, ListSubscriptionsQueryDto>(({ query }) => input.module.list(query))
+        handler<unknown, ListSubscriptionsQueryDto>(async ({ query }) => {
+            const result = await input.module.list(query);
+            if (Array.isArray(result)) {
+                return { subscriptions: result };
+            }
+            return result;
+        })
     );
 
     app.openapi(
@@ -65,8 +72,28 @@ export function createSubscriptionsRoutes(input: { module: SubscriptionsModule; 
             success: { schema: subscriptionActionResultSchema },
             security: [{ adminBearerAuth: [] }]
         }),
-        handler<unknown, unknown, { subscriptionId: string }>(({ c, params }) => {
-            return input.module.activate({ subscriptionId: params.subscriptionId, adminId: c.get("adminId") as string });
+        handler<unknown, unknown, { subscriptionId: string }>(async ({ c, params }) => {
+            const result = await input.module.activate({
+                subscriptionId: params.subscriptionId,
+                adminId: c.get("adminId") as string
+            });
+
+            if (typeof result === "boolean") {
+                if (!result) {
+                    throw new HttpError({
+                        status: 404,
+                        code: "subscription_not_found",
+                        message: "Subscription not found"
+                    });
+                }
+
+                return {
+                    subscriptionId: params.subscriptionId,
+                    isActive: true
+                };
+            }
+
+            return result;
         })
     );
 
@@ -85,8 +112,28 @@ export function createSubscriptionsRoutes(input: { module: SubscriptionsModule; 
             success: { schema: subscriptionActionResultSchema },
             security: [{ adminBearerAuth: [] }]
         }),
-        handler<unknown, unknown, { subscriptionId: string }>(({ c, params }) => {
-            return input.module.deactivate({ subscriptionId: params.subscriptionId, adminId: c.get("adminId") as string });
+        handler<unknown, unknown, { subscriptionId: string }>(async ({ c, params }) => {
+            const result = await input.module.deactivate({
+                subscriptionId: params.subscriptionId,
+                adminId: c.get("adminId") as string
+            });
+
+            if (typeof result === "boolean") {
+                if (!result) {
+                    throw new HttpError({
+                        status: 404,
+                        code: "subscription_not_found",
+                        message: "Subscription not found"
+                    });
+                }
+
+                return {
+                    subscriptionId: params.subscriptionId,
+                    isActive: false
+                };
+            }
+
+            return result;
         })
     );
 

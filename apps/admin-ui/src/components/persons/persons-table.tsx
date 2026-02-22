@@ -38,7 +38,11 @@ export function PersonsTable({
           <h2 className="text-sm font-semibold">Persons</h2>
           <p className="text-xs text-muted-foreground">Manage person profiles and open identities page.</p>
         </div>
-        <PersonsUpsertPanel mode="create" canWrite={canWrite} onSubmit={onCreatePerson} />
+        <PersonsUpsertPanel
+          mode="create"
+          canWrite={canWrite}
+          onSubmit={(input) => onCreatePerson(input as CreatePersonWithAutoIdentitiesInput)}
+        />
       </div>
       <div className="overflow-x-auto">
         <Table>
@@ -77,11 +81,11 @@ export function PersonsTable({
                   <TableCell>{new Date(person.createdAt).toLocaleString()}</TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-2">
-                      <Button type="button" size="sm" variant="outline" asChild>
-                        <Link to="/persons/$personId" params={{ personId: person.id }}>
+                      <Link to="/persons/$personId" params={{ personId: person.id }}>
+                        <Button type="button" size="sm" variant="outline">
                           Open
-                        </Link>
-                      </Button>
+                        </Button>
+                      </Link>
                       <PersonsUpsertPanel
                         mode="edit"
                         person={person}

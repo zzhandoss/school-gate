@@ -39,8 +39,10 @@ describe("persons service", () => {
 
         expect(result.page).toEqual({ limit: 20, offset: 40, total: 100 });
         expect(fetchMock).toHaveBeenCalledTimes(1);
-        expect(fetchMock.mock.calls[0]?.[0]).toBe(
-            "http://localhost:3000/api/persons?limit=20&offset=40&iin=0305&query=ivan"
+        expect(fetchMock).toHaveBeenNthCalledWith(
+            1,
+            "http://localhost:3000/api/persons?limit=20&offset=40&iin=0305&query=ivan",
+            expect.any(Object)
         );
     });
 
@@ -142,9 +144,25 @@ describe("persons service", () => {
             identities: [{ deviceId: "dev-1", terminalPersonId: "T-1" }]
         });
 
-        expect(fetchMock.mock.calls[0]?.[0]).toBe("http://localhost:3000/api/persons/p1/identities/auto/preview");
-        expect(fetchMock.mock.calls[1]?.[0]).toBe("http://localhost:3000/api/persons/identities/auto/preview/by-iin");
-        expect(fetchMock.mock.calls[2]?.[0]).toBe("http://localhost:3000/api/ds/identity/find");
-        expect(fetchMock.mock.calls[3]?.[0]).toBe("http://localhost:3000/api/persons/p1/identities/auto/apply");
+        expect(fetchMock).toHaveBeenNthCalledWith(
+            1,
+            "http://localhost:3000/api/persons/p1/identities/auto/preview",
+            expect.any(Object)
+        );
+        expect(fetchMock).toHaveBeenNthCalledWith(
+            2,
+            "http://localhost:3000/api/persons/identities/auto/preview/by-iin",
+            expect.any(Object)
+        );
+        expect(fetchMock).toHaveBeenNthCalledWith(
+            3,
+            "http://localhost:3000/api/ds/identity/find",
+            expect.any(Object)
+        );
+        expect(fetchMock).toHaveBeenNthCalledWith(
+            4,
+            "http://localhost:3000/api/persons/p1/identities/auto/apply",
+            expect.any(Object)
+        );
     });
 });

@@ -5,7 +5,7 @@ export type AuditLogItem = {
     action: string
     entityType: string
     entityId: string
-    meta: Record<string, unknown> | null
+    meta: Record<string, {}> | null
     at: string
 };
 

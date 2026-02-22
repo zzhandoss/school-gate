@@ -56,6 +56,27 @@ function resolveParams(c: Context<ApiEnv>) {
     return c.req.param();
 }
 
+function toSerializable(value: unknown): unknown {
+    if (value instanceof Date) {
+        return value.toISOString();
+    }
+
+    if (Array.isArray(value)) {
+        return value.map((item) => toSerializable(item));
+    }
+
+    if (value && typeof value === "object") {
+        const objectValue = value as Record<string, unknown>;
+        const result: Record<string, unknown> = {};
+        for (const [key, item] of Object.entries(objectValue)) {
+            result[key] = toSerializable(item);
+        }
+        return result;
+    }
+
+    return value;
+}
+
 export function handler<TBody = unknown, TQuery = unknown, TParams = Record<string, string>, TResult = unknown>(
     run: HandlerFn<TBody, TQuery, TParams, TResult>,
     options?: HandlerOptions
@@ -68,7 +89,8 @@ export function handler<TBody = unknown, TQuery = unknown, TParams = Record<stri
             params: resolveParams(c) as TParams
         });
         const responseSchema = c.get("responseSchema");
-        const data = responseSchema ? responseSchema.parse(result) : result;
+        const serialized = toSerializable(result);
+        const data = responseSchema ? responseSchema.parse(serialized) : serialized;
         return ok(c, data, options?.successStatus ?? 200);
     };
 }

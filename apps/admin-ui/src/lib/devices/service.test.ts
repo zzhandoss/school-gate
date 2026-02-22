@@ -26,7 +26,11 @@ describe("devices service", () => {
 
         expect(result).toEqual([]);
         expect(fetchMock).toHaveBeenCalledTimes(1);
-        expect(fetchMock.mock.calls[0]?.[0]).toBe("http://localhost:3000/api/ds/devices");
+        expect(fetchMock).toHaveBeenNthCalledWith(
+            1,
+            "http://localhost:3000/api/ds/devices",
+            expect.any(Object)
+        );
     });
 
     it("loads adapters list from /api/ds/adapters", async () => {
@@ -75,7 +79,11 @@ describe("devices service", () => {
             required: ["host"]
         });
         expect(fetchMock).toHaveBeenCalledTimes(1);
-        expect(fetchMock.mock.calls[0]?.[0]).toBe("http://localhost:3000/api/ds/adapters");
+        expect(fetchMock).toHaveBeenNthCalledWith(
+            1,
+            "http://localhost:3000/api/ds/adapters",
+            expect.any(Object)
+        );
     });
 
     it("creates, updates, toggles and deletes devices using DS endpoints", async () => {
@@ -139,7 +147,11 @@ describe("devices service", () => {
         const result = await getMonitoringSnapshot();
 
         expect(result.adapters).toEqual([]);
-        expect(fetchMock.mock.calls[0]?.[0]).toBe("http://localhost:3000/api/ds/monitoring");
+        expect(fetchMock).toHaveBeenNthCalledWith(
+            1,
+            "http://localhost:3000/api/ds/monitoring",
+            expect.any(Object)
+        );
     });
 });
 

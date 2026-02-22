@@ -16,7 +16,7 @@ import { defineRoute } from "../openapi/defineRoute.js";
 
 export type MonitoringModule = {
     getSnapshot: () => Promise<MonitoringSnapshotDto>;
-    listSnapshots: (input: ListMonitoringSnapshotsQueryDto) => Promise<ListMonitoringSnapshotsResultDto>;
+    listSnapshots: (input: ListMonitoringSnapshotsQueryDto) => Promise<ListMonitoringSnapshotsResultDto | ListMonitoringSnapshotsResultDto["snapshots"]>;
 };
 
 export function createMonitoringRoutes(input: { module: MonitoringModule; auth: AdminAuth }) {
@@ -56,7 +56,13 @@ export function createMonitoringRoutes(input: { module: MonitoringModule; auth: 
             success: { schema: listMonitoringSnapshotsResultSchema },
             security: [{ adminBearerAuth: [] }]
         }),
-        handler<unknown, ListMonitoringSnapshotsQueryDto>(({ query }) => input.module.listSnapshots(query))
+        handler<unknown, ListMonitoringSnapshotsQueryDto>(async ({ query }) => {
+            const result = await input.module.listSnapshots(query);
+            if (Array.isArray(result)) {
+                return { snapshots: result };
+            }
+            return result;
+        })
     );
 
     return app;

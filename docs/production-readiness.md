@@ -14,8 +14,7 @@ Status legend: `todo` | `in_progress` | `blocked` | `done`
 
 ## Critical blockers (current baseline)
 
-- `blocked` Quality gates are failing (`pnpm typecheck`, `pnpm test`).
-- `blocked` Service deployment scripts and units are not fully wired to runtime paths.
+- `blocked` Release smoke verification is pending: `P0-12` requires successful tag-driven GitHub Release with `source zip`, `prebuilt zip`, and `SHA256SUMS`.
 
 ## P0 Checklist
 
@@ -57,10 +56,10 @@ Status legend: `todo` | `in_progress` | `blocked` | `done`
 - `pnpm test`
 - `pnpm build`
 
-All four commands must pass before release tagging.
+Current status: all four commands pass on local baseline (2026-02-23).
 
 ## Next actions
 
-1. Resolve `typecheck` failures in `apps/admin-ui`.
-2. Resolve `test` failures in `packages/test` import/export and API suites.
-3. Create first tag and verify release pipeline (`P0-12`).
+1. Create a fresh release tag (`vX.Y.Z`) and verify GitHub Release artifacts (`source zip` + `prebuilt zip` + `SHA256SUMS`).
+2. Validate deployment from release ZIPs on both target OS baselines (Windows 8+ compatible host, Ubuntu 18+ compatible host) using runbook commands.
+3. Attach smoke-check evidence to runbook/tracker (service restart, health checks, and rollback rehearsal).

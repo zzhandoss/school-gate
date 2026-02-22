@@ -3,6 +3,7 @@ import { createFileRoute, redirect } from '@tanstack/react-router'
 import { AuditLogsView } from '@/components/audit-logs/audit-logs-view'
 import { AppShell } from '@/components/app/app-shell'
 import { getInitialAuditLogsServerFn } from '@/lib/audit-logs/audit-logs.server'
+import type { ListAuditLogsResult } from '@/lib/audit-logs/types'
 import { ApiError } from '@/lib/api/types'
 
 type AuditLogsSearch = {
@@ -49,7 +50,7 @@ export const Route = createFileRoute('/audit-logs')({
     } as const
   },
   loaderDeps: ({ search }) => search,
-  loader: async ({ deps }) => {
+  loader: async ({ deps }): Promise<{ initialData: ListAuditLogsResult | null }> => {
     try {
       const initialData = await getInitialAuditLogsServerFn({ data: deps })
       return { initialData }

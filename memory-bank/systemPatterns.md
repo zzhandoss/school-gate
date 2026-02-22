@@ -227,3 +227,10 @@ It is optional, but recommended to be updated as the project evolves.
 
 - AdminUI i18n rollout pattern: localize operational screens by combining shared enum-label helpers and interpolation keys (status/result templates) instead of inline literals; validate changes by running admin-ui tests and build after each module batch.
 [2026-02-17 22:11:36] - Pattern update: documented incremental AdminUI i18n rollout for access-events/subscription-requests/device-monitoring modules.
+
+- Legacy compatibility adapter pattern: when core module paths or dependency shapes evolve (repo -> service), provide thin adapters at old import paths (usecases/*, uth/*) that normalize deps and preserve historical tests/integration code while keeping new implementations in canonical modules.
+[2026-02-23 02:22:10] - Pattern update: documented compatibility adapter strategy used to reduce breakage during core architecture migration.
+
+- HTTP response normalization pattern: delivery handler should normalize Date values to ISO strings before response-schema validation, so module/flow outputs with Date objects remain compatible with strict DTO schemas without duplicating per-route mappers.
+- Legacy route-compat pattern: routes may accept historical module return forms (array/boolean) and normalize to current envelope DTO shape to prevent runtime 500s during migration windows.
+[2026-02-23 02:35:56] - Pattern update: documented response normalization and legacy route-compat behavior used for production-readiness stabilization.

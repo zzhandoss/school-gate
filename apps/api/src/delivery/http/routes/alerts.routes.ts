@@ -30,12 +30,12 @@ import { handler } from "../routing/route.js";
 import { defineRoute, okSchema } from "../openapi/defineRoute.js";
 
 export type AlertsModule = {
-    listRules: (input: ListAlertRulesQueryDto) => Promise<ListAlertRulesResultDto>;
+    listRules: (input: ListAlertRulesQueryDto) => Promise<ListAlertRulesResultDto | ListAlertRulesResultDto["rules"]>;
     createRule: (input: CreateAlertRuleDto, adminId?: string | undefined) => Promise<{ ruleId: string }>;
     updateRule: (input: { ruleId: string } & UpdateAlertRuleDto, adminId?: string | undefined) => Promise<void>;
-    listSubscriptions: (input: ListAlertSubscriptionsQueryDto) => Promise<ListAlertSubscriptionsResultDto>;
+    listSubscriptions: (input: ListAlertSubscriptionsQueryDto) => Promise<ListAlertSubscriptionsResultDto | ListAlertSubscriptionsResultDto["subscriptions"]>;
     setSubscription: (input: SetAlertSubscriptionDto) => Promise<void>;
-    listEvents: (input: ListAlertEventsQueryDto) => Promise<ListAlertEventsResultDto>;
+    listEvents: (input: ListAlertEventsQueryDto) => Promise<ListAlertEventsResultDto | ListAlertEventsResultDto["events"]>;
 };
 
 export function createAlertsRoutes(input: { module: AlertsModule; auth: AdminAuth }) {
@@ -63,7 +63,13 @@ export function createAlertsRoutes(input: { module: AlertsModule; auth: AdminAut
             success: { schema: listAlertRulesResultSchema },
             security: [{ adminBearerAuth: [] }]
         }),
-        handler<unknown, ListAlertRulesQueryDto>(({ query }) => input.module.listRules(query))
+        handler<unknown, ListAlertRulesQueryDto>(async ({ query }) => {
+            const result = await input.module.listRules(query);
+            if (Array.isArray(result)) {
+                return { rules: result };
+            }
+            return result;
+        })
     );
 
     app.openapi(
@@ -128,7 +134,13 @@ export function createAlertsRoutes(input: { module: AlertsModule; auth: AdminAut
             success: { schema: listAlertSubscriptionsResultSchema },
             security: [{ adminBearerAuth: [] }]
         }),
-        handler<unknown, ListAlertSubscriptionsQueryDto>(({ query }) => input.module.listSubscriptions(query))
+        handler<unknown, ListAlertSubscriptionsQueryDto>(async ({ query }) => {
+            const result = await input.module.listSubscriptions(query);
+            if (Array.isArray(result)) {
+                return { subscriptions: result };
+            }
+            return result;
+        })
     );
 
     app.openapi(
@@ -167,7 +179,13 @@ export function createAlertsRoutes(input: { module: AlertsModule; auth: AdminAut
             success: { schema: listAlertEventsResultSchema },
             security: [{ adminBearerAuth: [] }]
         }),
-        handler<unknown, ListAlertEventsQueryDto>(({ query }) => input.module.listEvents(query))
+        handler<unknown, ListAlertEventsQueryDto>(async ({ query }) => {
+            const result = await input.module.listEvents(query);
+            if (Array.isArray(result)) {
+                return { events: result };
+            }
+            return result;
+        })
     );
 
     return app;

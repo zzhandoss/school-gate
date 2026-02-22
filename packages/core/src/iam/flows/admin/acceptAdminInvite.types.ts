@@ -24,7 +24,7 @@ export type AcceptAdminInviteDeps = {
     adminInvitesService: AdminInvitesService;
     adminsService: AdminsService;
     rolesService: RolesService;
-    outbox: OutboxRepo;
+    outbox?: OutboxRepo;
     passwordHasher: PasswordHasher;
     tokenHasher: TokenHasher;
     idGen: IdGenerator;

@@ -26,16 +26,18 @@ export function createCreateAdminPasswordResetLinkFlow(
             createdAt
         });
 
-        enqueueAuditRequested({
-            outbox: deps.outbox,
-            id: deps.idGen.nextId(),
-            actorId: input.requestedByAdminId ?? "system:password_reset_admin",
-            action: "admin_password_reset_link_created",
-            entityType: "admin",
-            entityId: admin.id,
-            at: createdAt,
-            meta: { expiresAt: input.expiresAt.toISOString() }
-        });
+        if (deps.outbox) {
+            enqueueAuditRequested({
+                outbox: deps.outbox,
+                id: deps.idGen.nextId(),
+                actorId: input.requestedByAdminId ?? "system:password_reset_admin",
+                action: "admin_password_reset_link_created",
+                entityType: "admin",
+                entityId: admin.id,
+                at: createdAt,
+                meta: { expiresAt: input.expiresAt.toISOString() }
+            });
+        }
 
         return { token, expiresAt: input.expiresAt };
     };

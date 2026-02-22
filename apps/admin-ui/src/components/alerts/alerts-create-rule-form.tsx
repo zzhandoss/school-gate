@@ -73,7 +73,7 @@ export function AlertsCreateRuleForm({ onCreated, onClose }: AlertsCreateRuleFor
       adapterVendorKey
     })
     if ('error' in built) {
-      setError(built.error)
+      setError(built.error ?? 'Invalid rule config.')
       return
     }
 
