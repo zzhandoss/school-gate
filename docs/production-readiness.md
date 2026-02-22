@@ -32,7 +32,7 @@ Status legend: `todo` | `in_progress` | `blocked` | `done`
 | P0-08 | Runbook baseline added | done | deploy + operations + troubleshooting docs exist | `docs/runbook/*` |
 | P0-09 | Linux ops scripts baseline | done | start/stop/restart/status/logs/health scripts exist | `ops/linux/*` |
 | P0-10 | Windows ops scripts baseline | done | start/stop/restart/status/logs/health scripts exist | `ops/windows/*` |
-| P0-11 | First secure push to GitHub | blocked | `main` branch pushed and visible in remote repo | GitHub repo |
+| P0-11 | First secure push to GitHub | done | `main` branch pushed and visible in remote repo | GitHub repo |
 | P0-12 | First release tag smoke test | blocked | Tag `vX.Y.Z` creates release with two zips and checksums | GitHub release |
 
 ## P1 Readiness (after P0)
