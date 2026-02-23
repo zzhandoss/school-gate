@@ -30,6 +30,8 @@ This file tracks the project's current status, including recent changes, current
 
 ## Recent Changes
 
+- [2026-02-23 10:21:16] - 🐛 Bug fix: Resolved GitHub Actions Linux CI failure caused by blocked native build for better-sqlite3 in pnpm workspace policy. Updated pnpm-workspace.yaml to allow better-sqlite3 and argon2 build scripts in onlyBuiltDependencies, removed ignoredBuiltDependencies entry for better-sqlite3, validated with local lint/typecheck/test/build, pushed commit 34233f5, and verified CI job `verify` succeeded for run 22293919740.
+
 - [2026-02-17 22:11:36] - 🚀 Feature completed: Admin UI i18n expansion: localized access-events, subscription-requests, and device-monitoring modules with enum label helpers, interpolation/plural keys, and validated build/tests.
 
 - [2026-02-17 20:48:25] - 🚀 Feature completed: Implemented Admin UI i18n foundation with react-i18next (RU/EN), language detection + persistence, language switchers in app shell and settings, localized navigation/breadcrumb shell strings, localized fallback routes/pages, localized auth error mapping, and locale-aware date/time formatting helpers adopted by major format modules.

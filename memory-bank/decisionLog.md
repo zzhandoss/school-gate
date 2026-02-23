@@ -24,6 +24,28 @@ This file records architectural and implementation decisions using a list format
 
 ---
 ### Decision Record
+[2026-02-23 10:21:16] - Allow required native addon build scripts through pnpm workspace policy instead of bypassing tests.
+
+**Decision Background:**
+GitHub Actions Linux `verify` failed before tests ran because `better-sqlite3` native bindings were not built under the workspace pnpm build-script policy.
+
+**Available Options:**
+- Option 1: Keep current policy and relax CI checks (skip/fork tests or disable native-dependent suites).
+  - Pros: fastest short-term unblocking.
+  - Cons: hides real production/runtime constraints and reduces confidence.
+- Option 2: Keep strict CI checks and explicitly allow required native build scripts in workspace policy.
+  - Pros: preserves test fidelity across Linux CI and production-like environments.
+  - Cons: requires tighter dependency governance and explicit allowlist maintenance.
+
+**Final Decision:**
+Use Option 2. Update `pnpm-workspace.yaml` to permit required native build scripts (`better-sqlite3`, `argon2`) via `onlyBuiltDependencies` and remove contradictory ignore entry for `better-sqlite3`.
+
+**Risks and Mitigation:**
+- Risk 1: Future native dependencies may fail similarly when not allowlisted.
+  - Mitigation: treat new native deps as explicit production decisions and add them to policy with CI verification.
+
+---
+### Decision Record
 [2026-02-09 20:16:27] - Standardize `apps/device-service` OpenAPI input docs and failure mapping through shared helpers.
 
 **Decision Background:**
