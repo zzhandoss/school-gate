@@ -259,3 +259,6 @@ This file tracks the project's progress using a task list format.
 ## Next Steps (2026-02-23)
 - Create and push fresh release tag vX.Y.Z, then verify GitHub Release artifacts (source zip + prebuilt zip + SHA256SUMS).
 - Execute ZIP-based deployment smoke checks on Windows/Linux targets and record evidence in runbook/tracker.
+
+- [2026-02-23 01:44:03] - ✅ Completed: Release smoke test passed for tag v1.0.2 with GitHub Release assets: source zip, prebuilt zip, and SHA256SUMS.
+- [2026-02-23 01:44:03] - ⚠️ Follow-up: main CI workflow still fails on GitHub at Test step (Linux parity issue) and requires investigation.

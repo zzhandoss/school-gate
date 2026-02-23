@@ -14,7 +14,7 @@ Status legend: `todo` | `in_progress` | `blocked` | `done`
 
 ## Critical blockers (current baseline)
 
-- `blocked` Release smoke verification is pending: `P0-12` requires successful tag-driven GitHub Release with `source zip`, `prebuilt zip`, and `SHA256SUMS`.
+- `blocked` CI parity issue: GitHub `CI` workflow on `main` still fails on `Test` step, while local `pnpm test` is green.
 
 ## P0 Checklist
 
@@ -31,7 +31,7 @@ Status legend: `todo` | `in_progress` | `blocked` | `done`
 | P0-09 | Linux ops scripts baseline | done | start/stop/restart/status/logs/health scripts exist | `ops/linux/*` |
 | P0-10 | Windows ops scripts baseline | done | start/stop/restart/status/logs/health scripts exist | `ops/windows/*` |
 | P0-11 | First secure push to GitHub | done | `main` branch pushed and visible in remote repo | GitHub repo |
-| P0-12 | First release tag smoke test | blocked | Tag `vX.Y.Z` creates release with two zips and checksums | GitHub release |
+| P0-12 | First release tag smoke test | done | Tag `vX.Y.Z` creates release with two zips and checksums | `v1.0.2` release assets |
 
 ## P1 Readiness (after P0)
 
@@ -61,5 +61,6 @@ Current status: all four commands pass on local baseline (2026-02-23).
 ## Next actions
 
 1. Create a fresh release tag (`vX.Y.Z`) and verify GitHub Release artifacts (`source zip` + `prebuilt zip` + `SHA256SUMS`).
-2. Validate deployment from release ZIPs on both target OS baselines (Windows 8+ compatible host, Ubuntu 18+ compatible host) using runbook commands.
-3. Attach smoke-check evidence to runbook/tracker (service restart, health checks, and rollback rehearsal).
+2. Resolve CI/Linux `pnpm test` failure on GitHub Actions to keep release and mainline verification aligned.
+3. Validate deployment from release ZIPs on both target OS baselines (Windows 8+ compatible host, Ubuntu 18+ compatible host) using runbook commands.
+4. Attach smoke-check evidence to runbook/tracker (service restart, health checks, and rollback rehearsal).

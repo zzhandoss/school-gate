@@ -361,3 +361,6 @@ This file tracks the project's current status, including recent changes, current
 
 - [2026-02-23 02:35:56] - 🚀 Feature completed: Production-readiness stabilization done; restored legacy compatibility paths, added Date-safe response normalization in HTTP handler, fixed legacy flow outbox optionality, and brought all quality gates to green (lint/typecheck/test/build).
 - [2026-02-23 02:35:56] - Current focus update: run tag-based release smoke (P0-12) and validate ZIP deploy/restart/health runbook on Windows/Linux baselines.
+
+- [2026-02-23 01:44:03] - 🚀 Release v1.0.2 published successfully with required artifacts (source zip + prebuilt zip + SHA256SUMS).
+- [2026-02-23 01:44:03] - Current focus update: isolate and fix GitHub Linux CI test failure to align with local green baseline.
