@@ -1,7 +1,6 @@
-ignoredBuiltDependencies:
-  - better-sqlite3
-
 onlyBuiltDependencies:
+  - argon2
+  - better-sqlite3
   - esbuild
 
 packages:
