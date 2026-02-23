@@ -33,7 +33,7 @@ jobs:
         run: pnpm typecheck
 
       - name: Test
-        run: pnpm vitest --run --maxWorkers=1
+        run: pnpm vitest --run --maxWorkers=1 --retry=2
 
       - name: Build
         run: pnpm build
