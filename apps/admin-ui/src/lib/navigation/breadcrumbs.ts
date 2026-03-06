@@ -33,6 +33,13 @@ export function buildBreadcrumbs(pathname: string, permissions: Array<string>): 
         return [{ label: i18n.t("app.nav.profile") }];
     }
 
+    if (pathname === "/persons/import") {
+        return [
+            { label: i18n.t("app.nav.persons"), to: "/persons" },
+            { label: i18n.t("app.nav.import") }
+        ];
+    }
+
     if (pathname.startsWith("/persons/")) {
         return [
             { label: i18n.t("app.nav.persons"), to: "/persons" },

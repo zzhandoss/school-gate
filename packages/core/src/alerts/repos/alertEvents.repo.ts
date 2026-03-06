@@ -28,6 +28,7 @@ export type ListAlertEventsInput = {
 export interface AlertEventsRepo {
     insertSync(input: CreateAlertEventInput): void;
     list(input: ListAlertEventsInput): Promise<AlertEvent[]>;
+    count(input: Omit<ListAlertEventsInput, "limit" | "offset">): Promise<number>;
     listLatestByRuleIds(input: { ruleIds: string[] }): Promise<AlertEvent[]>;
     withTx(tx: unknown): AlertEventsRepo;
 }

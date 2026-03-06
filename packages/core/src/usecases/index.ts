@@ -2,6 +2,8 @@ export * from "./alerts/setAlertSubscription.js";
 export * from "./events/index.js";
 export * from "./identities/mapPersonTerminalIdentity.js";
 export * from "./identities/mapPersonTerminalIdentity.types.js";
+export * from "./persons/listPersonsAdmin.js";
+export * from "./persons/listPersonsAdmin.types.js";
 export * from "./subscriptions/preprocessPendingRequests.js";
 export * from "./subscriptions/preprocessPendingRequests.types.js";
 export * from "./subscriptions/listSubscriptionsAdmin.js";

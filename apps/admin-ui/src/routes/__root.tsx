@@ -3,6 +3,7 @@ import { useEffect } from 'react'
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { TanStackDevtools } from '@tanstack/react-devtools'
 import { useTranslation } from 'react-i18next'
+import { Toaster } from 'sonner'
 
 import appCss from '../styles.css?url'
 import { clearSession, setSession } from '@/lib/auth/session-store'
@@ -95,12 +96,12 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (typeof document !== 'undefined') {
-      document.documentElement.lang = i18nClient.resolvedLanguage === 'ru' ? 'ru' : 'en'
+      document.documentElement.lang = i18nClient.resolvedLanguage === 'kz' ? 'kz' : i18nClient.resolvedLanguage === 'ru' ? 'ru' : 'en'
     }
   }, [i18nClient.resolvedLanguage])
 
   return (
-    <html lang={i18nClient.resolvedLanguage === 'ru' ? 'ru' : 'en'}>
+    <html lang={i18nClient.resolvedLanguage === 'kz' ? 'kz' : i18nClient.resolvedLanguage === 'ru' ? 'ru' : 'en'}>
       <head>
         <HeadContent />
       </head>
@@ -126,6 +127,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
               },
             ]}
           />
+          <Toaster richColors position="top-right" />
           <Scripts />
         </QueryProvider>
       </body>

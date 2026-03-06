@@ -1,0 +1,23 @@
+export type TerminalDirectoryEntry = {
+    id: string;
+    deviceId: string;
+    terminalPersonId: string;
+    iin: string | null;
+    displayName: string | null;
+    userType: string | null;
+    userStatus: string | null;
+    authority: string | null;
+    validFrom: string | null;
+    validTo: string | null;
+    cardNo: string | null;
+    cardName: string | null;
+    sourceSummary: string[];
+    rawUserPayload: string | null;
+    rawCardPayload: string | null;
+    payloadHash: string;
+    isPresentInLastSync: boolean;
+    lastSeenAt: Date;
+    lastSyncRunId: string | null;
+    createdAt: Date;
+    updatedAt: Date;
+};

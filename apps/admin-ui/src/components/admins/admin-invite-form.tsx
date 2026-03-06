@@ -1,8 +1,11 @@
 import { useEffect, useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Copy, Link as LinkIcon } from 'lucide-react'
 
 import type { AdminRole } from '@/lib/admins/types'
 import { createAdminInvite, createRole } from '@/lib/admins/service'
+import { permissionLabel } from '@/lib/i18n/enum-labels'
+import { formatDateTime } from '@/lib/i18n/format'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -28,9 +31,9 @@ type AdminInviteFormProps = {
 type RoleMode = 'existing' | 'new'
 
 const EXPIRATION_OPTIONS = [
-  { label: '24 hours', value: 24 * 60 * 60 * 1000 },
-  { label: '72 hours', value: 72 * 60 * 60 * 1000 },
-  { label: '7 days', value: 7 * 24 * 60 * 60 * 1000 }
+  { value: 24 * 60 * 60 * 1000 },
+  { value: 72 * 60 * 60 * 1000 },
+  { value: 7 * 24 * 60 * 60 * 1000 }
 ] as const
 
 function sortPermissions(input: Array<string>) {
@@ -50,6 +53,7 @@ function buildPresetPermissions(allPermissions: Array<string>) {
 }
 
 export function AdminInviteForm({ roles, allPermissions, canManage, onCreated, onClose }: AdminInviteFormProps) {
+  const { t } = useTranslation()
   const defaultRoleId = roles[0]?.id ?? ''
 
   const [roleMode, setRoleMode] = useState<RoleMode>(roles.length > 0 ? 'existing' : 'new')
@@ -117,12 +121,12 @@ export function AdminInviteForm({ roles, allPermissions, canManage, onCreated, o
     event.preventDefault()
 
     if (!canManage) {
-      setError('Missing admin.manage permission')
+      setError(t('admins.inviteForm.errors.missingPermission', { permission: permissionLabel(t, 'admin.manage') }))
       return
     }
 
     if (!email.trim()) {
-      setError('Email is required')
+      setError(t('admins.inviteForm.errors.emailRequired'))
       return
     }
 
@@ -131,17 +135,17 @@ export function AdminInviteForm({ roles, allPermissions, canManage, onCreated, o
 
     if (roleMode === 'existing') {
       if (!resolvedRoleId) {
-        setError('Role is required')
+        setError(t('admins.inviteForm.errors.roleRequired'))
         return
       }
     } else {
       const normalizedRoleName = newRoleName.trim()
       if (!normalizedRoleName) {
-        setError('New role name is required')
+        setError(t('admins.inviteForm.errors.newRoleNameRequired'))
         return
       }
       if (newRolePermissions.length === 0) {
-        setError('Select at least one permission for new role')
+        setError(t('admins.inviteForm.errors.newRolePermissionRequired'))
         return
       }
 
@@ -156,7 +160,7 @@ export function AdminInviteForm({ roles, allPermissions, canManage, onCreated, o
         resolvedRoleName = normalizedRoleName
       } catch (value) {
         setSubmitting(false)
-        setError(value instanceof Error ? value.message : 'Failed to create role')
+        setError(value instanceof Error ? value.message : t('admins.inviteForm.errors.createRoleFailed'))
         return
       }
     }
@@ -176,7 +180,7 @@ export function AdminInviteForm({ roles, allPermissions, canManage, onCreated, o
       }
       await onCreated()
     } catch (value) {
-      setError(value instanceof Error ? value.message : 'Failed to create invite')
+      setError(value instanceof Error ? value.message : t('admins.inviteForm.errors.createInviteFailed'))
     } finally {
       setSubmitting(false)
     }
@@ -200,7 +204,7 @@ export function AdminInviteForm({ roles, allPermissions, canManage, onCreated, o
       return
     }
 
-    await copyText(inviteResult.token, 'Cannot copy invite token in this browser')
+    await copyText(inviteResult.token, t('admins.inviteForm.errors.copyTokenFailed'))
   }
 
   async function onCopyLink() {
@@ -208,33 +212,33 @@ export function AdminInviteForm({ roles, allPermissions, canManage, onCreated, o
       return
     }
 
-    await copyText(inviteLink, 'Cannot copy invite link in this browser')
+    await copyText(inviteLink, t('admins.inviteForm.errors.copyLinkFailed'))
   }
 
   return (
     <form className="space-y-4 p-4 pt-0" onSubmit={onSubmit}>
       <div className="space-y-2">
-        <Label htmlFor="invite-email">Admin email</Label>
+        <Label htmlFor="invite-email">{t('admins.inviteForm.adminEmail')}</Label>
         <Input
           id="invite-email"
           type="email"
           required
           value={email}
           onChange={(event) => setEmail(event.target.value)}
-          placeholder="admin@example.com"
+          placeholder={t('common.placeholders.email')}
           disabled={!canManage || submitting}
         />
       </div>
 
       <div className="space-y-2">
-        <Label>Role source</Label>
+        <Label>{t('admins.inviteForm.roleSource')}</Label>
         <Tabs value={roleMode} onValueChange={(value) => setRoleMode(value as RoleMode)}>
           <TabsList className="w-full">
             <TabsTrigger value="existing" className="cursor-pointer" disabled={roles.length === 0}>
-              Existing role
+              {t('admins.inviteForm.existingRole')}
             </TabsTrigger>
             <TabsTrigger value="new" className="cursor-pointer">
-              New role
+              {t('admins.inviteForm.newRole')}
             </TabsTrigger>
           </TabsList>
         </Tabs>
@@ -242,14 +246,14 @@ export function AdminInviteForm({ roles, allPermissions, canManage, onCreated, o
 
       {roleMode === 'existing' ? (
         <div className="space-y-2">
-          <Label htmlFor="invite-role">Role</Label>
+          <Label htmlFor="invite-role">{t('admins.inviteForm.role')}</Label>
           <Select
             value={roleId}
             onValueChange={setRoleId}
             disabled={!canManage || submitting || roles.length === 0}
           >
             <SelectTrigger id="invite-role" className="w-full">
-              <SelectValue placeholder="Choose role" />
+              <SelectValue placeholder={t('admins.inviteForm.placeholders.chooseRole')} />
             </SelectTrigger>
             <SelectContent>
               {roles.map((role) => (
@@ -260,23 +264,23 @@ export function AdminInviteForm({ roles, allPermissions, canManage, onCreated, o
             </SelectContent>
           </Select>
           {roles.length === 0 ? (
-            <p className="text-xs text-muted-foreground">No roles available yet. Create a new role.</p>
+            <p className="text-xs text-muted-foreground">{t('admins.inviteForm.noRoles')}</p>
           ) : null}
         </div>
       ) : (
         <div className="space-y-3 rounded-lg border border-border/70 bg-background/70 p-3">
           <div className="space-y-2">
-            <Label htmlFor="new-role-name">New role name</Label>
+            <Label htmlFor="new-role-name">{t('admins.inviteForm.newRoleName')}</Label>
             <Input
               id="new-role-name"
               value={newRoleName}
               onChange={(event) => setNewRoleName(event.target.value)}
-              placeholder="ops_manager"
+              placeholder={t('admins.inviteForm.placeholders.newRoleName')}
               disabled={!canManage || submitting}
             />
           </div>
           <div className="space-y-2">
-            <Label>Permissions</Label>
+            <Label>{t('admins.inviteForm.permissions')}</Label>
             <div className="flex flex-wrap gap-2">
               <Button
                 type="button"
@@ -285,7 +289,7 @@ export function AdminInviteForm({ roles, allPermissions, canManage, onCreated, o
                 disabled={!canManage || submitting || presetPermissions.viewer.length === 0}
                 onClick={() => applyPreset('viewer')}
               >
-                Viewer preset
+                {t('admins.inviteForm.presets.viewer')}
               </Button>
               <Button
                 type="button"
@@ -294,7 +298,7 @@ export function AdminInviteForm({ roles, allPermissions, canManage, onCreated, o
                 disabled={!canManage || submitting || presetPermissions.operator.length === 0}
                 onClick={() => applyPreset('operator')}
               >
-                Operator preset
+                {t('admins.inviteForm.presets.operator')}
               </Button>
               <Button
                 type="button"
@@ -303,20 +307,23 @@ export function AdminInviteForm({ roles, allPermissions, canManage, onCreated, o
                 disabled={!canManage || submitting || presetPermissions.admin.length === 0}
                 onClick={() => applyPreset('admin')}
               >
-                Admin preset
+                {t('admins.inviteForm.presets.admin')}
               </Button>
             </div>
             <p className="text-xs text-muted-foreground">
-              Presets are shortcuts. You can still fine-tune permissions below.
+              {t('admins.inviteForm.presets.hint')}
             </p>
             <div className="max-h-52 space-y-2 overflow-y-auto rounded-md border border-border/70 p-2">
               {allPermissions.map((permission) => {
                 const itemId = `invite-role-${permission}`
                 return (
                   <div key={permission} className="flex items-center justify-between rounded-md border border-border/60 px-2 py-1.5">
-                    <Label htmlFor={itemId} className="text-sm">
-                      {permission}
-                    </Label>
+                    <div className="min-w-0">
+                      <Label htmlFor={itemId} className="text-sm">
+                        {permissionLabel(t, permission)}
+                      </Label>
+                      <p className="truncate font-mono text-xs text-muted-foreground">{permission}</p>
+                    </div>
                     <Switch
                       id={itemId}
                       checked={selectedPermissions.has(permission)}
@@ -332,19 +339,19 @@ export function AdminInviteForm({ roles, allPermissions, canManage, onCreated, o
       )}
 
       <div className="space-y-2">
-        <Label htmlFor="invite-expiration">Expiration</Label>
+        <Label htmlFor="invite-expiration">{t('admins.inviteForm.expiration')}</Label>
         <Select
           value={expiresInMs}
           onValueChange={setExpiresInMs}
           disabled={!canManage || submitting}
         >
           <SelectTrigger id="invite-expiration" className="w-full">
-            <SelectValue placeholder="Select expiration" />
+            <SelectValue placeholder={t('admins.inviteForm.placeholders.selectExpiration')} />
           </SelectTrigger>
           <SelectContent>
             {EXPIRATION_OPTIONS.map((option) => (
               <SelectItem key={option.value} value={String(option.value)}>
-                {option.label}
+                {t(`admins.inviteForm.expirationOptions.${option.value}`)}
               </SelectItem>
             ))}
           </SelectContent>
@@ -353,34 +360,34 @@ export function AdminInviteForm({ roles, allPermissions, canManage, onCreated, o
 
       {error ? (
         <Alert className="border-destructive/40 bg-destructive/5 text-destructive">
-          <AlertTitle>Invite creation failed</AlertTitle>
+          <AlertTitle>{t('admins.inviteForm.inviteCreationFailedTitle')}</AlertTitle>
           <AlertDescription>{error}</AlertDescription>
         </Alert>
       ) : null}
 
       {inviteResult ? (
         <Alert role="status" className="border-emerald-300/60 bg-emerald-50 text-emerald-900">
-          <AlertTitle>Invite created</AlertTitle>
+          <AlertTitle>{t('admins.inviteForm.inviteCreatedTitle')}</AlertTitle>
           <AlertDescription className="space-y-3">
-            <p>Role: {inviteResult.roleName}</p>
-            <p>Expires: {new Date(inviteResult.expiresAt).toLocaleString()}</p>
+            <p>{t('admins.inviteForm.roleValue', { value: inviteResult.roleName })}</p>
+            <p>{t('admins.inviteForm.expiresValue', { value: formatDateTime(inviteResult.expiresAt, inviteResult.expiresAt) })}</p>
             <div className="space-y-1">
-              <p className="text-xs font-medium uppercase tracking-wide text-emerald-900/80">Invite code</p>
+              <p className="text-xs font-medium uppercase tracking-wide text-emerald-900/80">{t('admins.inviteForm.inviteCode')}</p>
               <div className="flex gap-2">
                 <Input readOnly value={inviteResult.token} className="font-mono text-xs" />
                 <Button type="button" variant="outline" onClick={() => void onCopyToken()}>
                   <Copy className="h-4 w-4" />
-                  Copy code
+                  {t('admins.inviteForm.copyCode')}
                 </Button>
               </div>
             </div>
             <div className="space-y-1">
-              <p className="text-xs font-medium uppercase tracking-wide text-emerald-900/80">Invite link</p>
+              <p className="text-xs font-medium uppercase tracking-wide text-emerald-900/80">{t('admins.inviteForm.inviteLink')}</p>
               <div className="flex gap-2">
                 <Input readOnly value={inviteLink} className="text-xs" />
                 <Button type="button" variant="outline" onClick={() => void onCopyLink()}>
                   <Copy className="h-4 w-4" />
-                  Copy link
+                  {t('admins.inviteForm.copyLink')}
                 </Button>
               </div>
             </div>
@@ -390,11 +397,15 @@ export function AdminInviteForm({ roles, allPermissions, canManage, onCreated, o
 
       <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
         <Button type="button" variant="outline" onClick={onClose}>
-          Close
+          {t('common.actions.close')}
         </Button>
         <Button type="submit" disabled={!canManage || submitting}>
           <LinkIcon className="h-4 w-4" />
-          {submitting ? 'Creating...' : roleMode === 'new' ? 'Create role + invite' : 'Create invite'}
+          {submitting
+            ? t('common.actions.creating')
+            : roleMode === 'new'
+              ? t('admins.inviteForm.createRoleAndInvite')
+              : t('admins.inviteForm.createInvite')}
         </Button>
       </div>
     </form>

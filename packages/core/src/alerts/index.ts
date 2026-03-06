@@ -20,6 +20,8 @@ export * from "./services/alertEvents.service.js";
 export * from "./services/alertEvents.types.js";
 export * from "./services/alertSubscriptions.service.js";
 export * from "./services/alertSubscriptions.types.js";
+export * from "./flows/deleteAlertRule.flow.js";
+export * from "./flows/deleteAlertRule.types.js";
 export * from "./flows/processMonitoringAlerts.flow.js";
 export * from "./flows/processMonitoringAlerts.types.js";
 

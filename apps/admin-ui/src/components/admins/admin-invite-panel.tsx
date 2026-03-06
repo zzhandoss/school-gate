@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Plus } from 'lucide-react'
 
 import { AdminInviteForm } from './admin-invite-form'
@@ -27,6 +28,7 @@ type AdminInvitePanelProps = {
 }
 
 export function AdminInvitePanel({ roles, allPermissions, canManage, onCreated }: AdminInvitePanelProps) {
+  const { t } = useTranslation()
   const [isDesktopOpen, setIsDesktopOpen] = useState(false)
   const [isMobileOpen, setIsMobileOpen] = useState(false)
 
@@ -39,7 +41,7 @@ export function AdminInvitePanel({ roles, allPermissions, canManage, onCreated }
         onClick={() => setIsDesktopOpen(true)}
       >
         <Plus className="h-4 w-4" />
-        Create invite
+        {t('admins.invitePanel.createInvite')}
       </Button>
       <Button
         type="button"
@@ -48,15 +50,15 @@ export function AdminInvitePanel({ roles, allPermissions, canManage, onCreated }
         onClick={() => setIsMobileOpen(true)}
       >
         <Plus className="h-4 w-4" />
-        Invite
+        {t('admins.invitePanel.invite')}
       </Button>
 
       <Sheet open={isDesktopOpen} onOpenChange={setIsDesktopOpen}>
         <SheetContent side="right" className="w-full sm:max-w-xl">
           <SheetHeader>
-            <SheetTitle>Create admin invite</SheetTitle>
+            <SheetTitle>{t('admins.invitePanel.sheetTitle')}</SheetTitle>
             <SheetDescription>
-              Generate secure invite token for a new admin account.
+              {t('admins.invitePanel.sheetDescription')}
             </SheetDescription>
           </SheetHeader>
           <AdminInviteForm
@@ -72,9 +74,9 @@ export function AdminInvitePanel({ roles, allPermissions, canManage, onCreated }
       <Drawer open={isMobileOpen} onOpenChange={setIsMobileOpen}>
         <DrawerContent>
           <DrawerHeader>
-            <DrawerTitle>Create admin invite</DrawerTitle>
+            <DrawerTitle>{t('admins.invitePanel.drawerTitle')}</DrawerTitle>
             <DrawerDescription>
-              Select role and expiration, then generate one-time token.
+              {t('admins.invitePanel.drawerDescription')}
             </DrawerDescription>
           </DrawerHeader>
           <AdminInviteForm

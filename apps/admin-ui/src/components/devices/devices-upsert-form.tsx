@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import type { FormEvent } from 'react'
+import { useTranslation } from 'react-i18next'
 
 import type { DeviceAdapterItem, DeviceDirection, DeviceItem, DeviceUpdateInput, DeviceUpsertInput } from '@/lib/devices/types'
 import {
@@ -39,6 +40,7 @@ export function DevicesUpsertForm({
   onSubmit,
   onClose
 }: DevicesUpsertFormProps) {
+  const { t } = useTranslation()
   const adapterVendorOptions = useMemo(
     () => Array.from(new Set(adapters.map((adapter) => adapter.vendorKey))),
     [adapters]
@@ -116,7 +118,7 @@ export function DevicesUpsertForm({
         const built = buildSettingsJsonFromDraft(settingsSchemaView, settingsDraft)
         if (Object.keys(built.fieldErrors).length > 0) {
           setSettingsErrors(built.fieldErrors)
-          setError('Check device settings fields and try again.')
+          setError(t('devices.form.errors.checkSettings'))
           return
         }
         resolvedSettingsJson = built.settingsJson
@@ -144,7 +146,7 @@ export function DevicesUpsertForm({
       }
       onClose()
     } catch (value) {
-      setError(value instanceof Error ? value.message : 'Operation failed')
+      setError(value instanceof Error ? value.message : t('devices.form.errors.operationFailed'))
     } finally {
       setIsSubmitting(false)
     }
@@ -155,57 +157,59 @@ export function DevicesUpsertForm({
       <div className="min-h-0 flex-1 space-y-4 overflow-y-auto px-4 pb-4">
         {error ? (
           <Alert className="border-destructive/40 bg-destructive/5 text-destructive">
-            <AlertTitle>Cannot save device</AlertTitle>
+            <AlertTitle>{t('devices.form.cannotSaveTitle')}</AlertTitle>
             <AlertDescription>{error}</AlertDescription>
           </Alert>
         ) : null}
 
         <div className="grid gap-2">
-          <Label htmlFor="device-id">Device ID</Label>
+          <Label htmlFor="device-id">{t('devices.form.deviceId')}</Label>
           <Input
             id="device-id"
             value={deviceId}
             disabled={mode === 'edit' || isSubmitting}
             onChange={(event) => setDeviceId(event.target.value)}
-            placeholder="door-1"
+            placeholder={t('devices.form.placeholders.deviceId')}
           />
         </div>
 
         <div className="grid gap-2">
-          <Label htmlFor="device-name">Name</Label>
+          <Label htmlFor="device-name">{t('common.labels.name')}</Label>
           <Input
             id="device-name"
             value={name}
             disabled={isSubmitting}
             onChange={(event) => setName(event.target.value)}
-            placeholder="Main entry"
+            placeholder={t('devices.form.placeholders.name')}
           />
         </div>
 
         <div className="grid gap-2 sm:grid-cols-2">
           <div className="grid gap-2">
-            <Label>Direction</Label>
+            <Label>{t('common.labels.direction')}</Label>
             <Select
               value={direction}
               onValueChange={(value) => setDirection(value as DeviceDirection)}
               disabled={isSubmitting}
             >
               <SelectTrigger className="w-full">
-                <SelectValue placeholder="Select direction" />
+                <SelectValue placeholder={t('devices.form.placeholders.selectDirection')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="IN">IN</SelectItem>
-                <SelectItem value="OUT">OUT</SelectItem>
+                <SelectItem value="IN">{t('enums.direction.IN')}</SelectItem>
+                <SelectItem value="OUT">{t('enums.direction.OUT')}</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
           <div className="grid gap-2">
-            <Label>Adapter</Label>
+            <Label>{t('common.labels.adapter')}</Label>
             <Select value={adapterKey} onValueChange={setAdapterKey} disabled={isSubmitting}>
               <SelectTrigger className="w-full">
                 <SelectValue
-                  placeholder={adapterVendorOptions.length > 0 ? 'Select adapter vendor' : 'No adapters registered'}
+                  placeholder={adapterVendorOptions.length > 0
+                    ? t('devices.form.placeholders.selectAdapterVendor')
+                    : t('devices.noAdaptersRegistered')}
                 />
               </SelectTrigger>
               <SelectContent>
@@ -218,12 +222,12 @@ export function DevicesUpsertForm({
             </Select>
             {selectedVendor.length > 0 ? (
               <p className="text-xs text-muted-foreground">
-                Active instances: {selectedVendor.map((adapter) => adapter.instanceName).join(', ')}
+                {t('devices.form.activeInstances', { value: selectedVendor.map((adapter) => adapter.instanceName).join(', ') })}
               </p>
             ) : null}
             {adapterVendorOptions.length === 0 ? (
               <p className="text-xs text-muted-foreground">
-                No adapters found. Register adapter instance first in Device Operations.
+                {t('devices.form.noAdaptersHint')}
               </p>
             ) : null}
           </div>
@@ -231,11 +235,11 @@ export function DevicesUpsertForm({
 
         <div className="grid gap-2">
           <div className="flex items-center justify-between gap-2">
-            <Label htmlFor="settings-json">Device settings</Label>
+            <Label htmlFor="settings-json">{t('devices.form.deviceSettings')}</Label>
             {settingsSchemaView ? (
-              <p className="text-xs text-muted-foreground">Schema-driven</p>
+              <p className="text-xs text-muted-foreground">{t('devices.form.schemaDriven')}</p>
             ) : (
-              <p className="text-xs text-muted-foreground">Raw JSON</p>
+              <p className="text-xs text-muted-foreground">{t('devices.form.rawJson')}</p>
             )}
           </div>
           {settingsSchemaView ? (
@@ -253,17 +257,17 @@ export function DevicesUpsertForm({
                 value={settingsJson}
                 disabled={isSubmitting}
                 onChange={(event) => setSettingsJson(event.target.value)}
-                placeholder='{"zone":"A"}'
+                placeholder={t('devices.form.placeholders.settingsJson')}
               />
               <p className="text-xs text-muted-foreground">
-                Adapter has no declared settings schema. Provide JSON manually.
+                {t('devices.form.noSchemaHint')}
               </p>
             </>
           )}
         </div>
 
         <div className="flex items-center justify-between rounded-lg border border-border/70 bg-muted/30 px-3 py-2">
-          <Label htmlFor="device-enabled" className="text-sm font-medium">Enabled</Label>
+          <Label htmlFor="device-enabled" className="text-sm font-medium">{t('devices.enabled')}</Label>
           <Switch
             id="device-enabled"
             checked={enabled}
@@ -276,10 +280,14 @@ export function DevicesUpsertForm({
       <div className="sticky bottom-0 border-t border-border/70 bg-background/95 px-4 py-3 backdrop-blur">
         <div className="flex justify-end gap-2">
           <Button type="button" variant="outline" onClick={onClose} disabled={isSubmitting}>
-            Cancel
+            {t('common.actions.cancel')}
           </Button>
           <Button type="submit" disabled={!canSubmit}>
-            {isSubmitting ? 'Saving...' : mode === 'create' ? 'Create device' : 'Save changes'}
+            {isSubmitting
+              ? t('settings.saving')
+              : mode === 'create'
+                ? t('devices.form.createDevice')
+                : t('profile.saveChanges')}
           </Button>
         </div>
       </div>

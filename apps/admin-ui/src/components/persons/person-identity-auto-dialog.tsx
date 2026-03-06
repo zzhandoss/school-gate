@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import { Sparkles } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 import { applyAutoIdentities, previewAutoIdentities } from '@/lib/persons/service'
 import type { ApplyAutoIdentitiesResult, AutoIdentityPreviewResult } from '@/lib/persons/types'
@@ -27,6 +28,7 @@ function matchKey(deviceId: string, terminalPersonId: string) {
 }
 
 export function PersonIdentityAutoDialog({ personId, canWrite, onApplied }: PersonIdentityAutoDialogProps) {
+  const { t } = useTranslation()
   const [open, setOpen] = useState(false)
   const [preview, setPreview] = useState<AutoIdentityPreviewResult | null>(null)
   const [result, setResult] = useState<ApplyAutoIdentitiesResult | null>(null)
@@ -59,7 +61,7 @@ export function PersonIdentityAutoDialog({ personId, canWrite, onApplied }: Pers
       }
       setSelected(initial)
     } catch (value) {
-      setError(value instanceof Error ? value.message : 'Failed to preview auto mappings')
+      setError(value instanceof Error ? value.message : t('persons.autoDialog.errors.previewFailed'))
     } finally {
       setLoadingPreview(false)
     }
@@ -67,7 +69,7 @@ export function PersonIdentityAutoDialog({ personId, canWrite, onApplied }: Pers
 
   async function applySelected() {
     if (selectedItems.length === 0) {
-      setError('Select at least one identity mapping.')
+      setError(t('persons.autoDialog.errors.selectAtLeastOne'))
       return
     }
     setError(null)
@@ -82,7 +84,7 @@ export function PersonIdentityAutoDialog({ personId, canWrite, onApplied }: Pers
       setResult(applied)
       await onApplied()
     } catch (value) {
-      setError(value instanceof Error ? value.message : 'Failed to apply auto mappings')
+      setError(value instanceof Error ? value.message : t('persons.autoDialog.errors.applyFailed'))
     } finally {
       setLoadingApply(false)
     }
@@ -92,7 +94,7 @@ export function PersonIdentityAutoDialog({ personId, canWrite, onApplied }: Pers
     <>
       <Button type="button" variant="outline" disabled={!canWrite} onClick={() => setOpen(true)}>
         <Sparkles className="h-4 w-4" />
-        Auto
+        {t('persons.autoDialog.auto')}
       </Button>
 
       <Dialog
@@ -109,27 +111,30 @@ export function PersonIdentityAutoDialog({ personId, canWrite, onApplied }: Pers
       >
         <DialogContent className="sm:max-w-3xl">
           <DialogHeader>
-            <DialogTitle>Auto identity mapping</DialogTitle>
+            <DialogTitle>{t('persons.autoDialog.title')}</DialogTitle>
             <DialogDescription>
-              Preview identity mappings for this person by IIN and apply selected entries.
+              {t('persons.autoDialog.description')}
             </DialogDescription>
           </DialogHeader>
 
           <div className="flex items-center justify-between gap-3">
             <Button type="button" disabled={loadingPreview || loadingApply} onClick={() => void loadPreview()}>
-              {loadingPreview ? 'Previewing...' : 'Preview'}
+              {loadingPreview ? t('persons.autoDialog.previewing') : t('persons.autoDialog.preview')}
             </Button>
             {preview ? (
               <div className="text-xs text-muted-foreground">
-                eligible {preview.diagnostics.devicesEligible}, requests {preview.diagnostics.requestsSent}, errors{' '}
-                {preview.diagnostics.errors}
+                {t('persons.autoDialog.diagnostics', {
+                  eligible: preview.diagnostics.devicesEligible,
+                  requests: preview.diagnostics.requestsSent,
+                  errors: preview.diagnostics.errors
+                })}
               </div>
             ) : null}
           </div>
 
           {error ? (
             <Alert className="border-destructive/40 bg-destructive/5 text-destructive">
-              <AlertTitle>Operation failed</AlertTitle>
+              <AlertTitle>{t('persons.autoDialog.operationFailedTitle')}</AlertTitle>
               <AlertDescription>{error}</AlertDescription>
             </Alert>
           ) : null}
@@ -138,7 +143,7 @@ export function PersonIdentityAutoDialog({ personId, canWrite, onApplied }: Pers
             <div className="max-h-80 overflow-y-auto rounded-lg border border-border/70 p-3">
               <div className="space-y-2">
                 {preview.matches.length === 0 ? (
-                  <p className="text-sm text-muted-foreground">No matches found.</p>
+                  <p className="text-sm text-muted-foreground">{t('common.empty.noMatches')}</p>
                 ) : (
                   preview.matches.map((item) => {
                     const key = matchKey(item.deviceId, item.terminalPersonId)
@@ -148,21 +153,21 @@ export function PersonIdentityAutoDialog({ personId, canWrite, onApplied }: Pers
                           <p className="text-sm font-medium">
                             {item.deviceId} <span className="text-muted-foreground">({item.adapterKey})</span>
                           </p>
-                          <p className="text-xs text-muted-foreground">terminal: {item.terminalPersonId}</p>
+                          <p className="text-xs text-muted-foreground">{t('persons.autoDialog.terminalValue', { value: item.terminalPersonId })}</p>
                           {item.displayName ? (
-                            <p className="text-xs text-muted-foreground">name: {item.displayName}</p>
+                            <p className="text-xs text-muted-foreground">{t('persons.autoDialog.nameValue', { value: item.displayName })}</p>
                           ) : null}
                           {item.source || item.userType ? (
                             <p className="text-xs text-muted-foreground">
-                              {item.source ? `source: ${item.source}` : ''}
+                              {item.source ? t('persons.autoDialog.sourceValue', { value: item.source }) : ''}
                               {item.source && item.userType ? ', ' : ''}
-                              {item.userType ? `userType: ${item.userType}` : ''}
+                              {item.userType ? t('persons.autoDialog.userTypeValue', { value: item.userType }) : ''}
                             </p>
                           ) : null}
                           {item.score !== undefined && item.score !== null ? (
-                            <p className="text-xs text-muted-foreground">score: {item.score}</p>
+                            <p className="text-xs text-muted-foreground">{t('persons.autoDialog.scoreValue', { value: item.score })}</p>
                           ) : null}
-                          {item.alreadyLinked ? <Badge variant="outline">already linked</Badge> : null}
+                          {item.alreadyLinked ? <Badge variant="outline">{t('persons.autoDialog.alreadyLinked')}</Badge> : null}
                         </div>
                         <Switch
                           checked={Boolean(selected[key])}
@@ -181,24 +186,28 @@ export function PersonIdentityAutoDialog({ personId, canWrite, onApplied }: Pers
 
           {result ? (
             <Alert>
-              <AlertTitle>Apply result</AlertTitle>
+              <AlertTitle>{t('persons.autoDialog.applyResultTitle')}</AlertTitle>
               <AlertDescription>
-                linked {result.linked}, already linked {result.alreadyLinked}, conflicts {result.conflicts}, errors{' '}
-                {result.errors}
+                {t('persons.autoDialog.applyResultDescription', {
+                  linked: result.linked,
+                  alreadyLinked: result.alreadyLinked,
+                  conflicts: result.conflicts,
+                  errors: result.errors
+                })}
               </AlertDescription>
             </Alert>
           ) : null}
 
           <DialogFooter>
             <Button type="button" variant="outline" disabled={loadingApply} onClick={() => setOpen(false)}>
-              Close
+              {t('common.actions.close')}
             </Button>
             <Button
               type="button"
               disabled={!preview || selectedItems.length === 0 || loadingApply || loadingPreview}
               onClick={() => void applySelected()}
             >
-              {loadingApply ? 'Applying...' : 'Apply selected'}
+              {loadingApply ? t('persons.autoDialog.applying') : t('persons.autoDialog.applySelected')}
             </Button>
           </DialogFooter>
         </DialogContent>

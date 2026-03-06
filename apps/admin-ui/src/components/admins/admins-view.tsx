@@ -1,12 +1,14 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useRouter } from '@tanstack/react-router'
 import { RefreshCw, ShieldAlert } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 import { AdminInvitePanel } from './admin-invite-panel'
 import { AdminsTable } from './admins-table'
 import type { AdminItem, AdminRole, AdminStatus } from '@/lib/admins/types'
 import { ApiError } from '@/lib/api/types'
 import { useSession } from '@/lib/auth/session-store'
+import { permissionLabel } from '@/lib/i18n/enum-labels'
 import {
   createAdminPasswordReset,
   listAdmins,
@@ -23,6 +25,7 @@ import { Input } from '@/components/ui/input'
 import { Skeleton } from '@/components/ui/skeleton'
 
 export function AdminsView() {
+  const { t, i18n } = useTranslation()
   const router = useRouter()
   const session = useSession()
   const permissions = session?.admin.permissions ?? []
@@ -73,7 +76,7 @@ export function AdminsView() {
         return
       }
 
-      setError(value instanceof Error ? value.message : 'Failed to load admins')
+      setError(value instanceof Error ? value.message : t('admins.loadFailed'))
     }
   }
 
@@ -100,7 +103,7 @@ export function AdminsView() {
 
   async function onStatusChange(adminId: string, nextStatus: Extract<AdminStatus, 'active' | 'disabled'>) {
     if (nextStatus === 'disabled' && adminId === lastActiveSuperAdminId) {
-      setMutationError('Cannot disable the last active super_admin')
+      setMutationError(t('admins.cannotDisableLastSuperAdmin'))
       return
     }
 
@@ -111,7 +114,7 @@ export function AdminsView() {
       await setAdminStatus(adminId, { status: nextStatus })
       await load()
     } catch (value) {
-      setMutationError(value instanceof Error ? value.message : 'Failed to update admin status')
+      setMutationError(value instanceof Error ? value.message : t('admins.updateStatusFailed'))
     } finally {
       setUpdatingAdminId(null)
     }
@@ -119,7 +122,7 @@ export function AdminsView() {
 
   async function onRoleChange(adminId: string, roleId: string) {
     if (adminId === currentAdminId) {
-      setMutationError('Changing your own role is not allowed')
+      setMutationError(t('admins.cannotChangeOwnRole'))
       return
     }
 
@@ -130,7 +133,7 @@ export function AdminsView() {
       await setAdminRole(adminId, { roleId })
       await load()
     } catch (value) {
-      setMutationError(value instanceof Error ? value.message : 'Failed to update role')
+      setMutationError(value instanceof Error ? value.message : t('admins.updateRoleFailed'))
     } finally {
       setUpdatingAdminId(null)
     }
@@ -150,7 +153,7 @@ export function AdminsView() {
       const resetUrl = `${baseOrigin}/password-reset/confirm?token=${encodeURIComponent(result.token)}`
       setResetResult({ ...result, resetUrl })
     } catch (value) {
-      setMutationError(value instanceof Error ? value.message : 'Failed to create reset token')
+      setMutationError(value instanceof Error ? value.message : t('admins.createResetFailed'))
     } finally {
       setUpdatingAdminId(null)
     }
@@ -158,10 +161,10 @@ export function AdminsView() {
 
   if (!canManage) {
     return (
-      <Alert className="border-amber-300/60 bg-amber-50 text-amber-900">
-        <AlertTitle>Access denied</AlertTitle>
+        <Alert className="border-amber-300/60 bg-amber-50 text-amber-900">
+        <AlertTitle>{t('settings.accessDeniedTitle')}</AlertTitle>
         <AlertDescription>
-          Your account does not have `admin.manage` permission.
+          {t('admins.accessDeniedDescription')}
         </AlertDescription>
       </Alert>
     )
@@ -179,7 +182,7 @@ export function AdminsView() {
   if (error) {
     return (
       <Alert className="border-destructive/40 bg-destructive/5 text-destructive">
-        <AlertTitle>Admins page failed to load</AlertTitle>
+        <AlertTitle>{t('admins.pageLoadFailedTitle')}</AlertTitle>
         <AlertDescription>{error}</AlertDescription>
       </Alert>
     )
@@ -189,9 +192,9 @@ export function AdminsView() {
     <div className="space-y-5">
       <div className="flex flex-col gap-3 rounded-xl border border-border/70 bg-card/70 p-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-lg font-semibold">Admins & access</h1>
+          <h1 className="text-lg font-semibold">{t('admins.title')}</h1>
           <p className="text-sm text-muted-foreground">
-            Manage admin accounts, invite newcomers, and control role assignments.
+            {t('admins.subtitle')}
           </p>
         </div>
         <div className="flex w-full gap-2 sm:w-auto">
@@ -202,11 +205,11 @@ export function AdminsView() {
             onCreated={load}
           />
           <Button type="button" variant="outline" onClick={() => void router.navigate({ to: '/admins/roles' })}>
-            Roles
+            {t('app.nav.roles')}
           </Button>
           <Button type="button" variant="outline" disabled={refreshing} onClick={onRefresh}>
             <RefreshCw className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} />
-            {refreshing ? 'Refreshing...' : 'Refresh'}
+            {refreshing ? t('common.actions.refreshing') : t('common.actions.refresh')}
           </Button>
         </div>
       </div>
@@ -214,19 +217,19 @@ export function AdminsView() {
       <div className="grid gap-4 md:grid-cols-3">
         <Card>
           <CardHeader className="pb-2">
-            <CardDescription>Total admins</CardDescription>
+            <CardDescription>{t('admins.totalAdmins')}</CardDescription>
             <CardTitle className="text-2xl">{stats.total}</CardTitle>
           </CardHeader>
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardDescription>Active</CardDescription>
+            <CardDescription>{t('admins.active')}</CardDescription>
             <CardTitle className="text-2xl">{stats.active}</CardTitle>
           </CardHeader>
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardDescription>Disabled</CardDescription>
+            <CardDescription>{t('admins.disabled')}</CardDescription>
             <CardTitle className="text-2xl">{stats.disabled}</CardTitle>
           </CardHeader>
         </Card>
@@ -234,19 +237,19 @@ export function AdminsView() {
 
       {mutationError ? (
         <Alert className="border-destructive/40 bg-destructive/5 text-destructive">
-          <AlertTitle>Operation failed</AlertTitle>
+          <AlertTitle>{t('admins.operationFailedTitle')}</AlertTitle>
           <AlertDescription>{mutationError}</AlertDescription>
         </Alert>
       ) : null}
 
       {resetResult ? (
         <Alert role="status" className="border-emerald-300/60 bg-emerald-50 text-emerald-900">
-          <AlertTitle>Password reset token generated</AlertTitle>
+          <AlertTitle>{t('admins.passwordResetGenerated')}</AlertTitle>
           <AlertDescription className="space-y-2">
-            <p>Token expires: {new Date(resetResult.expiresAt).toLocaleString()}</p>
-            <p className="text-xs text-muted-foreground">Token</p>
+            <p>{t('admins.tokenExpires')}: {new Date(resetResult.expiresAt).toLocaleString(i18n.language === 'ru' ? 'ru-RU' : 'en-GB')}</p>
+            <p className="text-xs text-muted-foreground">{t('admins.tokenLabel')}</p>
             <Input readOnly className="font-mono text-xs" value={resetResult.token} />
-            <p className="text-xs text-muted-foreground">Reset URL</p>
+            <p className="text-xs text-muted-foreground">{t('admins.resetUrlLabel')}</p>
             <Input readOnly className="font-mono text-xs" value={resetResult.resetUrl} />
           </AlertDescription>
         </Alert>
@@ -254,9 +257,9 @@ export function AdminsView() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Admin registry</CardTitle>
+          <CardTitle>{t('admins.registryTitle')}</CardTitle>
           <CardDescription>
-            Update status, change role assignments, and issue password reset links.
+            {t('admins.registryDescription')}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -277,15 +280,15 @@ export function AdminsView() {
       <div className="rounded-lg border border-border/70 bg-background/70 p-3 text-xs text-muted-foreground">
         <p className="flex items-center gap-1.5 font-medium text-foreground">
           <ShieldAlert className="h-3.5 w-3.5" />
-          Security note
+          {t('admins.securityNoteTitle')}
         </p>
         <p className="mt-1">
-          Invite and reset tokens are sensitive credentials. Share them only in secure channels.
+          {t('admins.securityNoteDescription')}
         </p>
       </div>
 
       <div className="flex justify-end">
-        <Badge variant="outline">permission: admin.manage</Badge>
+        <Badge variant="outline">{t('admins.permissionBadge', { permission: permissionLabel(t, 'admin.manage') })}</Badge>
       </div>
     </div>
   )

@@ -1,4 +1,5 @@
 import {
+    Activity,
     BellRing,
     ClipboardList,
     Cpu,
@@ -110,6 +111,15 @@ export function buildSidebarNavigation(input: SidebarNavigationInput): Array<Sid
             titleKey: "app.nav.monitoring",
             visible: true,
             items: [
+                {
+                    id: "monitoring-overview",
+                    label: i18n.t("app.nav.monitoring"),
+                    labelKey: "app.nav.monitoring",
+                    to: "/monitoring",
+                    icon: Activity,
+                    isActive: (pathname) => pathname === "/monitoring",
+                    visible: canReadMonitoring
+                },
                 {
                     id: "alerts",
                     label: i18n.t("app.nav.alerts"),

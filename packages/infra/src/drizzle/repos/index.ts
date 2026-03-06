@@ -15,6 +15,8 @@ export * from "./parents.repo.js";
 export * from "./passwordResets.repo.js";
 export * from "./persons.repo.js";
 export * from "./personTerminalIdentities.repo.js";
+export * from "./terminalDirectoryEntries.repo.js";
+export * from "./terminalDirectorySyncRuns.repo.js";
 export * from "./refreshTokens.repo.js";
 export * from "./roles.repo.js";
 export * from "./settings.repo.js";

@@ -10,6 +10,7 @@ import {
     createStubAuditLogsHandlers,
     createStubSubscriptionsHandlers
 } from "../helpers/adminAuth.js";
+import { createEmptyPersonsModule } from "../helpers/personsModule.js";
 
 type JwtInput = {
     adminId: string;
@@ -192,7 +193,7 @@ describe("API auth cookies", () => {
                 listUnmatched: async () => [],
                 mapTerminalIdentity: async () => ({ status: "already_linked", updatedEvents: 0 })
             },
-            persons: { searchByIin: async () => [] },
+            persons: createEmptyPersonsModule(),
             subscriptionRequests: {
                 listPending: async () => ({ requests: [], page: { limit: 50, offset: 0, total: 0 } }),
                 review: async () => ({ requestId: "r-1", status: "rejected", personId: null })

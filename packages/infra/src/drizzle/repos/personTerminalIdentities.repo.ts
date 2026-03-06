@@ -81,6 +81,21 @@ export function createPersonTerminalIdentitiesRepo(db: Db): PersonTerminalIdenti
             return rows.map(mapIdentity);
         },
 
+        deleteByPersonIdSync({ personId }) {
+            const rows = db
+                .select({ id: personTerminalIdentities.id })
+                .from(personTerminalIdentities)
+                .where(eq(personTerminalIdentities.personId, personId))
+                .all();
+
+            if (rows.length === 0) {
+                return 0;
+            }
+
+            db.delete(personTerminalIdentities).where(eq(personTerminalIdentities.personId, personId)).run();
+            return rows.length;
+        },
+
         withTx(tx) {
             return createPersonTerminalIdentitiesRepo(tx as Db);
         }

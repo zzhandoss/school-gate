@@ -4,6 +4,7 @@ import type { AlertEventsRepo, CreateAlertEventInput, ListAlertEventsInput } fro
 export type AlertEventsService = {
     insertSync(input: CreateAlertEventInput): void;
     list(input: ListAlertEventsInput): Promise<AlertEvent[]>;
+    count(input: Omit<ListAlertEventsInput, "limit" | "offset">): Promise<number>;
     listLatestByRuleIds(input: { ruleIds: string[] }): Promise<AlertEvent[]>;
     withTx(tx: unknown): AlertEventsService;
 };

@@ -61,6 +61,20 @@ export function createAlertEventsRepo(db: Db): AlertEventsRepo {
             return rows.map(mapEvent);
         },
 
+        async count(input) {
+            const conditions = [];
+            if (input.ruleId) conditions.push(eq(alertEvents.ruleId, input.ruleId));
+            if (input.status) conditions.push(eq(alertEvents.status, input.status));
+            if (input.from) conditions.push(gte(alertEvents.createdAt, input.from));
+            if (input.to) conditions.push(lte(alertEvents.createdAt, input.to));
+
+            const query = conditions.length
+                ? db.select().from(alertEvents).where(and(...conditions))
+                : db.select().from(alertEvents);
+
+            return query.all().length;
+        },
+
         async listLatestByRuleIds(input) {
             if (input.ruleIds.length === 0) return [];
             const rows = db

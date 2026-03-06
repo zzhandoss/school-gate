@@ -10,6 +10,7 @@ import {
     createStubAdminsHandlers,
     createStubSubscriptionsHandlers
 } from "../helpers/adminAuth.js";
+import { createEmptyPersonsModule } from "../helpers/personsModule.js";
 import { createTestDb } from "../helpers/testDb.js";
 
 describe("API audit logs routes", () => {
@@ -55,9 +56,7 @@ describe("API audit logs routes", () => {
                 listUnmatched: async () => [],
                 mapTerminalIdentity: async () => ({ status: "already_linked", updatedEvents: 0 })
             },
-            persons: {
-                searchByIin: async () => []
-            },
+            persons: createEmptyPersonsModule(),
             subscriptionRequests: {
                 listPending: async () => ({ requests: [], page: { limit: 50, offset: 0, total: 0 } }),
                 review: async () => ({ requestId: "r1", status: "rejected", personId: null })

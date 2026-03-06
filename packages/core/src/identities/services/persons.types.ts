@@ -11,6 +11,9 @@ export type ListPersonsInput = {
     offset: number;
     iin?: string;
     query?: string;
+    linkedStatus?: "all" | "linked" | "unlinked";
+    includeDeviceIds?: string[];
+    excludeDeviceIds?: string[];
 };
 
 export type PersonsService = {
@@ -27,6 +30,9 @@ export type PersonsService = {
     count(input: {
         iin?: string;
         query?: string;
+        linkedStatus?: "all" | "linked" | "unlinked";
+        includeDeviceIds?: string[];
+        excludeDeviceIds?: string[];
     }): Promise<number>;
     searchByIinPrefix(input: { iinPrefix: string; limit: number }): Promise<Person[]>;
     getByTerminalPersonId(terminalPersonId: string): Promise<Person | null>;

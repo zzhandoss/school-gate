@@ -1,6 +1,6 @@
-import { and, asc, eq, like, or, sql } from "drizzle-orm";
+import { and, asc, eq, inArray, like, or, sql, type SQL } from "drizzle-orm";
 import type { Db } from "@school-gate/db/drizzle";
-import { persons } from "@school-gate/db/schema";
+import { personTerminalIdentities, persons } from "@school-gate/db/schema";
 import type { Person, PersonsRepo } from "@school-gate/core";
 
 function toDate(v: unknown): Date {
@@ -23,21 +23,72 @@ function mapPerson(row: typeof persons.$inferSelect): Person {
     } satisfies Person;
 }
 
-function buildWhereClause(input: { iin?: string; query?: string }) {
+function buildWhereClause(input: {
+    iin?: string;
+    query?: string;
+    linkedStatus?: "all" | "linked" | "unlinked";
+    includeDeviceIds?: string[];
+    excludeDeviceIds?: string[];
+}) {
     const normalizedIin = input.iin?.trim();
     const normalizedQuery = input.query?.trim().toLowerCase();
+    const normalizedIncludeDeviceIds = Array.from(
+        new Set((input.includeDeviceIds ?? []).map((value) => value.trim()).filter((value) => value.length > 0))
+    );
+    const normalizedExcludeDeviceIds = Array.from(
+        new Set((input.excludeDeviceIds ?? []).map((value) => value.trim()).filter((value) => value.length > 0))
+    );
 
-    const filters = [];
+    const filters: SQL[] = [];
     if (normalizedIin) {
         filters.push(like(persons.iin, `${normalizedIin}%`));
     }
     if (normalizedQuery) {
+        const queryFilter = or(
+            like(persons.iin, `%${normalizedQuery}%`),
+            like(persons.firstName, `%${normalizedQuery}%`),
+            like(persons.lastName, `%${normalizedQuery}%`)
+        );
+        if (queryFilter !== undefined) {
+            filters.push(queryFilter);
+        }
+    }
+    if (input.linkedStatus === "linked") {
         filters.push(
-            or(
-                like(persons.iin, `%${normalizedQuery}%`),
-                like(persons.firstName, `%${normalizedQuery}%`),
-                like(persons.lastName, `%${normalizedQuery}%`)
-            )
+            sql`exists (
+                select 1
+                from ${personTerminalIdentities}
+                where ${personTerminalIdentities.personId} = ${persons.id}
+            )`
+        );
+    }
+    if (input.linkedStatus === "unlinked") {
+        filters.push(
+            sql`not exists (
+                select 1
+                from ${personTerminalIdentities}
+                where ${personTerminalIdentities.personId} = ${persons.id}
+            )`
+        );
+    }
+    if (normalizedIncludeDeviceIds.length > 0) {
+        filters.push(
+            sql`exists (
+                select 1
+                from ${personTerminalIdentities}
+                where ${personTerminalIdentities.personId} = ${persons.id}
+                  and ${inArray(personTerminalIdentities.deviceId, normalizedIncludeDeviceIds)}
+            )`
+        );
+    }
+    if (normalizedExcludeDeviceIds.length > 0) {
+        filters.push(
+            sql`not exists (
+                select 1
+                from ${personTerminalIdentities}
+                where ${personTerminalIdentities.personId} = ${persons.id}
+                  and ${inArray(personTerminalIdentities.deviceId, normalizedExcludeDeviceIds)}
+            )`
         );
     }
 
@@ -83,16 +134,20 @@ export function createPersonsRepo(db: Db): PersonsRepo {
             return mapPerson(row);
         },
 
-        async list({ limit, offset, iin, query }) {
+        async list({ limit, offset, iin, query, linkedStatus, includeDeviceIds, excludeDeviceIds }) {
             const whereClause = buildWhereClause({
                 ...(iin !== undefined ? { iin } : {}),
-                ...(query !== undefined ? { query } : {})
+                ...(query !== undefined ? { query } : {}),
+                ...(linkedStatus !== undefined ? { linkedStatus } : {}),
+                ...(includeDeviceIds !== undefined ? { includeDeviceIds } : {}),
+                ...(excludeDeviceIds !== undefined ? { excludeDeviceIds } : {})
             });
 
-            const rows = await db
+            const baseQuery = db
                 .select()
-                .from(persons)
-                .where(whereClause)
+                .from(persons);
+
+            const rows = await (whereClause === undefined ? baseQuery : baseQuery.where(whereClause))
                 .orderBy(asc(persons.createdAt), asc(persons.iin))
                 .limit(limit)
                 .offset(offset);
@@ -100,15 +155,18 @@ export function createPersonsRepo(db: Db): PersonsRepo {
             return rows.map(mapPerson);
         },
 
-        async count({ iin, query }) {
+        async count({ iin, query, linkedStatus, includeDeviceIds, excludeDeviceIds }) {
             const whereClause = buildWhereClause({
                 ...(iin !== undefined ? { iin } : {}),
-                ...(query !== undefined ? { query } : {})
+                ...(query !== undefined ? { query } : {}),
+                ...(linkedStatus !== undefined ? { linkedStatus } : {}),
+                ...(includeDeviceIds !== undefined ? { includeDeviceIds } : {}),
+                ...(excludeDeviceIds !== undefined ? { excludeDeviceIds } : {})
             });
-            const rows = await db
+            const baseQuery = db
                 .select({ count: sql<number>`count(*)` })
-                .from(persons)
-                .where(whereClause);
+                .from(persons);
+            const rows = await (whereClause === undefined ? baseQuery : baseQuery.where(whereClause));
 
             return Number(rows[0]?.count ?? 0);
         },
@@ -150,6 +208,16 @@ export function createPersonsRepo(db: Db): PersonsRepo {
                 }
                 throw e;
             }
+        },
+
+        deleteByIdSync({ id }) {
+            const rows = db.select({ id: persons.id }).from(persons).where(eq(persons.id, id)).limit(1).all();
+            if (!rows[0]) {
+                return false;
+            }
+
+            db.delete(persons).where(eq(persons.id, id)).run();
+            return true;
         },
 
         withTx(tx) {

@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import type { AuditLogItem } from '@/lib/audit-logs/types'
 import { Skeleton } from '@/components/ui/skeleton'
 import {
@@ -25,7 +26,7 @@ function formatDateTime(value: string) {
 
 function summarizeMeta(meta: Record<string, unknown> | null) {
   if (!meta) {
-    return '—'
+    return '-'
   }
 
   const keys = Object.keys(meta)
@@ -38,6 +39,7 @@ function summarizeMeta(meta: Record<string, unknown> | null) {
 }
 
 export function AuditLogsTable({ logs, loading }: AuditLogsTableProps) {
+  const { t } = useTranslation()
   if (loading) {
     return (
       <div className="space-y-2">
@@ -53,19 +55,19 @@ export function AuditLogsTable({ logs, loading }: AuditLogsTableProps) {
       <Table className="min-w-[980px]">
         <TableHeader>
           <TableRow>
-            <TableHead className="w-[180px]">At</TableHead>
-            <TableHead className="w-[140px]">Actor</TableHead>
-            <TableHead className="w-[220px]">Action</TableHead>
-            <TableHead className="w-[240px]">Entity</TableHead>
-            <TableHead className="w-[200px]">Meta</TableHead>
-            <TableHead className="w-[220px]">Event ID</TableHead>
+            <TableHead className="w-[180px]">{t('auditLogs.table.at')}</TableHead>
+            <TableHead className="w-[140px]">{t('auditLogs.table.actor')}</TableHead>
+            <TableHead className="w-[220px]">{t('auditLogs.table.action')}</TableHead>
+            <TableHead className="w-[240px]">{t('auditLogs.table.entity')}</TableHead>
+            <TableHead className="w-[200px]">{t('auditLogs.table.meta')}</TableHead>
+            <TableHead className="w-[220px]">{t('common.labels.eventId')}</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {logs.length === 0 ? (
             <TableRow>
               <TableCell colSpan={6} className="text-center text-sm text-muted-foreground">
-                No audit logs found for current filters.
+                {t('auditLogs.noLogsForFilters')}
               </TableCell>
             </TableRow>
           ) : (
@@ -97,10 +99,10 @@ export function AuditLogsTable({ logs, loading }: AuditLogsTableProps) {
                       </TooltipContent>
                     </Tooltip>
                   ) : (
-                    <span className="text-muted-foreground">—</span>
+                    <span className="text-muted-foreground">-</span>
                   )}
                 </TableCell>
-                <TableCell className="font-mono text-xs">{log.eventId ?? '—'}</TableCell>
+                <TableCell className="font-mono text-xs">{log.eventId ?? '-'}</TableCell>
               </TableRow>
             ))
           )}

@@ -1,11 +1,13 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useRouter } from '@tanstack/react-router'
 import { AlertTriangle, BellRing, RefreshCw, Siren, TriangleAlert } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 import { AlertsEventsCard } from './alerts-events-card'
 import { AlertsCreateRulePanel } from './alerts-create-rule-panel'
 import { AlertsRulesCard } from './alerts-rules-card'
 import type { AlertEvent, AlertRule, AlertSubscription } from '@/lib/alerts/types'
+import { Route } from '@/routes/alerts'
 import { ApiError } from '@/lib/api/types'
 import { useSession } from '@/lib/auth/session-store'
 import {
@@ -20,16 +22,22 @@ import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui/ca
 import { Skeleton } from '@/components/ui/skeleton'
 
 export function AlertsView() {
+  const { t } = useTranslation()
   const router = useRouter()
+  const navigate = Route.useNavigate()
+  const search = Route.useSearch()
   const session = useSession()
   const [rules, setRules] = useState<Array<AlertRule>>([])
   const [events, setEvents] = useState<Array<AlertEvent>>([])
+  const [eventsTotal, setEventsTotal] = useState(0)
   const [subscriptions, setSubscriptions] = useState<Array<AlertSubscription>>([])
   const [loading, setLoading] = useState(true)
   const [refreshing, setRefreshing] = useState(false)
+  const [eventsLoading, setEventsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [subscriptionError, setSubscriptionError] = useState<string | null>(null)
   const [subscriptionUpdatingRuleId, setSubscriptionUpdatingRuleId] = useState<string | null>(null)
+  const firstEventsLoadSkippedRef = useRef(false)
 
   const adminId = session?.admin.id ?? null
   const canManageSubscriptions = session?.admin.permissions.includes('admin.manage') ?? false
@@ -42,9 +50,9 @@ export function AlertsView() {
     return map
   }, [subscriptions])
 
-  async function load(activeRef?: { current: boolean }) {
+  async function loadRules(activeRef?: { current: boolean }) {
     if (!adminId) {
-      setError('Session is missing admin identifier.')
+      setError(t('alerts.sessionMissingAdminId'))
       return
     }
 
@@ -52,9 +60,8 @@ export function AlertsView() {
     setSubscriptionError(null)
 
     try {
-      const [nextRules, nextEvents, nextSubscriptions] = await Promise.all([
+      const [nextRules, nextSubscriptions] = await Promise.all([
         getAlertRules({ limit: 100 }),
-        getAlertEvents({ limit: 30 }),
         getMyAlertSubscriptions(adminId)
       ])
 
@@ -63,7 +70,6 @@ export function AlertsView() {
       }
 
       setRules(nextRules)
-      setEvents(nextEvents)
       setSubscriptions(nextSubscriptions)
     } catch (value) {
       if (activeRef && !activeRef.current) {
@@ -75,8 +81,43 @@ export function AlertsView() {
         return
       }
 
-      const message = value instanceof Error ? value.message : 'Failed to load alerts'
+      const message = value instanceof Error ? value.message : t('alerts.loadFailed')
       setError(message)
+    }
+  }
+
+  async function loadEvents(activeRef?: { current: boolean }) {
+    setError(null)
+    setEventsLoading(true)
+
+    try {
+      const result = await getAlertEvents({
+        limit: search.eventsLimit,
+        offset: search.eventsOffset
+      })
+
+      if (activeRef && !activeRef.current) {
+        return
+      }
+
+      setEvents(result.events)
+      setEventsTotal(result.page.total)
+    } catch (value) {
+      if (activeRef && !activeRef.current) {
+        return
+      }
+
+      if (value instanceof ApiError && value.code === 'server_unreachable') {
+        await router.navigate({ to: '/unavailable' })
+        return
+      }
+
+      const message = value instanceof Error ? value.message : t('alerts.loadFailed')
+      setError(message)
+    } finally {
+      if (!activeRef || activeRef.current) {
+        setEventsLoading(false)
+      }
     }
   }
 
@@ -85,8 +126,9 @@ export function AlertsView() {
 
     async function initialLoad() {
       setLoading(true)
-      await load(activeRef)
+      await Promise.all([loadRules(activeRef), loadEvents(activeRef)])
       if (activeRef.current) {
+        firstEventsLoadSkippedRef.current = true
         setLoading(false)
       }
     }
@@ -97,9 +139,20 @@ export function AlertsView() {
     }
   }, [adminId, router])
 
+  useEffect(() => {
+    if (loading || !adminId) {
+      return
+    }
+    if (firstEventsLoadSkippedRef.current) {
+      firstEventsLoadSkippedRef.current = false
+      return
+    }
+    void loadEvents()
+  }, [search.eventsLimit, search.eventsOffset])
+
   async function onRefresh() {
     setRefreshing(true)
-    await load()
+    await Promise.all([loadRules(), loadEvents()])
     setRefreshing(false)
   }
 
@@ -117,9 +170,9 @@ export function AlertsView() {
         ruleId,
         isEnabled: !current
       })
-      await load()
+      await loadRules()
     } catch (value) {
-      const message = value instanceof Error ? value.message : 'Cannot update subscription'
+      const message = value instanceof Error ? value.message : t('alerts.cannotUpdateSubscription')
       setSubscriptionError(message)
     } finally {
       setSubscriptionUpdatingRuleId(null)
@@ -139,7 +192,7 @@ export function AlertsView() {
   if (error) {
     return (
       <Alert className="border-destructive/40 bg-destructive/5 text-destructive">
-        <AlertTitle>Alerts page failed to load</AlertTitle>
+        <AlertTitle>{t('alerts.pageLoadFailedTitle')}</AlertTitle>
         <AlertDescription>{error}</AlertDescription>
       </Alert>
     )
@@ -151,17 +204,40 @@ export function AlertsView() {
   ).length
   const enabledRulesCount = rules.filter((item) => item.isEnabled).length
 
+  async function onEventsPageChange(page: number) {
+    await navigate({
+      search: {
+        ...search,
+        eventsOffset: (page - 1) * search.eventsLimit
+      }
+    })
+  }
+
+  async function onEventsPageSizeChange(limit: number) {
+    await navigate({
+      search: {
+        ...search,
+        eventsLimit: limit,
+        eventsOffset: 0
+      }
+    })
+  }
+
+  async function onRulesChanged() {
+    await Promise.all([loadRules(), loadEvents()])
+  }
+
   return (
     <div className="space-y-5">
       <div className="flex flex-col gap-3 rounded-xl border border-border/70 bg-card/70 p-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-lg font-semibold">Alerts control center</h1>
+          <h1 className="text-lg font-semibold">{t('alerts.title')}</h1>
           <p className="text-sm text-muted-foreground">
-            Manage rules and notification subscriptions for your account.
+            {t('alerts.subtitle')}
           </p>
         </div>
         <div className="flex w-full gap-2 sm:w-auto">
-          <AlertsCreateRulePanel onCreated={load} canCreate={canManageSubscriptions} />
+          <AlertsCreateRulePanel onCreated={onRulesChanged} canCreate={canManageSubscriptions} />
           <Button
             type="button"
             variant="outline"
@@ -170,7 +246,7 @@ export function AlertsView() {
             className="flex-1 sm:flex-none"
           >
             <RefreshCw className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} />
-            {refreshing ? 'Refreshing...' : 'Refresh data'}
+            {refreshing ? t('common.actions.refreshing') : t('alerts.refreshData')}
           </Button>
         </div>
       </div>
@@ -178,7 +254,7 @@ export function AlertsView() {
       <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
         <Card className="border-border/80">
           <CardHeader className="pb-2">
-            <CardDescription>Triggered now</CardDescription>
+            <CardDescription>{t('alerts.triggeredNow')}</CardDescription>
             <CardTitle className="flex items-center gap-2 text-2xl">
               <Siren className="h-5 w-5 text-red-700" />
               {triggeredCount}
@@ -187,7 +263,7 @@ export function AlertsView() {
         </Card>
         <Card className="border-border/80">
           <CardHeader className="pb-2">
-            <CardDescription>Critical active</CardDescription>
+            <CardDescription>{t('alerts.criticalActive')}</CardDescription>
             <CardTitle className="flex items-center gap-2 text-2xl">
               <TriangleAlert className="h-5 w-5 text-red-700" />
               {criticalTriggeredCount}
@@ -196,7 +272,7 @@ export function AlertsView() {
         </Card>
         <Card className="border-border/80">
           <CardHeader className="pb-2">
-            <CardDescription>Enabled rules</CardDescription>
+            <CardDescription>{t('alerts.enabledRules')}</CardDescription>
             <CardTitle className="flex items-center gap-2 text-2xl">
               <BellRing className="h-5 w-5 text-cyan-700" />
               {enabledRulesCount}
@@ -212,18 +288,29 @@ export function AlertsView() {
         subscriptionError={subscriptionError}
         subscriptionUpdatingRuleId={subscriptionUpdatingRuleId}
         onToggleSubscription={onToggleSubscription}
-        onRuleUpdated={load}
+        onRuleUpdated={loadRules}
+        onRuleDeleted={onRulesChanged}
       />
 
-      <AlertsEventsCard events={events} />
+      <AlertsEventsCard
+        events={events}
+        page={{
+          limit: search.eventsLimit,
+          offset: search.eventsOffset,
+          total: eventsTotal
+        }}
+        loading={eventsLoading || refreshing}
+        onPageChange={(page) => void onEventsPageChange(page)}
+        onPageSizeChange={(limit) => void onEventsPageSizeChange(limit)}
+      />
 
       <div className="rounded-lg border border-border/70 bg-background/70 p-3 text-xs text-muted-foreground">
         <p className="flex items-center gap-1.5 font-medium text-foreground">
           <AlertTriangle className="h-3.5 w-3.5" />
-          Delivery scope
+          {t('alerts.deliveryScopeTitle')}
         </p>
         <p className="mt-1">
-          This page supports creating, editing, and subscribing to rules in one workflow.
+          {t('alerts.deliveryScopeDescription')}
         </p>
       </div>
     </div>

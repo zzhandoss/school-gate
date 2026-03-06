@@ -1,7 +1,9 @@
 import { useEffect, useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { ShieldCheck } from 'lucide-react'
 
 import type { AdminRole } from '@/lib/admins/types'
+import { permissionLabel } from '@/lib/i18n/enum-labels'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -31,6 +33,7 @@ export function AdminRoleForm({
   onSubmit,
   onClose
 }: AdminRoleFormProps) {
+  const { t } = useTranslation()
   const [name, setName] = useState(role?.name ?? '')
   const [selectedPermissions, setSelectedPermissions] = useState<Array<string>>(sortPermissions(initialPermissions))
   const [submitting, setSubmitting] = useState(false)
@@ -62,12 +65,12 @@ export function AdminRoleForm({
 
     const normalizedName = name.trim()
     if (!normalizedName) {
-      setError('Role name is required')
+      setError(t('admins.roleForm.errors.roleNameRequired'))
       return
     }
 
     if (selectedPermissions.length === 0) {
-      setError('Select at least one permission')
+      setError(t('admins.roleForm.errors.permissionRequired'))
       return
     }
 
@@ -79,7 +82,7 @@ export function AdminRoleForm({
       })
       onClose()
     } catch (value) {
-      setError(value instanceof Error ? value.message : 'Failed to save role')
+      setError(value instanceof Error ? value.message : t('admins.roleForm.errors.saveFailed'))
     } finally {
       setSubmitting(false)
     }
@@ -90,29 +93,32 @@ export function AdminRoleForm({
   return (
     <form className="space-y-4 p-4 pt-0" onSubmit={submit}>
       <div className="space-y-2">
-        <Label htmlFor={`role-name-${mode}`}>Role name</Label>
+        <Label htmlFor={`role-name-${mode}`}>{t('admins.roleForm.roleName')}</Label>
         <Input
           id={`role-name-${mode}`}
           value={name}
           disabled={disabled || mode === 'edit'}
           onChange={(event) => setName(event.target.value)}
-          placeholder="ops_manager"
+          placeholder={t('admins.roleForm.placeholders.roleName')}
         />
         {mode === 'edit' ? (
-          <p className="text-xs text-muted-foreground">Role name is immutable.</p>
+          <p className="text-xs text-muted-foreground">{t('admins.roleForm.roleNameImmutable')}</p>
         ) : null}
       </div>
 
       <div className="space-y-2">
-        <Label>Permissions</Label>
+        <Label>{t('admins.roleForm.permissions')}</Label>
         <div className="max-h-72 space-y-2 overflow-y-auto rounded-lg border border-border/70 p-3">
           {allPermissions.map((permission) => {
             const id = `${mode}-${role?.id ?? 'new'}-${permission}`
             return (
               <div key={permission} className="flex items-center justify-between gap-3 rounded-md border border-border/60 px-3 py-2">
-                <Label htmlFor={id} className="text-sm">
-                  {permission}
-                </Label>
+                <div className="min-w-0">
+                  <Label htmlFor={id} className="text-sm">
+                    {permissionLabel(t, permission)}
+                  </Label>
+                  <p className="truncate font-mono text-xs text-muted-foreground">{permission}</p>
+                </div>
                 <Switch
                   id={id}
                   checked={selectedSet.has(permission)}
@@ -127,18 +133,22 @@ export function AdminRoleForm({
 
       {error ? (
         <Alert className="border-destructive/40 bg-destructive/5 text-destructive">
-          <AlertTitle>Cannot save role</AlertTitle>
+          <AlertTitle>{t('admins.roleForm.cannotSaveTitle')}</AlertTitle>
           <AlertDescription>{error}</AlertDescription>
         </Alert>
       ) : null}
 
       <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
         <Button type="button" variant="outline" onClick={onClose}>
-          Cancel
+          {t('common.actions.cancel')}
         </Button>
         <Button type="submit" disabled={disabled}>
           <ShieldCheck className="h-4 w-4" />
-          {submitting ? 'Saving...' : mode === 'create' ? 'Create role' : 'Save permissions'}
+          {submitting
+            ? t('admins.roleForm.saving')
+            : mode === 'create'
+              ? t('admins.roleForm.createRole')
+              : t('admins.roleForm.savePermissions')}
         </Button>
       </div>
     </form>

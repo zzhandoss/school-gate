@@ -7,6 +7,7 @@ import {
     type ListAlertSubscriptionsResultDto
 } from "@school-gate/contracts";
 import {
+    createDeleteAlertRuleFlow,
     createAdminsService,
     createAlertEventsService,
     createAlertRulesService,
@@ -19,7 +20,8 @@ import {
     createAlertRulesRepo,
     createAlertSubscriptionsRepo,
     createArgon2PasswordHasher,
-    createOutbox
+    createOutbox,
+    createUnitOfWork
 } from "@school-gate/infra";
 import type { AlertsModule } from "../../delivery/http/routes/alerts.routes.js";
 import type { ApiRuntime } from "../../runtime/createRuntime.js";
@@ -54,6 +56,15 @@ export function createAlertsFeature(runtime: ApiRuntime): AlertsModule {
         idGen: runtime.idGen,
         clock: runtime.clock
     });
+    const deleteAlertRule = createDeleteAlertRuleFlow({
+        tx: createUnitOfWork(runtime.dbClient.db, {
+            rulesRepo: createAlertRulesRepo,
+            outbox: createOutbox
+        }),
+        idGen: runtime.idGen,
+        clock: runtime.clock,
+        rulesService
+    });
 
     return {
         listRules: async (input) => {
@@ -75,6 +86,7 @@ export function createAlertsFeature(runtime: ApiRuntime): AlertsModule {
             return data;
         },
         createRule: (input, adminId) => rulesService.create({ ...input, actorId: adminId }),
+        deleteRule: (input, adminId) => deleteAlertRule({ ...input, adminId }),
         updateRule: (input, adminId) => rulesService.update({ ...input, actorId: adminId }),
         listSubscriptions: async (input) => {
             const subscriptions = await subscriptionsService.list(input);
@@ -93,11 +105,20 @@ export function createAlertsFeature(runtime: ApiRuntime): AlertsModule {
         },
         setSubscription: (input) => setAlertSubscription(input),
         listEvents: async (input) => {
-            const events = await eventsService.list({
+            const params = {
                 ...input,
                 from: input.from ? new Date(input.from) : undefined,
                 to: input.to ? new Date(input.to) : undefined
-            });
+            };
+            const [events, total] = await Promise.all([
+                eventsService.list(params),
+                eventsService.count({
+                    ruleId: params.ruleId,
+                    status: params.status,
+                    from: params.from,
+                    to: params.to
+                })
+            ]);
             const data: ListAlertEventsResultDto = {
                 events: events.map((event) =>
                     alertEventSchema.parse({
@@ -110,7 +131,12 @@ export function createAlertsFeature(runtime: ApiRuntime): AlertsModule {
                         details: event.details,
                         createdAt: event.createdAt.toISOString()
                     })
-                )
+                ),
+                page: {
+                    limit: input.limit,
+                    offset: input.offset,
+                    total
+                }
             };
             return data;
         }

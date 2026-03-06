@@ -130,7 +130,7 @@ export function SubscriptionRequestsTable({
               <TableRow key={request.id}>
                 <TableCell className="font-medium">
                   {request.personId ? (
-                    <PersonHoverCard person={{ id: request.personId, iin: request.iin }}>
+                    <PersonHoverCard loadDetails person={{ id: request.personId, iin: request.iin }}>
                       <button
                         type="button"
                         className="inline-flex max-w-full cursor-help truncate text-left text-foreground hover:text-primary"

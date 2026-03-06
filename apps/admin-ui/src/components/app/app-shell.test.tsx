@@ -1,6 +1,9 @@
 import { describe, expect, it } from 'vitest'
 
-import { getSidebarBrandingVariant } from './app-shell'
+import {
+  getAvatarInitials,
+  getSidebarBrandingVariant
+} from './app-shell.utils'
 
 describe('AppShell', () => {
   it('returns full branding variant for expanded sidebar', () => {
@@ -9,5 +12,13 @@ describe('AppShell', () => {
 
   it('returns compact branding variant for collapsed sidebar', () => {
     expect(getSidebarBrandingVariant(true)).toBe('compact')
+  })
+
+  it('builds avatar initials from full name', () => {
+    expect(getAvatarInitials('Admin User', 'admin@example.com')).toBe('AU')
+  })
+
+  it('falls back to email when name is missing', () => {
+    expect(getAvatarInitials(null, 'admin@example.com')).toBe('AD')
   })
 })

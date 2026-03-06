@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Pencil } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 import { AlertsEditRuleForm } from './alerts-edit-rule-form'
 import type { AlertRule } from '@/lib/alerts/types'
@@ -26,6 +27,7 @@ type AlertsEditRulePanelProps = {
 }
 
 export function AlertsEditRulePanel({ rule, onUpdated, canEdit }: AlertsEditRulePanelProps) {
+  const { t } = useTranslation()
   const [isDesktopOpen, setIsDesktopOpen] = useState(false)
   const [isMobileOpen, setIsMobileOpen] = useState(false)
 
@@ -40,14 +42,14 @@ export function AlertsEditRulePanel({ rule, onUpdated, canEdit }: AlertsEditRule
         onClick={() => setIsDesktopOpen(true)}
       >
         <Pencil className="h-3.5 w-3.5" />
-        Edit
+        {t('alerts.rulePanel.edit')}
       </Button>
       <Button
         type="button"
         size="icon"
         variant="outline"
         className="sm:hidden"
-        aria-label={`Edit ${rule.name}`}
+        aria-label={t('alerts.rulePanel.editAria', { ruleName: rule.name })}
         disabled={!canEdit}
         onClick={() => setIsMobileOpen(true)}
       >
@@ -57,9 +59,9 @@ export function AlertsEditRulePanel({ rule, onUpdated, canEdit }: AlertsEditRule
       <Sheet open={isDesktopOpen} onOpenChange={setIsDesktopOpen}>
         <SheetContent side="right" className="w-full sm:max-w-xl">
           <SheetHeader>
-            <SheetTitle>Edit alert rule</SheetTitle>
+            <SheetTitle>{t('alerts.rulePanel.editTitle')}</SheetTitle>
             <SheetDescription>
-              Update rule metadata and thresholds without leaving alerts overview.
+              {t('alerts.rulePanel.editSheetDescription')}
             </SheetDescription>
           </SheetHeader>
           <AlertsEditRuleForm
@@ -73,9 +75,9 @@ export function AlertsEditRulePanel({ rule, onUpdated, canEdit }: AlertsEditRule
       <Drawer open={isMobileOpen} onOpenChange={setIsMobileOpen}>
         <DrawerContent>
           <DrawerHeader>
-            <DrawerTitle>Edit alert rule</DrawerTitle>
+            <DrawerTitle>{t('alerts.rulePanel.editTitle')}</DrawerTitle>
             <DrawerDescription>
-              Update rule settings and save changes.
+              {t('alerts.rulePanel.editDrawerDescription')}
             </DrawerDescription>
           </DrawerHeader>
           <AlertsEditRuleForm

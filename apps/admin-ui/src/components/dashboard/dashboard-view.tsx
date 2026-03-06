@@ -1,4 +1,4 @@
-﻿import { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from '@tanstack/react-router'
 import {
   AlertTriangle,
@@ -7,6 +7,7 @@ import {
   ServerCog,
   UserRoundCheck
 } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 import type { MonitoringSnapshot, PendingRequestItem } from '@/lib/dashboard/types'
 import { getMonitoringSnapshot, getPendingRequests } from '@/lib/dashboard/service'
@@ -38,6 +39,7 @@ function formatDate(value: string | null) {
 }
 
 export function DashboardView() {
+  const { t } = useTranslation()
   const router = useRouter()
   const session = useSession()
   const permissions = session?.admin.permissions ?? []
@@ -81,7 +83,7 @@ export function DashboardView() {
               return
             }
             setMonitoringError(
-              value instanceof Error ? value.message : 'Failed to load monitoring widget'
+              value instanceof Error ? value.message : t('dashboard.monitoringWidgetUnavailable')
             )
             setMonitoring(null)
           }
@@ -110,7 +112,7 @@ export function DashboardView() {
               return
             }
             setRequestsError(
-              value instanceof Error ? value.message : 'Failed to load requests widget'
+              value instanceof Error ? value.message : t('dashboard.requestsWidgetUnavailable')
             )
             setRequests([])
           }
@@ -175,17 +177,14 @@ export function DashboardView() {
   const queueNew = monitoring?.accessEvents.counts.NEW ?? 0
   const outboxNew = monitoring?.outbox.counts.new ?? 0
   const workerCount = monitoring?.workers.length ?? 0
-  const staleLabel = workerStaleCount === 1 ? 'worker stale' : 'workers stale'
-  const componentLabel =
-    componentDownCount === 1 ? 'component down' : 'components down'
 
   return (
     <div className="space-y-5">
       <div className="flex flex-col gap-3 rounded-xl border border-border/70 bg-card/70 p-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-lg font-semibold">Operations dashboard</h1>
+          <h1 className="text-lg font-semibold">{t('dashboard.title')}</h1>
           <p className="text-sm text-muted-foreground">
-            Last snapshot: {formatDate(monitoring?.now ?? null)}
+            {t('dashboard.subtitle', { value: formatDate(monitoring?.now ?? null) })}
           </p>
         </div>
         <Button
@@ -196,7 +195,7 @@ export function DashboardView() {
           className="sm:w-auto"
         >
           <RefreshCw className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} />
-          {refreshing ? 'Refreshing…' : 'Refresh data'}
+          {refreshing ? t('common.actions.refreshing') : t('common.actions.refresh')}
         </Button>
       </div>
 
@@ -205,48 +204,48 @@ export function DashboardView() {
           <>
             <Card className="border-border/80 transition-shadow duration-200 hover:shadow-md">
               <CardHeader className="pb-2">
-                <CardDescription>Worker health</CardDescription>
+                <CardDescription>{t('dashboard.workerHealth')}</CardDescription>
                 <CardTitle className="flex items-center gap-2 text-2xl">
                   <ServerCog className="h-5 w-5 text-cyan-600" />
-                  {workerStaleCount === 0 ? 'All healthy' : `${workerStaleCount} stale`}
+                  {workerStaleCount === 0 ? t('dashboard.allHealthy') : t('dashboard.staleCount', { count: workerStaleCount })}
                 </CardTitle>
               </CardHeader>
               <CardContent className="text-sm text-muted-foreground">
-                {workerCount} workers tracked
+                {t('dashboard.workersTracked', { count: workerCount })}
               </CardContent>
             </Card>
 
             <Card className="border-border/80 transition-shadow duration-200 hover:shadow-md">
               <CardHeader className="pb-2">
-                <CardDescription>Queue pressure</CardDescription>
+                <CardDescription>{t('dashboard.queuePressure')}</CardDescription>
                 <CardTitle className="text-2xl">{queueNew + outboxNew}</CardTitle>
               </CardHeader>
               <CardContent className="text-sm text-muted-foreground">
-                access_events.NEW: {queueNew} · outbox.new: {outboxNew}
+                {t('monitoring.accessEventsNew')}: {queueNew} � {t('monitoring.outboxNew')}: {outboxNew}
               </CardContent>
             </Card>
 
             <Card className="border-border/80 transition-shadow duration-200 hover:shadow-md">
               <CardHeader className="pb-2">
-                <CardDescription>Component status</CardDescription>
+                <CardDescription>{t('dashboard.componentStatus')}</CardDescription>
                 <CardTitle className="flex items-center gap-2 text-2xl">
                   <AlertTriangle className="h-5 w-5 text-amber-600" />
-                  {componentDownCount === 0 ? 'Operational' : `${componentDownCount} down`}
+                  {componentDownCount === 0 ? t('dashboard.operational') : t('dashboard.downCount', { count: componentDownCount })}
                 </CardTitle>
               </CardHeader>
               <CardContent className="text-sm text-muted-foreground">
-                Total components: {monitoring?.components.length ?? 0}
+                {t('dashboard.totalComponents', { count: monitoring?.components.length ?? 0 })}
               </CardContent>
             </Card>
 
             <Card className="border-border/80 transition-shadow duration-200 hover:shadow-md">
               <CardHeader className="pb-2">
-                <CardDescription>Risk summary</CardDescription>
+                <CardDescription>{t('dashboard.riskSummary')}</CardDescription>
                 <CardTitle className="text-2xl">{workerStaleCount + componentDownCount}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-1 text-sm text-muted-foreground">
-                <p>{workerStaleCount} {staleLabel}</p>
-                <p>{componentDownCount} {componentLabel}</p>
+                <p>{t('dashboard.staleWorkers', { count: workerStaleCount })}</p>
+                <p>{t('dashboard.componentsDown', { count: componentDownCount })}</p>
               </CardContent>
             </Card>
           </>
@@ -255,7 +254,7 @@ export function DashboardView() {
 
       {canViewMonitoring && monitoringError ? (
         <Alert className="border-destructive/40 bg-destructive/5 text-destructive">
-          <AlertTitle>Monitoring widget unavailable</AlertTitle>
+          <AlertTitle>{t('dashboard.monitoringWidgetUnavailable')}</AlertTitle>
           <AlertDescription>{monitoringError}</AlertDescription>
         </Alert>
       ) : null}
@@ -265,19 +264,19 @@ export function DashboardView() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <UserRoundCheck className="h-5 w-5 text-emerald-700" />
-              Recent subscription requests
+              {t('dashboard.requestsTitle')}
             </CardTitle>
-            <CardDescription>Latest incoming requests needing review</CardDescription>
+            <CardDescription>{t('dashboard.requestsDescription')}</CardDescription>
           </CardHeader>
           <CardContent>
             {requestsError ? (
               <Alert className="border-destructive/40 bg-destructive/5 text-destructive">
-                <AlertTitle>Requests widget unavailable</AlertTitle>
+                <AlertTitle>{t('dashboard.requestsWidgetUnavailable')}</AlertTitle>
                 <AlertDescription>{requestsError}</AlertDescription>
               </Alert>
             ) : requests.length === 0 ? (
               <div className="rounded-lg border border-dashed border-border/80 px-4 py-8 text-center text-sm text-muted-foreground">
-                No requests found.
+                {t('dashboard.noRequests')}
               </div>
             ) : (
               <div className="rounded-lg border border-border/80">
@@ -287,10 +286,10 @@ export function DashboardView() {
                   </caption>
                   <TableHeader>
                     <TableRow className="hover:bg-transparent">
-                      <TableHead>IIN</TableHead>
-                      <TableHead>Telegram ID</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead className="text-right">Created At</TableHead>
+                      <TableHead>{t('common.labels.iin')}</TableHead>
+                      <TableHead>{t('common.labels.telegram')}</TableHead>
+                      <TableHead>{t('common.labels.status')}</TableHead>
+                      <TableHead className="text-right">{t('common.labels.created')}</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -319,13 +318,12 @@ export function DashboardView() {
 
       {!hasVisibleWidgets ? (
         <Alert>
-          <AlertTitle>No available widgets</AlertTitle>
+          <AlertTitle>{t('dashboard.noWidgetsTitle')}</AlertTitle>
           <AlertDescription>
-            Your role has access to dashboard, but no widgets are available with current permissions.
+            {t('dashboard.noWidgetsDescription')}
           </AlertDescription>
         </Alert>
       ) : null}
     </div>
   )
 }
-

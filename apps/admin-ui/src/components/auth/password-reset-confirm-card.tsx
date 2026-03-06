@@ -1,8 +1,9 @@
-import { Link, useRouter } from '@tanstack/react-router'
+﻿import { Link, useRouter } from '@tanstack/react-router'
 import { useMutation } from '@tanstack/react-query'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { CheckCircle2, KeyRound } from 'lucide-react'
 import { useForm } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
 
 import type { ConfirmPasswordResetValues } from '@/lib/auth/password-reset-schema'
 import { mapAuthErrorToMessage } from '@/lib/auth/error-messages'
@@ -21,6 +22,7 @@ type PasswordResetConfirmCardProps = {
 }
 
 export function PasswordResetConfirmCard({ token }: PasswordResetConfirmCardProps) {
+  const { t } = useTranslation()
   const router = useRouter()
   const form = useForm<ConfirmPasswordResetValues>({
     resolver: zodResolver(confirmPasswordResetSchema),
@@ -64,6 +66,13 @@ export function PasswordResetConfirmCard({ token }: PasswordResetConfirmCardProp
         ? mutation.error.message
         : null
 
+  function translateValidationMessage(message: string | undefined) {
+    if (!message) {
+      return ''
+    }
+    return t(message, { defaultValue: message })
+  }
+
   if (!token) {
     return (
       <Card className="border-border/80 shadow-lg shadow-slate-900/10">
@@ -72,17 +81,16 @@ export function PasswordResetConfirmCard({ token }: PasswordResetConfirmCardProp
             <KeyRound className="h-5 w-5" />
           </span>
           <div>
-            <h1 className="text-2xl font-semibold">Reset token is missing</h1>
+            <h1 className="text-2xl font-semibold">{t('auth.passwordResetConfirm.missingTitle')}</h1>
             <p className="mt-2 text-sm text-muted-foreground">
-              Open this page from a valid reset link or request a new password
-              reset token.
+              {t('auth.passwordResetConfirm.missingDescription')}
             </p>
           </div>
           <Link
             to="/password-reset/request"
             className={cn(buttonVariants({ variant: 'default' }), 'w-full')}
           >
-            Request new reset token
+            {t('auth.passwordResetConfirm.requestNewToken')}
           </Link>
         </CardContent>
       </Card>
@@ -95,16 +103,16 @@ export function PasswordResetConfirmCard({ token }: PasswordResetConfirmCardProp
         <form className="space-y-4 p-6 md:p-8" onSubmit={form.handleSubmit(onSubmit)}>
           <div className="space-y-2">
             <p className="text-xs font-semibold tracking-[0.24em] text-muted-foreground uppercase">
-              School Gate
+              {t('app.brand.schoolGate')}
             </p>
-            <h1 className="text-2xl font-semibold">Set a new password</h1>
+            <h1 className="text-2xl font-semibold">{t('auth.passwordResetConfirm.title')}</h1>
             <p className="text-sm text-muted-foreground">
-              Choose your new admin password and sign in again.
+              {t('auth.passwordResetConfirm.subtitle')}
             </p>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="password">New password</Label>
+            <Label htmlFor="password">{t('auth.passwordResetConfirm.newPassword')}</Label>
             <Input
               id="password"
               type="password"
@@ -113,13 +121,13 @@ export function PasswordResetConfirmCard({ token }: PasswordResetConfirmCardProp
             />
             {form.formState.errors.password ? (
               <p className="text-xs text-destructive">
-                {form.formState.errors.password.message}
+                {translateValidationMessage(form.formState.errors.password.message)}
               </p>
             ) : null}
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="confirmPassword">Confirm new password</Label>
+            <Label htmlFor="confirmPassword">{t('auth.passwordResetConfirm.confirmNewPassword')}</Label>
             <Input
               id="confirmPassword"
               type="password"
@@ -128,14 +136,14 @@ export function PasswordResetConfirmCard({ token }: PasswordResetConfirmCardProp
             />
             {form.formState.errors.confirmPassword ? (
               <p className="text-xs text-destructive">
-                {form.formState.errors.confirmPassword.message}
+                {translateValidationMessage(form.formState.errors.confirmPassword.message)}
               </p>
             ) : null}
           </div>
 
           {errorMessage ? (
             <Alert className="border-destructive/40 bg-destructive/5 text-destructive">
-              <AlertTitle>Password reset failed</AlertTitle>
+              <AlertTitle>{t('auth.passwordResetConfirm.failedTitle')}</AlertTitle>
               <AlertDescription className="text-destructive/90">
                 {errorMessage}
               </AlertDescription>
@@ -143,11 +151,11 @@ export function PasswordResetConfirmCard({ token }: PasswordResetConfirmCardProp
           ) : null}
 
           <Button type="submit" className="w-full" disabled={mutation.isPending}>
-            {mutation.isPending ? 'Saving new password…' : 'Set new password'}
+            {mutation.isPending ? t('auth.passwordResetConfirm.saving') : t('auth.passwordResetConfirm.save')}
           </Button>
 
           <Link to="/login" className={cn(buttonVariants({ variant: 'outline' }), 'w-full')}>
-            Back to sign in
+            {t('auth.common.backToSignIn')}
           </Link>
         </form>
         <div className="relative hidden overflow-hidden bg-gradient-to-br from-emerald-100 via-white to-cyan-100 p-8 md:flex md:flex-col md:justify-between">
@@ -156,19 +164,19 @@ export function PasswordResetConfirmCard({ token }: PasswordResetConfirmCardProp
           <div className="relative z-10">
             <span className="inline-flex items-center gap-2 rounded-full border border-slate-300/70 bg-white/80 px-3 py-1 text-xs font-medium text-slate-700">
               <KeyRound className="h-4 w-4" />
-              Secure reset
+              {t('auth.passwordResetConfirm.hero.secureReset')}
             </span>
           </div>
           <div className="relative z-10 space-y-3">
             <h2 className="text-2xl font-semibold text-slate-900">
-              Password changed immediately
+              {t('auth.passwordResetConfirm.hero.title')}
             </h2>
             <p className="max-w-xs text-sm text-slate-700">
-              After successful reset you can sign in with the new password.
+              {t('auth.passwordResetConfirm.hero.description')}
             </p>
             <div className="inline-flex items-center gap-2 text-xs text-slate-600">
               <CheckCircle2 className="h-4 w-4 text-emerald-600" />
-              One-time token protection
+              {t('auth.passwordResetConfirm.hero.tokenProtection')}
             </div>
           </div>
         </div>

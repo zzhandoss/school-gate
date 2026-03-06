@@ -17,6 +17,9 @@ export function createAlertEventsService(deps: AlertEventsServiceDeps): AlertEve
         list(input) {
             return deps.eventsRepo.list(input);
         },
+        count(input) {
+            return deps.eventsRepo.count(input);
+        },
         listLatestByRuleIds(input) {
             return deps.eventsRepo.listLatestByRuleIds(input);
         }

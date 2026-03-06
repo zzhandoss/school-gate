@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link, useRouter } from '@tanstack/react-router'
 import { ArrowRight, KeyRound, ShieldCheck } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { mapAuthErrorToMessage } from '@/lib/auth/error-messages'
 import {
   login,
@@ -12,6 +13,7 @@ import {
   telegramOtpLoginSchema
 } from '@/lib/auth/telegram-login-schema'
 import { ApiError } from '@/lib/api/types'
+import { formatTime } from '@/lib/i18n/format'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
@@ -22,6 +24,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 type AuthMethod = 'password' | 'telegram'
 export function LoginCard() {
+  const { t } = useTranslation()
   const router = useRouter()
   const [method, setMethod] = useState<AuthMethod>('password')
   const [email, setEmail] = useState('')
@@ -50,7 +53,7 @@ export function LoginCard() {
         }
         setError(mapAuthErrorToMessage(value.code, value.message))
       } else {
-        setError('Unexpected error during login')
+        setError(t('auth.login.errors.unexpectedLogin'))
       }
     } finally {
       setIsLoading(false)
@@ -64,7 +67,8 @@ export function LoginCard() {
 
     const parsed = requestTelegramLoginCodeSchema.safeParse({ email })
     if (!parsed.success) {
-      setError(parsed.error.issues[0]?.message ?? 'Email is invalid')
+      const message = parsed.error.issues[0]?.message ?? 'validation.emailInvalid'
+      setError(t(message, { defaultValue: message }))
       setIsLoading(false)
       return
     }
@@ -73,7 +77,7 @@ export function LoginCard() {
       setTelegramStep('verify')
       setTelegramCode('')
       setTelegramExpiresAt(result.expiresAt)
-      setNotice('Code sent to linked Telegram. Enter 6 digits to continue.')
+      setNotice(t('auth.login.notice.codeSent'))
     } catch (value) {
       if (value instanceof ApiError) {
         if (value.code === 'server_unreachable') {
@@ -82,7 +86,7 @@ export function LoginCard() {
         }
         setError(mapAuthErrorToMessage(value.code, value.message))
       } else {
-        setError('Unexpected error while requesting Telegram code')
+        setError(t('auth.login.errors.unexpectedRequestTelegram'))
       }
     } finally {
       setIsLoading(false)
@@ -101,7 +105,8 @@ export function LoginCard() {
 
     const parsed = telegramOtpLoginSchema.safeParse({ email, code: telegramCode })
     if (!parsed.success) {
-      setError(parsed.error.issues[0]?.message ?? 'Code is invalid')
+      const message = parsed.error.issues[0]?.message ?? 'validation.telegramCodeInvalid'
+      setError(t(message, { defaultValue: message }))
       setIsLoading(false)
       return
     }
@@ -116,7 +121,7 @@ export function LoginCard() {
         }
         setError(mapAuthErrorToMessage(value.code, value.message))
       } else {
-        setError('Unexpected error during Telegram login')
+        setError(t('auth.login.errors.unexpectedTelegramLogin'))
       }
     } finally {
       setIsLoading(false)
@@ -129,11 +134,11 @@ export function LoginCard() {
         <div className="space-y-5 p-6 md:p-8">
           <div className="space-y-2">
             <p className="text-xs font-semibold tracking-[0.24em] text-muted-foreground uppercase">
-              School Gate
+              {t('app.brand.schoolGate')}
             </p>
-            <h1 className="text-2xl font-semibold">Admin sign in</h1>
+            <h1 className="text-2xl font-semibold">{t('auth.login.title')}</h1>
             <p className="text-sm text-muted-foreground">
-              Use password or Telegram OTP to open the operations dashboard.
+              {t('auth.login.subtitle')}
             </p>
           </div>
           <Tabs
@@ -146,13 +151,13 @@ export function LoginCard() {
             }}
           >
             <TabsList className="w-full">
-              <TabsTrigger value="password">Password</TabsTrigger>
-              <TabsTrigger value="telegram">Telegram</TabsTrigger>
+              <TabsTrigger value="password">{t('auth.login.methods.password')}</TabsTrigger>
+              <TabsTrigger value="telegram">{t('auth.login.methods.telegram')}</TabsTrigger>
             </TabsList>
             <TabsContent value="password" className="space-y-5 pt-4">
               <form className="space-y-5" onSubmit={onPasswordSubmit}>
                 <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
+                  <Label htmlFor="email">{t('profile.email')}</Label>
                   <Input
                     id="email"
                     type="email"
@@ -160,18 +165,18 @@ export function LoginCard() {
                     autoComplete="email"
                     value={email}
                     onChange={(event) => setEmail(event.target.value)}
-                    placeholder="admin@example.com"
+                    placeholder={t('common.placeholders.email')}
                     required
                   />
                 </div>
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <Label htmlFor="password">Password</Label>
+                    <Label htmlFor="password">{t('auth.common.password')}</Label>
                     <Link
                       to="/password-reset/request"
                       className="text-xs text-muted-foreground underline-offset-2 transition-colors hover:text-foreground hover:underline focus-visible:rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                     >
-                      Forgot password?
+                      {t('auth.login.forgotPassword')}
                     </Link>
                   </div>
                   <Input
@@ -185,7 +190,7 @@ export function LoginCard() {
                   />
                 </div>
                 <Button type="submit" className="w-full" disabled={isLoading}>
-                  {isLoading ? 'Signing in...' : 'Sign in'}
+                  {isLoading ? t('auth.login.signingIn') : t('auth.login.signIn')}
                   <ArrowRight className="h-4 w-4" aria-hidden="true" />
                 </Button>
               </form>
@@ -194,26 +199,26 @@ export function LoginCard() {
               {telegramStep === 'request' ? (
                 <form className="space-y-4" onSubmit={onSendTelegramCode}>
                   <div className="space-y-2">
-                    <Label htmlFor="telegram-email">Email</Label>
+                    <Label htmlFor="telegram-email">{t('profile.email')}</Label>
                     <Input
                       id="telegram-email"
                       type="email"
                       autoComplete="email"
                       value={email}
                       onChange={(event) => setEmail(event.target.value)}
-                      placeholder="admin@example.com"
+                      placeholder={t('common.placeholders.email')}
                       required
                     />
                   </div>
                   <Button type="submit" className="w-full" disabled={isLoading}>
-                    {isLoading ? 'Sending code...' : 'Send code to Telegram'}
+                    {isLoading ? t('auth.login.sendingCode') : t('auth.login.sendCodeToTelegram')}
                     <KeyRound className="h-4 w-4" aria-hidden="true" />
                   </Button>
                 </form>
               ) : (
                 <form className="space-y-4" onSubmit={onTelegramLoginSubmit}>
                   <div className="space-y-2">
-                    <Label htmlFor="telegram-code">6-digit code</Label>
+                    <Label htmlFor="telegram-code">{t('auth.login.telegramCode')}</Label>
                     <InputOTP
                       id="telegram-code"
                       value={telegramCode}
@@ -222,7 +227,7 @@ export function LoginCard() {
                     />
                     {telegramExpiresAt ? (
                       <p className="text-xs text-muted-foreground">
-                        Code expires at {new Date(telegramExpiresAt).toLocaleTimeString()}.
+                        {t('auth.login.codeExpiresAt', { value: formatTime(telegramExpiresAt) })}
                       </p>
                     ) : null}
                   </div>
@@ -240,7 +245,7 @@ export function LoginCard() {
                         setNotice(null)
                       }}
                     >
-                      Change email
+                      {t('auth.login.changeEmail')}
                     </Button>
                     <Button
                       type="button"
@@ -249,10 +254,10 @@ export function LoginCard() {
                       disabled={isLoading}
                       onClick={() => void requestTelegramCode()}
                     >
-                      Resend code
+                      {t('auth.login.resendCode')}
                     </Button>
                     <Button type="submit" className="flex-1" disabled={isLoading}>
-                      {isLoading ? 'Verifying...' : 'Sign in'}
+                      {isLoading ? t('auth.login.verifying') : t('auth.login.signIn')}
                     </Button>
                   </div>
                 </form>
@@ -261,13 +266,13 @@ export function LoginCard() {
           </Tabs>
           {notice ? (
             <Alert>
-              <AlertTitle>Telegram login</AlertTitle>
+              <AlertTitle>{t('auth.login.telegramLoginTitle')}</AlertTitle>
               <AlertDescription>{notice}</AlertDescription>
             </Alert>
           ) : null}
           {error ? (
             <Alert className="border-destructive/40 bg-destructive/5 text-destructive">
-              <AlertTitle>Authentication failed</AlertTitle>
+              <AlertTitle>{t('auth.login.authFailedTitle')}</AlertTitle>
               <AlertDescription className="text-destructive/90">
                 {error}
               </AlertDescription>
@@ -280,16 +285,15 @@ export function LoginCard() {
           <div className="relative z-10">
             <span className="inline-flex items-center gap-2 rounded-full border border-slate-300/70 bg-white/80 px-3 py-1 text-xs font-medium text-slate-700">
               <ShieldCheck className="h-4 w-4" />
-              Protected admin access
+              {t('auth.login.hero.protected')}
             </span>
           </div>
           <div className="relative z-10 space-y-3">
             <h2 className="text-2xl font-semibold text-slate-900">
-              Operations center for School Gate
+              {t('auth.login.hero.title')}
             </h2>
             <p className="max-w-xs text-sm text-slate-700">
-              Monitor workers, queues, and incoming subscription requests from
-              one control panel.
+              {t('auth.login.hero.description')}
             </p>
           </div>
         </div>

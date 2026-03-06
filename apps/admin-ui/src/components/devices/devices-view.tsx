@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useRouter } from '@tanstack/react-router'
 import { RefreshCw, ShieldAlert } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 import { DeviceListPagination } from './device-list-pagination'
 import { DevicesTable } from './devices-table'
@@ -18,6 +19,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Skeleton } from '@/components/ui/skeleton'
 
 export function DevicesView() {
+  const { t } = useTranslation()
   const router = useRouter()
   const session = useSession()
   const permissions = session?.admin.permissions ?? []
@@ -93,7 +95,7 @@ export function DevicesView() {
         return
       }
 
-      setError(value instanceof Error ? value.message : 'Failed to load devices')
+      setError(value instanceof Error ? value.message : t('devices.opsLoadFailed'))
     }
   }
 
@@ -141,9 +143,9 @@ export function DevicesView() {
   if (!canRead) {
     return (
       <Alert className="border-amber-300/60 bg-amber-50 text-amber-900">
-        <AlertTitle>Access denied</AlertTitle>
+        <AlertTitle>{t('settings.accessDeniedTitle')}</AlertTitle>
         <AlertDescription>
-          Your account does not have `devices.read` permission.
+          {t('devices.accessDeniedDescription')}
         </AlertDescription>
       </Alert>
     )
@@ -161,7 +163,7 @@ export function DevicesView() {
   if (error) {
     return (
       <Alert className="border-destructive/40 bg-destructive/5 text-destructive">
-        <AlertTitle>Devices failed to load</AlertTitle>
+        <AlertTitle>{t('devices.opsPageLoadFailedTitle')}</AlertTitle>
         <AlertDescription>{error}</AlertDescription>
       </Alert>
     )
@@ -171,9 +173,9 @@ export function DevicesView() {
     <div className="space-y-5">
       <div className="flex flex-col gap-3 rounded-xl border border-border/70 bg-card/70 p-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-lg font-semibold">Device operations</h1>
+          <h1 className="text-lg font-semibold">{t('devices.opsTitle')}</h1>
           <p className="text-sm text-muted-foreground">
-            Manage devices mapped to adapter channels and monitor operational state.
+            {t('devices.opsSubtitle')}
           </p>
         </div>
         <div className="flex w-full gap-2 sm:w-auto">
@@ -191,7 +193,7 @@ export function DevicesView() {
             onClick={onRefresh}
           >
             <RefreshCw className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} />
-            {refreshing ? 'Refreshing...' : 'Refresh'}
+            {refreshing ? t('common.actions.refreshing') : t('common.actions.refresh')}
           </Button>
         </div>
       </div>
@@ -199,21 +201,21 @@ export function DevicesView() {
       <div className="grid gap-4 md:grid-cols-3">
         <Card>
           <CardHeader className="pb-2">
-            <CardDescription>Total devices</CardDescription>
+            <CardDescription>{t('devices.totalDevices')}</CardDescription>
             <CardTitle className="text-2xl">{devices.length}</CardTitle>
           </CardHeader>
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardDescription>Enabled</CardDescription>
+            <CardDescription>{t('devices.enabled')}</CardDescription>
             <CardTitle className="text-2xl">{enabledCount}</CardTitle>
           </CardHeader>
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardDescription>Writable scope</CardDescription>
+            <CardDescription>{t('devices.writableScope')}</CardDescription>
             <CardTitle className="text-base">
-              <Badge variant={canWrite ? 'default' : 'outline'}>{canWrite ? 'devices.write granted' : 'Read-only'}</Badge>
+              <Badge variant={canWrite ? 'default' : 'outline'}>{canWrite ? t('devices.writeGranted') : t('dashboard.readOnly')}</Badge>
             </CardTitle>
           </CardHeader>
         </Card>
@@ -221,34 +223,34 @@ export function DevicesView() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Devices registry</CardTitle>
+          <CardTitle>{t('devices.registryTitle')}</CardTitle>
           <CardDescription>
-            Edit metadata, toggle state, and remove obsolete devices.
+            {t('devices.registryDescription')}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="mb-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-5">
             <Input
-              placeholder="Search device, id, adapter"
+              placeholder={t('devices.searchDeviceIdAdapter')}
               value={query}
               onChange={(event) => setQuery(event.target.value)}
             />
             <Select value={enabledFilter} onValueChange={(value) => setEnabledFilter(value as typeof enabledFilter)}>
               <SelectTrigger>
-                <SelectValue placeholder="Status" />
+                <SelectValue placeholder={t('common.filters.status')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All statuses</SelectItem>
-                <SelectItem value="enabled">Enabled</SelectItem>
-                <SelectItem value="disabled">Disabled</SelectItem>
+                <SelectItem value="all">{t('enums.monitoringStatus.all')}</SelectItem>
+                <SelectItem value="enabled">{t('devices.enabled')}</SelectItem>
+                <SelectItem value="disabled">{t('settings.disabled')}</SelectItem>
               </SelectContent>
             </Select>
             <Select value={adapterFilter} onValueChange={setAdapterFilter}>
               <SelectTrigger>
-                <SelectValue placeholder="Adapter" />
+                <SelectValue placeholder={t('common.labels.adapter')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All adapters</SelectItem>
+                <SelectItem value="all">{t('devices.allAdapters')}</SelectItem>
                 {adapterOptions.map((adapterKey) => (
                   <SelectItem key={adapterKey} value={adapterKey}>
                     {adapterKey}
@@ -258,23 +260,23 @@ export function DevicesView() {
             </Select>
             <Select value={sortBy} onValueChange={(value) => setSortBy(value as typeof sortBy)}>
               <SelectTrigger>
-                <SelectValue placeholder="Sort by" />
+                <SelectValue placeholder={t('common.filters.order')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="updated_desc">Updated: newest</SelectItem>
-                <SelectItem value="updated_asc">Updated: oldest</SelectItem>
-                <SelectItem value="name_asc">Name: A-Z</SelectItem>
-                <SelectItem value="name_desc">Name: Z-A</SelectItem>
+                <SelectItem value="updated_desc">{t('devices.sort.updatedNewest')}</SelectItem>
+                <SelectItem value="updated_asc">{t('devices.sort.updatedOldest')}</SelectItem>
+                <SelectItem value="name_asc">{t('devices.sort.nameAsc')}</SelectItem>
+                <SelectItem value="name_desc">{t('devices.sort.nameDesc')}</SelectItem>
               </SelectContent>
             </Select>
             <Select value={String(limit)} onValueChange={(value) => setLimit(Number(value))}>
               <SelectTrigger>
-                <SelectValue placeholder="Page size" />
+                <SelectValue placeholder={t('common.filters.pageSize')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="10">10 per page</SelectItem>
-                <SelectItem value="20">20 per page</SelectItem>
-                <SelectItem value="50">50 per page</SelectItem>
+                <SelectItem value="10">{t('common.pagination.perPage', { count: 10 })}</SelectItem>
+                <SelectItem value="20">{t('common.pagination.perPage', { count: 20 })}</SelectItem>
+                <SelectItem value="50">{t('common.pagination.perPage', { count: 50 })}</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -288,7 +290,7 @@ export function DevicesView() {
           />
           <div className="mt-3 space-y-2">
             <p className="text-xs text-muted-foreground">
-              {rangeStart}-{rangeEnd} of {filteredDevices.length} devices.
+              {t('devices.range', { from: rangeStart, to: rangeEnd, total: filteredDevices.length })}
             </p>
             <DeviceListPagination
               currentPage={pageSafe}
@@ -303,10 +305,10 @@ export function DevicesView() {
         <div className="rounded-lg border border-border/70 bg-background/70 p-3 text-xs text-muted-foreground">
           <p className="flex items-center gap-1.5 font-medium text-foreground">
             <ShieldAlert className="h-3.5 w-3.5" />
-            Restricted mode
+            {t('devices.restrictedModeTitle')}
           </p>
           <p className="mt-1">
-            You can view devices, but mutations require `devices.write` permission.
+            {t('devices.restrictedModeDescription')}
           </p>
         </div>
       ) : null}

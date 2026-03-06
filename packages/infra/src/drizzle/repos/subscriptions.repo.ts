@@ -108,6 +108,26 @@ export function createSubscriptionsRepo(db: Db): SubscriptionsRepo {
                 .where(and(eq(subscriptions.tgUserId, tgUserId), eq(subscriptions.personId, personId)));
         },
 
+        deactivateByPersonIdSync({ personId }) {
+            const rows = db
+                .select({ id: subscriptions.id })
+                .from(subscriptions)
+                .where(and(eq(subscriptions.personId, personId), eq(subscriptions.isActive, true)))
+                .all();
+
+            if (rows.length === 0) {
+                return 0;
+            }
+
+            db
+                .update(subscriptions)
+                .set({ isActive: false })
+                .where(and(eq(subscriptions.personId, personId), eq(subscriptions.isActive, true)))
+                .run();
+
+            return rows.length;
+        },
+
         setActiveByIdSync({ id, isActive }) {
             const rows = db.select({ id: subscriptions.id }).from(subscriptions).where(eq(subscriptions.id, id)).limit(1).all();
             if (!rows[0]) return false;

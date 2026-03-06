@@ -1,5 +1,13 @@
 import { OpenAPIHono } from "@hono/zod-openapi";
 import {
+    deviceServiceIdentityExportUsersResultSchema,
+    deviceServiceIdentityExportUsersSchema,
+    deviceServiceIdentityBulkCreateUsersResultSchema,
+    deviceServiceIdentityBulkCreateUsersSchema,
+    deviceServiceIdentityGetUserPhotoResultSchema,
+    deviceServiceIdentityGetUserPhotoSchema,
+    deviceServiceIdentityWriteUsersResultSchema,
+    deviceServiceIdentityWriteUsersSchema,
     deviceServiceIdentityFindResultSchema,
     deviceServiceIdentityFindSchema,
     deviceServiceMonitoringSchema,
@@ -12,6 +20,14 @@ import {
     type GetDeviceServiceDeviceResultDto,
     type DeviceServiceIdentityFindDto,
     type DeviceServiceIdentityFindResultDto,
+    type DeviceServiceIdentityExportUsersDto,
+    type DeviceServiceIdentityExportUsersResultDto,
+    type DeviceServiceIdentityBulkCreateUsersDto,
+    type DeviceServiceIdentityBulkCreateUsersResultDto,
+    type DeviceServiceIdentityGetUserPhotoDto,
+    type DeviceServiceIdentityGetUserPhotoResultDto,
+    type DeviceServiceIdentityWriteUsersDto,
+    type DeviceServiceIdentityWriteUsersResultDto,
     type ListDeviceServiceAdaptersResultDto,
     type ListDeviceServiceDevicesResultDto,
     type SetDeviceServiceDeviceEnabledDto,
@@ -44,6 +60,11 @@ export type DeviceServiceGatewayModule = {
     listAdapters: (meta: GatewayRequestMeta) => Promise<ListDeviceServiceAdaptersResultDto>;
     getMonitoring: (meta: GatewayRequestMeta) => Promise<DeviceServiceMonitoringDto>;
     findIdentity: (input: { payload: DeviceServiceIdentityFindDto } & GatewayRequestMeta) => Promise<DeviceServiceIdentityFindResultDto>;
+    exportUsers: (input: { payload: DeviceServiceIdentityExportUsersDto } & GatewayRequestMeta) => Promise<DeviceServiceIdentityExportUsersResultDto>;
+    bulkCreateUsers: (input: { payload: DeviceServiceIdentityBulkCreateUsersDto } & GatewayRequestMeta) => Promise<DeviceServiceIdentityBulkCreateUsersResultDto>;
+    getUserPhoto: (input: { payload: DeviceServiceIdentityGetUserPhotoDto } & GatewayRequestMeta) => Promise<DeviceServiceIdentityGetUserPhotoResultDto>;
+    createUsers: (input: { payload: DeviceServiceIdentityWriteUsersDto } & GatewayRequestMeta) => Promise<DeviceServiceIdentityWriteUsersResultDto>;
+    updateUsers: (input: { payload: DeviceServiceIdentityWriteUsersDto } & GatewayRequestMeta) => Promise<DeviceServiceIdentityWriteUsersResultDto>;
 };
 
 const deviceIdParamsSchema = z.object({ deviceId: z.string().min(1) });
@@ -183,6 +204,86 @@ export function createDeviceServiceGatewayRoutes(input: {
             security: [{ adminBearerAuth: [] }]
         }),
         handler<DeviceServiceIdentityFindDto>(({ c, body }) => input.module.findIdentity({ payload: body!, ...getMeta(c) }))
+    );
+
+    app.openapi(
+        defineRoute({
+            method: "post",
+            path: "/identity/export-users",
+            tags: ["Device Service Gateway"],
+            summary: "Export terminal users via device-service",
+            request: { body: deviceServiceIdentityExportUsersSchema },
+            middleware: [input.auth.requirePermissions(["persons.read"]), parseBody(deviceServiceIdentityExportUsersSchema), useResponse(deviceServiceIdentityExportUsersResultSchema)],
+            success: { schema: deviceServiceIdentityExportUsersResultSchema },
+            security: [{ adminBearerAuth: [] }]
+        }),
+        handler<DeviceServiceIdentityExportUsersDto>(({ c, body }) =>
+            input.module.exportUsers({ payload: body!, ...getMeta(c) })
+        )
+    );
+
+    app.openapi(
+        defineRoute({
+            method: "post",
+            path: "/identity/users/photo/get",
+            tags: ["Device Service Gateway"],
+            summary: "Read terminal user photo via device-service",
+            request: { body: deviceServiceIdentityGetUserPhotoSchema },
+            middleware: [input.auth.requirePermissions(["persons.read"]), parseBody(deviceServiceIdentityGetUserPhotoSchema), useResponse(deviceServiceIdentityGetUserPhotoResultSchema)],
+            success: { schema: deviceServiceIdentityGetUserPhotoResultSchema },
+            security: [{ adminBearerAuth: [] }]
+        }),
+        handler<DeviceServiceIdentityGetUserPhotoDto>(({ c, body }) =>
+            input.module.getUserPhoto({ payload: body!, ...getMeta(c) })
+        )
+    );
+
+    app.openapi(
+        defineRoute({
+            method: "post",
+            path: "/identity/users/bulk-create",
+            tags: ["Device Service Gateway"],
+            summary: "Create multiple terminal users via device-service",
+            request: { body: deviceServiceIdentityBulkCreateUsersSchema },
+            middleware: [input.auth.requirePermissions(["persons.write"]), parseBody(deviceServiceIdentityBulkCreateUsersSchema), useResponse(deviceServiceIdentityBulkCreateUsersResultSchema)],
+            success: { schema: deviceServiceIdentityBulkCreateUsersResultSchema },
+            security: [{ adminBearerAuth: [] }]
+        }),
+        handler<DeviceServiceIdentityBulkCreateUsersDto>(({ c, body }) =>
+            input.module.bulkCreateUsers({ payload: body!, ...getMeta(c) })
+        )
+    );
+
+    app.openapi(
+        defineRoute({
+            method: "post",
+            path: "/identity/users/create",
+            tags: ["Device Service Gateway"],
+            summary: "Create terminal users via device-service",
+            request: { body: deviceServiceIdentityWriteUsersSchema },
+            middleware: [input.auth.requirePermissions(["persons.write"]), parseBody(deviceServiceIdentityWriteUsersSchema), useResponse(deviceServiceIdentityWriteUsersResultSchema)],
+            success: { schema: deviceServiceIdentityWriteUsersResultSchema },
+            security: [{ adminBearerAuth: [] }]
+        }),
+        handler<DeviceServiceIdentityWriteUsersDto>(({ c, body }) =>
+            input.module.createUsers({ payload: body!, ...getMeta(c) })
+        )
+    );
+
+    app.openapi(
+        defineRoute({
+            method: "post",
+            path: "/identity/users/update",
+            tags: ["Device Service Gateway"],
+            summary: "Update terminal users via device-service",
+            request: { body: deviceServiceIdentityWriteUsersSchema },
+            middleware: [input.auth.requirePermissions(["persons.write"]), parseBody(deviceServiceIdentityWriteUsersSchema), useResponse(deviceServiceIdentityWriteUsersResultSchema)],
+            success: { schema: deviceServiceIdentityWriteUsersResultSchema },
+            security: [{ adminBearerAuth: [] }]
+        }),
+        handler<DeviceServiceIdentityWriteUsersDto>(({ c, body }) =>
+            input.module.updateUsers({ payload: body!, ...getMeta(c) })
+        )
     );
 
     app.openapi(

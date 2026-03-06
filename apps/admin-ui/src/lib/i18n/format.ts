@@ -1,7 +1,13 @@
 import { i18n } from "./index";
 
 function resolveLocale() {
-    return i18n.resolvedLanguage === "ru" ? "ru-RU" : "en-US";
+    if (i18n.resolvedLanguage === "ru") {
+        return "ru-RU";
+    }
+    if (i18n.resolvedLanguage === "kz") {
+        return "kk-KZ";
+    }
+    return "en-US";
 }
 
 export function formatDateTime(value: string | number | Date | null | undefined, fallback = "-") {

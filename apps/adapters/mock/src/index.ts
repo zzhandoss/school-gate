@@ -24,7 +24,8 @@ const instanceName = config.instanceName ?? instanceKey;
 
 const server = createAdapterServer({
     token: config.deviceServiceToken,
-    eventsRepo
+    eventsRepo,
+    peopleCatalog
 });
 
 const deviceServiceClient = createDeviceServiceClient({

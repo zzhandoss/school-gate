@@ -5,6 +5,51 @@ This file tracks the project's progress using a task list format.
 
 ## Completed Tasks
 
+- [2026-03-06 09:26:05] - ✅ Completed: Added translated permission labels in AdminUI with a centralized `permissionLabel` helper, locale entries for EN/RU/KZ, localized admins role/invite/badge permission rendering, and a regression test that verifies locale coverage for all known permission codes.
+- [2026-03-06 09:20:23] - ✅ Completed: Refined Admin UI shell navigation: `/persons/import` breadcrumbs now resolve to localized `Persons -> Import`, the shared header back button now uses an arrow icon, and the desktop sidebar collapse trigger now uses chevron controls with the same background surface as the sidebar while mobile trigger behavior remains unchanged.
+- [2026-03-06 09:00:45] - ✅ Completed: Admin UI shell navigation polish: added a route-aware icon back button to the AppShell header for person details, moved the desktop sidebar collapse trigger into a centered circular boundary control between sidebar and header, removed the duplicate local back button from person details, and added regression coverage for back-button fallback routing plus new i18n shell labels.
+- [2026-03-06 08:32:27] - ✅ Completed: Refactored Persons backend around clean-abc/mr-propper concerns. Extracted Persons list read-model into core query port/usecase plus infra query adapter, removed list projection/N+1 logic from API composition feature, split persons.routes into focused registrars (list, import, terminal users, crud, identities), and consolidated empty PersonsModule test stubs into a shared helper. Added direct query adapter tests and validated with root typecheck, persons API/query tests, and full build.
+- [2026-03-06 07:59:37] - 🐛 Bug fix completed: Hardened Persons list delivery by removing the legacy searchByIin fallback from the API route and making PersonsModule.list mandatory. Updated API test fixtures to provide explicit empty list handlers so route wiring no longer silently degrades. Verified with root typecheck, persons API regression test, and full monorepo build. Targeted eslint remains blocked by existing package-local tsconfig.base.json parser path issues in apps/api and packages/test.
+- [2026-03-06 07:38:28] - ✅ Completed: Polished Persons filters panel and bulk terminal create dialog UI without changing backend contracts; reorganized filter sections, reduced multi-select visual noise, extracted per-person bulk preview card, and strengthened dialog summary hierarchy. Validated with targeted eslint, root typecheck, and admin-ui build.
+- [2026-03-06 07:18:19] - ✅ Completed: Fixed Persons filters apply behavior and contract drift, added include/exclude multi-device filters in AdminUI/API/repo, and updated bulk terminal create to support mixed linked selections with skipped existing person-device pairs plus preview UI.
+- [2026-03-06 05:52:28] - 🐛 Bug fix completed: Fixed Persons linked-status/device filters with regression coverage, moved Persons actions row to just above the table, compacted summary cards, and aligned device-service bulk-create contracts/runtime with the updated adapter identity API spec.
+- [2026-03-06 05:34:11] - ✅ Completed: Implemented Persons UX and backend changes: responsive filters panel with linked-status and linked-device filters, top-level actions bar, bulk terminal-user create flow for selected unlinked persons, and device-service bulk create route forwarding.
+- [2026-03-06 04:27:00] - ✅ Completed: Adjusted collapsed AppShell sidebar navigation to render explicit icon-only menu items with tooltips, preserving item icons in collapsed mode and keeping shell navigation aligned with shadcn sidebar behavior.
+- [2026-03-06 01:06:52] - ✅ Completed: Refactored `apps/admin-ui/src/components/app/app-shell.tsx` into extracted shell subcomponents, replaced manual profile dropdown/breadcrumb/language switcher rendering with shadcn primitives, added shell utility tests, and introduced generated admin-ui UI primitives for avatar, breadcrumb, dropdown-menu, scroll-area, toggle, and toggle-group.
+- [2026-03-05 23:50:51] - ✅ Completed: Reviewed `apps/admin-ui/src/components/app/app-shell.tsx` for readability, component extraction opportunities, shadcn/ui replacement candidates, and maintainable UI architecture/design rules. No code changes were made.
+- [2026-03-02 21:39:37] - ✅ Completed: Added terminal face photo preview flow via new identity get-user-photo contracts/routes across device-service and API gateway; AdminUI person face dialog now uses Sonner for result feedback, closes only on full success, and opens terminal photo preview dialogs per linked device.
+- [2026-03-02 21:06:26] - ✅ Completed: Improved person terminal write dialogs in AdminUI: create/update dialogs now use viewport-bounded scrollable shells, face update keeps the dialog open after submit and renders per-device terminal write results, and long terminal dialog files were modularized into dedicated extracted components.
+- [2026-03-02 20:51:36] - ✅ Completed: Added a dedicated person-details terminal face flow: linked-terminal face upload dialog with image preview, per-device selection, snapshot-backed update safety, and confirm-before-write UX using existing terminal update API face payload.
+- [2026-03-02 20:43:41] - ✅ Completed: Expanded person terminal create/update UX into a shared editable terminal form with snapshot-preloaded update values, terminal field editing (displayName, citizenIdNo, card fields, validity), Use IIN shortcut for terminal user ID, and step-1 backend/contract support for these editable write fields.
+- [2026-03-02 13:05:18] - ✅ Completed: AdminUI person terminal sync panel now uses differentiated add/update button styling, shadcn confirmation dialogs, and explicit field/device write summaries before terminal create/update actions.
+- [2026-03-02 12:52:44] - 🐛 Bug fix completed: Removed adapter capability gating for identity write in device write resolver and removed temporary exportUsers debug logging from device-service after import diagnostics were resolved.
+- [2026-03-02 12:47:10] - 🐛 Bug fix completed: Fixed persons import cookie-only auth regression by passing full admin context from persons route to createImportRun and then to deviceServiceGateway.listDevices, allowing API to mint admin JWT for DS calls when browser request has no Authorization header.
+- [2026-03-02 12:38:31] - ✅ Completed: Persons import now derives device-specific IIN source from settingsJson.identityQueryMappings.iin.paramsTemplate by finding the {{identityValue}} template key and extracting the field after Condition.; import then reads that field from raw payload, with fallback to UserID/citizenIdNo/terminalPersonId and regression coverage.
+- [2026-03-02 12:22:08] - 🐛 Bug fix completed: Normalized blank string fields in adapter export-users responses to null at the device HTTP client boundary, preserving strict DS/contracts validation while accepting terminals that emit empty citizenIdNo/card/display payloads; added regression test.
+- [2026-03-02 12:17:26] - 🐛 Bug fix completed: Added temporary error-only debug logging for device-service identity export: logs export-users payload in device-service and preserves adapter upstream failure body/details in adapter HTTP client error messages to diagnose Request validation failed during persons import.
+- [2026-03-02 12:08:38] - ✅ Completed: Extended persons import run summary to include detailed per-device errors alongside aggregate errorCount; surfaced these errors in AdminUI under Last sync and updated contracts/tests.
+- [2026-03-02 12:00:32] - ✅ Completed: Improved AdminUI persons import UX. Replaced device selection chips with a compact checkbox table showing device name, deviceId, adapterKey, direction, enabled state, and selection summary. Added structured persons-import error handling with explicit console.error logging for load/sync/apply failures and surfaced backend messages in the UI. Added unit tests for import error formatting and device-picker checkbox state.
+- [2026-03-02 11:27:14] - 🐛 Bug fix completed: Fixed broken persons import migration history. The terminal_directory_* tables had been added retroactively to already-applied migration 0000, so existing data/app.db never received them. Generated new migration 0001_greedy_vengeance for terminal_directory_entries and terminal_directory_sync_runs, restored 0000_whole_senator_kelly.sql to the pre-terminal-directory state, applied migrations to data/app.db, and verified persons import API tests/typecheck pass.
+- [2026-03-02 10:58:55] - 🐛 Bug fix completed: Handled missing persons import snapshot tables gracefully: `/api/persons/import-candidates` now returns an empty result when `terminal_directory_*` tables are absent, `/api/persons/import-runs` returns an explicit `persons_import_storage_not_initialized` error, and AdminUI persons import view now loads devices independently from import candidates so enabled devices remain visible even when candidate loading fails.
+- [2026-03-02 10:10:08] - ✅ Completed: Removed `exportUsers` capability gating from persons import UI and DS identity export resolver. Import eligibility now depends on enabled devices and active adapter session/actual export response instead of adapter registration capabilities metadata.
+- [2026-03-02 08:49:49] - 🐛 Bug fix completed: Fixed alerts events runtime error by rebuilding infra dist with `alertEventsRepo.count` and added explicit localized alert rule delete warnings describing cascade deletion of subscriptions and Recent Events history.
+- [2026-03-02 08:20:00] - ✅ Completed: Added person hard-delete flow with clean-architecture orchestration, detached person terminal identities, deactivated subscriptions, unlinked subscription requests, exposed `/api/persons/:personId` and `/api/persons/bulk-delete`, and implemented AdminUI page-scoped bulk selection/delete with shadcn confirmation dialog.
+
+- [2026-03-02 05:33:53] - ✅ Completed: Implemented phase 2 persons terminal sync: DS/API write-users gateway, person-level terminal create/update flows, snapshot-first attach/reassign dialog in person details, and supporting tests/validation.
+- [2026-03-02 03:07:29] - ✅ Completed: Implemented device-driven persons import flow backend and admin UI workspace with terminal directory snapshot, sync/apply APIs, TanStack Table review UI, and related tests.
+
+- [2026-02-24 01:46:18] - ✅ Completed: Completed full kz locale population by generating Kazakh translations for locale key values from ru.ts with placeholder/code-token preservation; wired kz language usage in header/settings selectors and i18n config.
+
+- [2026-02-24 01:35:58] - ✅ Completed: Removed language switching from profile dropdown in AppShell and added KZ locale option: wired new i18n language code `kz` in resources/supported languages, added header and settings selectors for RU/EN/KZ, and updated document/html language + locale formatting for kz.
+
+- [2026-02-24 01:27:03] - 🐛 Bug fix completed: Fixed RU locale mojibake in settings groups/validation and ensured sidebar/breadcrumb labels refresh immediately on language switch by adding i18n language dependency in AppShell memos.
+
+- [2026-02-24 01:04:16] - 🐛 Bug fix completed: Fixed AdminUI RU locale encoding corruption (mojibake) in apps/admin-ui/src/lib/i18n/locales/ru.ts by restoring valid UTF-8 Cyrillic content; validated with admin-ui typecheck/build.
+
+- [2026-02-24 00:13:06] - ✅ Completed: Completed additional AdminUI i18n polish: localized remaining settings field labels/hints and validation errors, removed hardcoded shell aria label, and validated admin-ui typecheck/build/test.
+
+- [2026-02-23 20:56:18] - ✅ Completed: Implemented standalone Admin UI Monitoring page with shadcn components, route `/monitoring`, sidebar navigation item with `monitoring.read` permission, and navigation tests; reused existing `/api/monitoring` service and permission checks.
+
 - [2026-02-23 10:21:16] - 🐛 Bug fix completed: Resolved GitHub Actions Linux CI failure caused by blocked native build for better-sqlite3 in pnpm workspace policy. Updated pnpm-workspace.yaml to allow better-sqlite3 and argon2 build scripts in onlyBuiltDependencies, removed ignoredBuiltDependencies entry for better-sqlite3, validated with local lint/typecheck/test/build, pushed commit 34233f5, and verified CI job `verify` succeeded for run 22293919740.
 
 - [2026-02-17 22:11:36] - ✅ Completed: Admin UI i18n expansion: localized access-events, subscription-requests, and device-monitoring modules with enum label helpers, interpolation/plural keys, and validated build/tests.
@@ -129,7 +174,17 @@ This file tracks the project's progress using a task list format.
 
 ## Next Steps
 
-- Continue i18n expansion for remaining AdminUI modules (admins, alerts, auth screens, audit logs, persons, devices list/adapters) and normalize RU copy quality after key coverage.
+- Validate the updated Persons include/exclude terminal filters and mixed bulk terminal-create preview against real operator scenarios and real device link data.
+
+- Validate terminal photo preview against real adapters: response shapes (`photoData`, `photoUrl`, `faceData`), image size/performance, and unavailable-photo behavior per device.
+- Validate end-to-end terminal create/update behavior against real adapters, especially per-device `userId` handling and partial failures.
+- Validate real-adapter face upload constraints (accepted image size/format, per-device face failures, and partial success handling) and decide whether face removal/replacement history is needed.
+- Validate whether the new in-dialog per-device terminal write result breakdown is sufficient for operators or should also surface in global toasts/panel-level history.
+- Decide the scope of step 2 terminal write fields: separate face-photo flow plus whether advanced Dahua-only fields (`password`, `doors`, `timeSections`, special schedules) belong in person details or in an advanced terminal tools workspace.
+- Validate the new terminal write confirmation UX against real operators and decide whether advanced write fields (`card`, `face`, custom authority/status) should stay implicit defaults or move into a separate advanced form.
+- Decide whether person details should expose richer write-back fields (card/face/authority/validity presets) or keep advanced payloads inside import/admin tooling.
+- Continue backlog item `Subscription Requests Table Polish` after standalone monitoring page completion.
+- Run RU/EN visual QA pass for settings and shell language controls in integrated runtime and fix any remaining copy inconsistencies.
 - Validate audit event payloads in integration tests for high-risk admin and subscription flows.
 
 - Wire admin UI settings for notification templates and bot status.
@@ -256,6 +311,15 @@ This file tracks the project's progress using a task list format.
 - Finish compatibility for legacy IAM/admin flows still requiring outbox in tests (cceptAdminInvite, password reset flow path wrappers).
 - Re-run pnpm test, then execute release smoke with a fresh tag.
 
+## Next Steps (2026-03-02)
+- Validate translated permission labels in integrated runtime across admins pages and continue remaining AdminUI i18n cleanup in alerts/auth/audit-log edge cases.
+- Validate the new AppShell header back button and boundary collapse control in integrated runtime on both desktop and mobile, especially direct-entry `/persons/$personId` fallback behavior.
+- Validate import against real Dahua settings where `identityQueryMappings.iin.paramsTemplate` points to fields other than `UserID`, and expand raw-payload extraction if adapters return nested objects instead of flat payload keys.
+- Validate detailed per-device import-run errors against real adapter partial-failure responses and decide whether to expose the same diagnostics in apply results.
+- Validate the new delete flow in integrated runtime, especially bulk-delete behavior on paginated `/persons` and the reappearance of detached terminal-directory candidates after person deletion.
+- Extend persons import flow with terminal write-back (`/identity/users/create` and `/identity/users/update`) after import reconciliation stabilizes in operator testing.
+- Decide whether to replace remaining manual person identity flows with snapshot-based attach/reassign dialogs everywhere in AdminUI.
+
 - [2026-02-23 02:35:56] - ✅ Completed: Production-readiness stabilization completed: legacy compatibility regressions fixed, backward-compatible HTTP response normalization added, outbox/tx adapters restored, and lint+typecheck+test+build are green.
 
 ## Next Steps (2026-02-23)
@@ -264,3 +328,5 @@ This file tracks the project's progress using a task list format.
 
 - [2026-02-23 01:44:03] - ✅ Completed: Release smoke test passed for tag v1.0.2 with GitHub Release assets: source zip, prebuilt zip, and SHA256SUMS.
 - [2026-02-23 01:44:03] - ⚠️ Follow-up: main CI workflow still fails on GitHub at Test step (Linux parity issue) and requires investigation.
+
+- [2026-02-23 23:37:52] - ✅ Completed: Expanded AdminUI i18n coverage across remaining operational pages; added header language switcher; improved monitoring status badge contrast; enhanced subscription requests person hover-card to load full profile by id/name.

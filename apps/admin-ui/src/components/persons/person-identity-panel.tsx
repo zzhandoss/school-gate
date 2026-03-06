@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Pencil, Plus } from 'lucide-react'
 
 import { PersonIdentityForm } from './person-identity-form'
@@ -18,14 +19,15 @@ type PersonIdentityPanelProps = {
 }
 
 export function PersonIdentityPanel({ mode, identity, personIin, devices, canWrite, onSubmit }: PersonIdentityPanelProps) {
+  const { t } = useTranslation()
   const [isDesktopOpen, setIsDesktopOpen] = useState(false)
   const [isMobileOpen, setIsMobileOpen] = useState(false)
 
-  const title = mode === 'create' ? 'Add identity' : 'Edit identity'
+  const title = mode === 'create' ? t('persons.identityPanel.addTitle') : t('persons.identityPanel.editTitle')
   const description =
     mode === 'create'
-      ? 'Bind person to specific device and terminal person id.'
-      : 'Update device mapping for this person.'
+      ? t('persons.identityPanel.addDescription')
+      : t('persons.identityPanel.editDescription')
 
   return (
     <>
@@ -38,7 +40,7 @@ export function PersonIdentityPanel({ mode, identity, personIin, devices, canWri
             onClick={() => setIsDesktopOpen(true)}
           >
             <Plus className="h-4 w-4" />
-            Add identity
+            {t('persons.identityPanel.addIdentity')}
           </Button>
           <Button
             type="button"
@@ -47,7 +49,7 @@ export function PersonIdentityPanel({ mode, identity, personIin, devices, canWri
             onClick={() => setIsMobileOpen(true)}
           >
             <Plus className="h-4 w-4" />
-            Add
+            {t('persons.identityPanel.add')}
           </Button>
         </>
       ) : (
@@ -61,7 +63,7 @@ export function PersonIdentityPanel({ mode, identity, personIin, devices, canWri
             onClick={() => setIsDesktopOpen(true)}
           >
             <Pencil className="h-3.5 w-3.5" />
-            Edit
+            {t('persons.identityPanel.edit')}
           </Button>
           <Button
             type="button"
@@ -69,7 +71,7 @@ export function PersonIdentityPanel({ mode, identity, personIin, devices, canWri
             variant="outline"
             className="sm:hidden"
             disabled={!canWrite}
-            aria-label="Edit identity"
+            aria-label={t('persons.identityPanel.editAria')}
             onClick={() => setIsMobileOpen(true)}
           >
             <Pencil className="h-3.5 w-3.5" />

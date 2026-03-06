@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useRouter } from '@tanstack/react-router'
 import { Cable, RefreshCw } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 import { DeviceListPagination } from './device-list-pagination'
 import { formatDateTime, formatDurationMs } from './device-ops-format'
@@ -17,6 +18,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Skeleton } from '@/components/ui/skeleton'
 
 export function DeviceAdaptersView() {
+  const { t } = useTranslation()
   const router = useRouter()
   const session = useSession()
   const canRead = session?.admin.permissions.includes('devices.read') ?? false
@@ -86,7 +88,7 @@ export function DeviceAdaptersView() {
         await router.navigate({ to: '/unavailable' })
         return
       }
-      setError(value instanceof Error ? value.message : 'Failed to load adapters')
+      setError(value instanceof Error ? value.message : t('devices.adaptersLoadFailed'))
     }
   }
 
@@ -114,9 +116,9 @@ export function DeviceAdaptersView() {
   if (!canRead) {
     return (
       <Alert className="border-amber-300/60 bg-amber-50 text-amber-900">
-        <AlertTitle>Access denied</AlertTitle>
+        <AlertTitle>{t('settings.accessDeniedTitle')}</AlertTitle>
         <AlertDescription>
-          Your account does not have `devices.read` permission.
+          {t('devices.accessDeniedDescription')}
         </AlertDescription>
       </Alert>
     )
@@ -134,7 +136,7 @@ export function DeviceAdaptersView() {
   if (error) {
     return (
       <Alert className="border-destructive/40 bg-destructive/5 text-destructive">
-        <AlertTitle>Adapters failed to load</AlertTitle>
+        <AlertTitle>{t('devices.adaptersPageLoadFailedTitle')}</AlertTitle>
         <AlertDescription>{error}</AlertDescription>
       </Alert>
     )
@@ -144,33 +146,33 @@ export function DeviceAdaptersView() {
     <div className="space-y-5">
       <div className="flex flex-col gap-3 rounded-xl border border-border/70 bg-card/70 p-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-lg font-semibold">Adapters operations</h1>
+          <h1 className="text-lg font-semibold">{t('devices.adaptersOpsTitle')}</h1>
           <p className="text-sm text-muted-foreground">
-            Read-only operational view for adapter status, mode, and metadata.
+            {t('devices.adaptersOpsSubtitle')}
           </p>
         </div>
         <Button type="button" variant="outline" disabled={refreshing} onClick={onRefresh}>
           <RefreshCw className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} />
-          {refreshing ? 'Refreshing...' : 'Refresh'}
+          {refreshing ? t('common.actions.refreshing') : t('common.actions.refresh')}
         </Button>
       </div>
 
       <div className="grid gap-4 md:grid-cols-3">
         <Card>
           <CardHeader className="pb-2">
-            <CardDescription>Total adapters</CardDescription>
+            <CardDescription>{t('devices.totalAdapters')}</CardDescription>
             <CardTitle className="text-2xl">{adapters.length}</CardTitle>
           </CardHeader>
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardDescription>Active mode</CardDescription>
+            <CardDescription>{t('devices.activeMode')}</CardDescription>
             <CardTitle className="text-2xl">{activeCount}</CardTitle>
           </CardHeader>
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardDescription>Draining mode</CardDescription>
+            <CardDescription>{t('devices.drainingMode')}</CardDescription>
             <CardTitle className="text-2xl">{adapters.length - activeCount}</CardTitle>
           </CardHeader>
         </Card>
@@ -179,43 +181,43 @@ export function DeviceAdaptersView() {
       <div className="grid gap-4 md:grid-cols-2">
         <div className="md:col-span-2 grid gap-2 sm:grid-cols-2 lg:grid-cols-5">
           <Input
-            placeholder="Search instance, vendor, url"
+            placeholder={t('devices.searchInstanceVendorUrl')}
             value={query}
             onChange={(event) => setQuery(event.target.value)}
           />
           <Select value={modeFilter} onValueChange={(value) => setModeFilter(value as typeof modeFilter)}>
             <SelectTrigger>
-              <SelectValue placeholder="Mode" />
+              <SelectValue placeholder={t('common.labels.mode')} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All modes</SelectItem>
-              <SelectItem value="active">Active</SelectItem>
-              <SelectItem value="draining">Draining</SelectItem>
+              <SelectItem value="all">{t('devices.allModes')}</SelectItem>
+              <SelectItem value="active">{t('devices.active')}</SelectItem>
+              <SelectItem value="draining">{t('devices.draining')}</SelectItem>
             </SelectContent>
           </Select>
           <Select value={sortBy} onValueChange={(value) => setSortBy(value as typeof sortBy)}>
             <SelectTrigger>
-              <SelectValue placeholder="Sort by" />
+              <SelectValue placeholder={t('common.filters.order')} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="last_seen_desc">Last seen: newest</SelectItem>
-              <SelectItem value="last_seen_asc">Last seen: oldest</SelectItem>
-              <SelectItem value="name_asc">Name: A-Z</SelectItem>
-              <SelectItem value="name_desc">Name: Z-A</SelectItem>
+              <SelectItem value="last_seen_desc">{t('devices.sort.lastSeenNewest')}</SelectItem>
+              <SelectItem value="last_seen_asc">{t('devices.sort.lastSeenOldest')}</SelectItem>
+              <SelectItem value="name_asc">{t('devices.sort.nameAsc')}</SelectItem>
+              <SelectItem value="name_desc">{t('devices.sort.nameDesc')}</SelectItem>
             </SelectContent>
           </Select>
           <Select value={String(limit)} onValueChange={(value) => setLimit(Number(value))}>
             <SelectTrigger>
-              <SelectValue placeholder="Page size" />
+              <SelectValue placeholder={t('common.filters.pageSize')} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="6">6 per page</SelectItem>
-              <SelectItem value="12">12 per page</SelectItem>
-              <SelectItem value="24">24 per page</SelectItem>
+              <SelectItem value="6">{t('common.pagination.perPage', { count: 6 })}</SelectItem>
+              <SelectItem value="12">{t('common.pagination.perPage', { count: 12 })}</SelectItem>
+              <SelectItem value="24">{t('common.pagination.perPage', { count: 24 })}</SelectItem>
             </SelectContent>
           </Select>
           <div className="text-xs text-muted-foreground self-center">
-            {rangeStart}-{rangeEnd} of {filteredAdapters.length}
+            {t('devices.adaptersRange', { from: rangeStart, to: rangeEnd, total: filteredAdapters.length })}
           </div>
         </div>
         {pagedAdapters.map((adapter) => (
@@ -226,18 +228,20 @@ export function DeviceAdaptersView() {
                   <Cable className="h-4 w-4 text-cyan-700" />
                   {adapter.instanceName}
                 </span>
-                <Badge variant={adapter.mode === 'active' ? 'default' : 'outline'}>{adapter.mode}</Badge>
+                <Badge variant={adapter.mode === 'active' ? 'default' : 'outline'}>
+                  {adapter.mode === 'active' ? t('devices.active') : t('devices.draining')}
+                </Badge>
               </CardTitle>
               <CardDescription>{adapter.vendorKey} | {adapter.adapterId}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-2 text-sm">
-              <p><span className="text-muted-foreground">Instance key:</span> {adapter.instanceKey}</p>
-              <p><span className="text-muted-foreground">Base URL:</span> {adapter.baseUrl}</p>
-              <p><span className="text-muted-foreground">Retention:</span> {formatDurationMs(adapter.retentionMs)}</p>
-              <p><span className="text-muted-foreground">Capabilities:</span> {adapter.capabilities.length > 0 ? adapter.capabilities.join(', ') : 'not declared'}</p>
-              <p><span className="text-muted-foreground">Version:</span> {adapter.version ?? 'n/a'}</p>
-              <p><span className="text-muted-foreground">Registered:</span> {formatDateTime(adapter.registeredAt)}</p>
-              <p><span className="text-muted-foreground">Last seen:</span> {formatDateTime(adapter.lastSeenAt)}</p>
+              <p><span className="text-muted-foreground">{t('devices.instanceKey')}:</span> {adapter.instanceKey}</p>
+              <p><span className="text-muted-foreground">{t('devices.baseUrl')}:</span> {adapter.baseUrl}</p>
+              <p><span className="text-muted-foreground">{t('devices.retention')}:</span> {formatDurationMs(adapter.retentionMs)}</p>
+              <p><span className="text-muted-foreground">{t('devices.capabilities')}:</span> {adapter.capabilities.length > 0 ? adapter.capabilities.join(', ') : t('devices.notDeclared')}</p>
+              <p><span className="text-muted-foreground">{t('devices.version')}:</span> {adapter.version ?? t('devices.noValue')}</p>
+              <p><span className="text-muted-foreground">{t('devices.registered')}:</span> {formatDateTime(adapter.registeredAt)}</p>
+              <p><span className="text-muted-foreground">{t('common.labels.lastSeen')}:</span> {formatDateTime(adapter.lastSeenAt)}</p>
             </CardContent>
           </Card>
         ))}
@@ -248,9 +252,9 @@ export function DeviceAdaptersView() {
 
       {filteredAdapters.length === 0 ? (
         <Alert>
-          <AlertTitle>No adapters registered</AlertTitle>
+          <AlertTitle>{t('devices.noAdaptersRegistered')}</AlertTitle>
           <AlertDescription>
-            Device service has not reported any adapter registrations yet.
+            {t('devices.noAdaptersRegisteredDescription')}
           </AlertDescription>
         </Alert>
       ) : null}

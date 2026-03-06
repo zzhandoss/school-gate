@@ -1,9 +1,10 @@
 import { useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 import { AlertsCreateRuleConfigFields } from './alerts-create-rule-config-fields'
 import {
   buildAlertRuleConfig,
-  getConfigHint,
+  getConfigHintKey,
   getRuleConfigDefaults
 } from './alerts-create-rule-utils'
 import type { AlertRule } from '@/lib/alerts/types'
@@ -28,6 +29,7 @@ type AlertsEditRuleFormProps = {
 }
 
 export function AlertsEditRuleForm({ rule, onUpdated, onClose }: AlertsEditRuleFormProps) {
+  const { t } = useTranslation()
   const defaults = useMemo(() => getRuleConfigDefaults(rule), [rule])
   const [name, setName] = useState(rule.name)
   const [severity, setSeverity] = useState<'warning' | 'critical'>(rule.severity)
@@ -51,7 +53,7 @@ export function AlertsEditRuleForm({ rule, onUpdated, onClose }: AlertsEditRuleF
     setError(null)
     const trimmedName = name.trim()
     if (!trimmedName) {
-      setError('Rule name is required.')
+      setError(t('alerts.ruleForm.errors.ruleNameRequired'))
       return
     }
 
@@ -67,8 +69,8 @@ export function AlertsEditRuleForm({ rule, onUpdated, onClose }: AlertsEditRuleF
       adapterId,
       adapterVendorKey
     })
-    if ('error' in built) {
-      setError(built.error ?? 'Invalid rule config.')
+    if ('errorKey' in built) {
+      setError(t(built.errorKey))
       return
     }
 
@@ -84,9 +86,9 @@ export function AlertsEditRuleForm({ rule, onUpdated, onClose }: AlertsEditRuleF
       onClose()
     } catch (value) {
       if (value instanceof ApiError) {
-        setError(value.message || 'Failed to update rule.')
+        setError(value.message || t('alerts.ruleForm.errors.updateFailed'))
       } else {
-        setError('Failed to update rule.')
+        setError(t('alerts.ruleForm.errors.updateFailed'))
       }
     } finally {
       setIsSubmitting(false)
@@ -96,7 +98,7 @@ export function AlertsEditRuleForm({ rule, onUpdated, onClose }: AlertsEditRuleF
   return (
     <form className="space-y-4 p-4" onSubmit={onSubmit}>
       <div className="space-y-2">
-        <Label htmlFor={`rule-name-${rule.id}`}>Rule name</Label>
+        <Label htmlFor={`rule-name-${rule.id}`}>{t('alerts.ruleForm.ruleName')}</Label>
         <Input
           id={`rule-name-${rule.id}`}
           value={name}
@@ -108,39 +110,39 @@ export function AlertsEditRuleForm({ rule, onUpdated, onClose }: AlertsEditRuleF
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-2">
-          <Label>Rule type</Label>
-          <Input value={rule.type} disabled />
+          <Label>{t('alerts.ruleForm.ruleType')}</Label>
+          <Input value={t(`alerts.ruleTypes.${rule.type}`)} disabled />
         </div>
         <div className="space-y-2">
-          <Label>Severity</Label>
+          <Label>{t('alerts.ruleForm.severity')}</Label>
           <Select value={severity} onValueChange={(value) => setSeverity(value as 'warning' | 'critical')}>
             <SelectTrigger className="w-full">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="warning">warning</SelectItem>
-              <SelectItem value="critical">critical</SelectItem>
+              <SelectItem value="warning">{t('alerts.severity.warning')}</SelectItem>
+              <SelectItem value="critical">{t('alerts.severity.critical')}</SelectItem>
             </SelectContent>
           </Select>
         </div>
       </div>
 
       <div className="space-y-2">
-        <Label>Status</Label>
+        <Label>{t('alerts.ruleForm.status')}</Label>
         <Select value={enabledValue} onValueChange={(value) => setEnabledValue(value as 'true' | 'false')}>
           <SelectTrigger className="w-full">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="true">enabled</SelectItem>
-            <SelectItem value="false">disabled</SelectItem>
+            <SelectItem value="true">{t('settings.enabled')}</SelectItem>
+            <SelectItem value="false">{t('settings.disabled')}</SelectItem>
           </SelectContent>
         </Select>
       </div>
 
       <div className="rounded-lg border border-border/70 bg-muted/30 p-3">
-        <p className="text-xs font-medium text-foreground">Config</p>
-        <p className="mt-1 text-xs text-muted-foreground">{getConfigHint(rule.type)}</p>
+        <p className="text-xs font-medium text-foreground">{t('alerts.ruleForm.config')}</p>
+        <p className="mt-1 text-xs text-muted-foreground">{t(getConfigHintKey(rule.type))}</p>
         <AlertsCreateRuleConfigFields
           type={rule.type}
           workerId={workerId}
@@ -166,17 +168,17 @@ export function AlertsEditRuleForm({ rule, onUpdated, onClose }: AlertsEditRuleF
 
       {error ? (
         <Alert className="border-destructive/40 bg-destructive/5 text-destructive">
-          <AlertTitle>Cannot update rule</AlertTitle>
+          <AlertTitle>{t('alerts.ruleForm.cannotUpdateTitle')}</AlertTitle>
           <AlertDescription>{error}</AlertDescription>
         </Alert>
       ) : null}
 
       <div className="flex justify-end gap-2">
         <Button type="button" variant="outline" onClick={onClose}>
-          Cancel
+          {t('common.actions.cancel')}
         </Button>
         <Button type="submit" disabled={isSubmitting}>
-          {isSubmitting ? 'Saving...' : 'Save changes'}
+          {isSubmitting ? t('alerts.ruleForm.saving') : t('profile.saveChanges')}
         </Button>
       </div>
     </form>

@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Pencil, Plus } from 'lucide-react'
 
 import { PersonsUpsertForm } from './persons-upsert-form'
@@ -15,14 +16,15 @@ type PersonsUpsertPanelProps = {
 }
 
 export function PersonsUpsertPanel({ mode, person, canWrite, onSubmit }: PersonsUpsertPanelProps) {
+  const { t } = useTranslation()
   const [isDesktopOpen, setIsDesktopOpen] = useState(false)
   const [isMobileOpen, setIsMobileOpen] = useState(false)
 
-  const title = mode === 'create' ? 'Create person' : 'Edit person'
+  const title = mode === 'create' ? t('persons.panel.createTitle') : t('persons.panel.editTitle')
   const description =
     mode === 'create'
-      ? 'Create person profile in the system.'
-      : 'Update person data. Device identities are managed separately.'
+      ? t('persons.panel.createDescription')
+      : t('persons.panel.editDescription')
 
   return (
     <>
@@ -35,7 +37,7 @@ export function PersonsUpsertPanel({ mode, person, canWrite, onSubmit }: Persons
             onClick={() => setIsDesktopOpen(true)}
           >
             <Plus className="h-4 w-4" />
-            Create person
+            {t('persons.panel.createPerson')}
           </Button>
           <Button
             type="button"
@@ -44,7 +46,7 @@ export function PersonsUpsertPanel({ mode, person, canWrite, onSubmit }: Persons
             onClick={() => setIsMobileOpen(true)}
           >
             <Plus className="h-4 w-4" />
-            Create
+            {t('common.actions.create')}
           </Button>
         </>
       ) : (
@@ -58,7 +60,7 @@ export function PersonsUpsertPanel({ mode, person, canWrite, onSubmit }: Persons
             onClick={() => setIsDesktopOpen(true)}
           >
             <Pencil className="h-3.5 w-3.5" />
-            Edit
+            {t('persons.panel.edit')}
           </Button>
           <Button
             type="button"
@@ -66,7 +68,7 @@ export function PersonsUpsertPanel({ mode, person, canWrite, onSubmit }: Persons
             variant="outline"
             className="sm:hidden"
             disabled={!canWrite}
-            aria-label={`Edit ${person?.iin ?? 'person'}`}
+            aria-label={t('persons.panel.editAria', { value: person?.iin ?? t('persons.unknownName') })}
             onClick={() => setIsMobileOpen(true)}
           >
             <Pencil className="h-3.5 w-3.5" />

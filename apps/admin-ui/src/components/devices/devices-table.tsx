@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Trash2 } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 import { DevicesUpsertPanel } from './devices-upsert-panel'
 import { formatDateTime } from './device-ops-format'
@@ -34,6 +35,7 @@ export function DevicesTable({
   onToggleEnabled,
   onDelete
 }: DevicesTableProps) {
+  const { t } = useTranslation()
   const adaptersByVendor = new Map<string, Array<DeviceAdapterItem>>()
   for (const adapter of adapters) {
     const group = adaptersByVendor.get(adapter.vendorKey)
@@ -59,7 +61,7 @@ export function DevicesTable({
     try {
       await onToggleEnabled(device.deviceId, nextEnabled)
     } catch (value) {
-      setActionError(value instanceof Error ? value.message : 'Cannot update device state')
+      setActionError(value instanceof Error ? value.message : t('devices.cannotUpdateState'))
     } finally {
       setUpdatingEnabledId(null)
     }
@@ -76,7 +78,7 @@ export function DevicesTable({
       await onDelete(deviceId)
       setConfirmDeleteId(null)
     } catch (value) {
-      setActionError(value instanceof Error ? value.message : 'Cannot delete device')
+      setActionError(value instanceof Error ? value.message : t('devices.cannotDeleteDevice'))
     } finally {
       setDeletingId(null)
     }
@@ -93,19 +95,19 @@ export function DevicesTable({
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Device</TableHead>
-            <TableHead>Adapter</TableHead>
-            <TableHead>Direction</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead>Updated</TableHead>
-            <TableHead className="text-right">Actions</TableHead>
+            <TableHead>{t('common.labels.device')}</TableHead>
+            <TableHead>{t('common.labels.adapter')}</TableHead>
+            <TableHead>{t('common.labels.direction')}</TableHead>
+            <TableHead>{t('common.labels.status')}</TableHead>
+            <TableHead>{t('devices.updated')}</TableHead>
+            <TableHead className="text-right">{t('common.labels.actions')}</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {devices.length === 0 ? (
             <TableRow>
               <TableCell colSpan={6} className="text-center text-muted-foreground">
-                No devices registered yet.
+                {t('devices.noDevicesRegistered')}
               </TableCell>
             </TableRow>
           ) : (
@@ -127,7 +129,7 @@ export function DevicesTable({
                       <p className="text-xs text-muted-foreground">
                         {adapterGroup.length > 0
                           ? adapterGroup.map((adapter) => adapter.instanceName).join(', ')
-                          : 'No active adapter instances'}
+                          : t('devices.noActiveAdapterInstances')}
                       </p>
                     </div>
                   </TableCell>
@@ -140,10 +142,10 @@ export function DevicesTable({
                         checked={device.enabled}
                         disabled={!canWrite || updatingEnabledId === device.deviceId}
                         onCheckedChange={(value) => void handleToggle(device, Boolean(value))}
-                        aria-label={`Toggle ${device.name}`}
+                        aria-label={t('devices.toggleAria', { name: device.name })}
                       />
                       <span className="text-xs text-muted-foreground">
-                        {device.enabled ? 'Enabled' : 'Disabled'}
+                        {device.enabled ? t('devices.enabled') : t('settings.disabled')}
                       </span>
                     </div>
                   </TableCell>
@@ -166,7 +168,7 @@ export function DevicesTable({
                             disabled={!canWrite || isDeleting}
                             onClick={() => void handleDelete(device.deviceId)}
                           >
-                            {isDeleting ? 'Deleting...' : 'Confirm'}
+                            {isDeleting ? t('persons.deleting') : t('devices.confirm')}
                           </Button>
                           <Button
                             type="button"
@@ -175,7 +177,7 @@ export function DevicesTable({
                             disabled={isDeleting}
                             onClick={() => setConfirmDeleteId(null)}
                           >
-                            Cancel
+                            {t('common.actions.cancel')}
                           </Button>
                         </>
                       ) : (
@@ -188,7 +190,7 @@ export function DevicesTable({
                           onClick={() => setConfirmDeleteId(device.deviceId)}
                         >
                           <Trash2 className="h-3.5 w-3.5" />
-                          Delete
+                          {t('persons.delete')}
                         </Button>
                       )}
                     </div>

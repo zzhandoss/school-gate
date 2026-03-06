@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useRouter } from '@tanstack/react-router'
 import { RefreshCw } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 import { AdminRolePanel } from './admin-role-panel'
 import type { AdminRole } from '@/lib/admins/types'
@@ -13,6 +14,7 @@ import {
   listRoles,
   updateRolePermissions
 } from '@/lib/admins/service'
+import { permissionLabel } from '@/lib/i18n/enum-labels'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -22,6 +24,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 type RolePermissionsMap = Record<string, Array<string>>
 
 export function AdminRolesView() {
+  const { t } = useTranslation()
   const router = useRouter()
   const session = useSession()
   const permissions = session?.admin.permissions ?? []
@@ -44,6 +47,13 @@ export function AdminRolesView() {
     }
     return map
   }, [rolePermissions])
+  const mostUsedPermission = useMemo(
+    () =>
+      allPermissions
+        .slice()
+        .sort((left, right) => (permissionUsage.get(right) ?? 0) - (permissionUsage.get(left) ?? 0))[0] ?? null,
+    [allPermissions, permissionUsage]
+  )
 
   async function load() {
     setError(null)
@@ -70,7 +80,7 @@ export function AdminRolesView() {
         return
       }
 
-      setError(value instanceof Error ? value.message : 'Failed to load roles')
+      setError(value instanceof Error ? value.message : t('roles.loadFailed'))
     }
   }
 
@@ -101,7 +111,7 @@ export function AdminRolesView() {
       await createRole(input)
       await load()
     } catch (value) {
-      setMutationError(value instanceof Error ? value.message : 'Failed to create role')
+      setMutationError(value instanceof Error ? value.message : t('roles.createFailed'))
       throw value
     }
   }
@@ -112,7 +122,7 @@ export function AdminRolesView() {
       await updateRolePermissions(roleId, { permissions: input.permissions })
       await load()
     } catch (value) {
-      setMutationError(value instanceof Error ? value.message : 'Failed to update role')
+      setMutationError(value instanceof Error ? value.message : t('roles.updateFailed'))
       throw value
     }
   }
@@ -120,9 +130,9 @@ export function AdminRolesView() {
   if (!canManage) {
     return (
       <Alert className="border-amber-300/60 bg-amber-50 text-amber-900">
-        <AlertTitle>Access denied</AlertTitle>
+        <AlertTitle>{t('settings.accessDeniedTitle')}</AlertTitle>
         <AlertDescription>
-          Your account does not have `admin.manage` permission.
+          {t('admins.accessDeniedDescription')}
         </AlertDescription>
       </Alert>
     )
@@ -140,7 +150,7 @@ export function AdminRolesView() {
   if (error) {
     return (
       <Alert className="border-destructive/40 bg-destructive/5 text-destructive">
-        <AlertTitle>Roles page failed to load</AlertTitle>
+        <AlertTitle>{t('roles.pageLoadFailedTitle')}</AlertTitle>
         <AlertDescription>{error}</AlertDescription>
       </Alert>
     )
@@ -150,9 +160,9 @@ export function AdminRolesView() {
     <div className="space-y-5">
       <div className="flex flex-col gap-3 rounded-xl border border-border/70 bg-card/70 p-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-lg font-semibold">Role management</h1>
+          <h1 className="text-lg font-semibold">{t('roles.title')}</h1>
           <p className="text-sm text-muted-foreground">
-            Create roles and tune permission sets used by admin accounts.
+            {t('roles.subtitle')}
           </p>
         </div>
         <div className="flex w-full gap-2 sm:w-auto">
@@ -165,14 +175,14 @@ export function AdminRolesView() {
           />
           <Button type="button" variant="outline" disabled={refreshing} onClick={onRefresh}>
             <RefreshCw className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} />
-            {refreshing ? 'Refreshing...' : 'Refresh'}
+            {refreshing ? t('common.actions.refreshing') : t('common.actions.refresh')}
           </Button>
         </div>
       </div>
 
       {mutationError ? (
         <Alert className="border-destructive/40 bg-destructive/5 text-destructive">
-          <AlertTitle>Role operation failed</AlertTitle>
+          <AlertTitle>{t('roles.operationFailedTitle')}</AlertTitle>
           <AlertDescription>{mutationError}</AlertDescription>
         </Alert>
       ) : null}
@@ -180,23 +190,21 @@ export function AdminRolesView() {
       <div className="grid gap-4 md:grid-cols-3">
         <Card>
           <CardHeader className="pb-2">
-            <CardDescription>Roles total</CardDescription>
+            <CardDescription>{t('roles.total')}</CardDescription>
             <CardTitle className="text-2xl">{roles.length}</CardTitle>
           </CardHeader>
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardDescription>Unique permissions</CardDescription>
+            <CardDescription>{t('roles.uniquePermissions')}</CardDescription>
             <CardTitle className="text-2xl">{allPermissions.length}</CardTitle>
           </CardHeader>
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardDescription>Most used permission</CardDescription>
+            <CardDescription>{t('roles.mostUsedPermission')}</CardDescription>
             <CardTitle className="text-base">
-              {allPermissions
-                .slice()
-                .sort((left, right) => (permissionUsage.get(right) ?? 0) - (permissionUsage.get(left) ?? 0))[0] ?? 'n/a'}
+              {mostUsedPermission ? permissionLabel(t, mostUsedPermission) : t('devices.noValue')}
             </CardTitle>
           </CardHeader>
         </Card>
@@ -211,7 +219,7 @@ export function AdminRolesView() {
                 <div>
                   <CardTitle className="text-base">{role.name}</CardTitle>
                   <CardDescription>
-                    {permissionsForRole.length} permission(s) assigned
+                    {t('roles.permissionsAssigned', { count: permissionsForRole.length })}
                   </CardDescription>
                 </div>
                 <AdminRolePanel
@@ -227,12 +235,12 @@ export function AdminRolesView() {
                 <div className="flex flex-wrap gap-2">
                   {permissionsForRole.length > 0 ? (
                     permissionsForRole.map((permission) => (
-                      <Badge key={permission} variant="outline">
-                        {permission}
+                      <Badge key={permission} variant="outline" title={permission}>
+                        {permissionLabel(t, permission)}
                       </Badge>
                     ))
                   ) : (
-                    <p className="text-sm text-muted-foreground">No permissions assigned.</p>
+                    <p className="text-sm text-muted-foreground">{t('roles.noPermissionsAssigned')}</p>
                   )}
                 </div>
               </CardContent>

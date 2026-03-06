@@ -1,8 +1,9 @@
-import { Link, useRouter } from '@tanstack/react-router'
+﻿import { Link, useRouter } from '@tanstack/react-router'
 import { useMutation } from '@tanstack/react-query'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { KeyRound, ShieldCheck, UserRoundPlus } from 'lucide-react'
 import { useForm } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
 
 import type { BootstrapFirstAdminValues } from '@/lib/auth/first-admin-schema'
 import { mapAuthErrorToMessage } from '@/lib/auth/error-messages'
@@ -17,6 +18,7 @@ import { Label } from '@/components/ui/label'
 import { cn } from '@/lib/utils'
 
 export function FirstAdminCard() {
+  const { t } = useTranslation()
   const router = useRouter()
   const form = useForm<BootstrapFirstAdminValues>({
     resolver: zodResolver(bootstrapFirstAdminSchema),
@@ -60,38 +62,45 @@ export function FirstAdminCard() {
   const alreadyInitialized = mutation.error instanceof ApiError &&
     mutation.error.code === 'first_admin_already_exists'
 
+  function translateValidationMessage(message: string | undefined) {
+    if (!message) {
+      return ''
+    }
+    return t(message, { defaultValue: message })
+  }
+
   return (
     <Card className="overflow-hidden border-border/80 p-0 shadow-lg shadow-slate-900/10">
       <CardContent className="grid p-0 md:grid-cols-2">
         <form className="space-y-4 p-6 md:p-8" onSubmit={form.handleSubmit(onSubmit)}>
           <div className="space-y-2">
             <p className="text-xs font-semibold tracking-[0.24em] text-muted-foreground uppercase">
-              School Gate
+              {t('app.brand.schoolGate')}
             </p>
-            <h1 className="text-2xl font-semibold">Initialize first admin</h1>
+            <h1 className="text-2xl font-semibold">{t('auth.firstAdmin.title')}</h1>
             <p className="text-sm text-muted-foreground">
-              Use this once to bootstrap access for an empty system.
+              {t('auth.firstAdmin.subtitle')}
             </p>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email">{t('profile.email')}</Label>
             <Input
               id="email"
               type="email"
               autoComplete="email"
-              placeholder="root@example.com…"
+              placeholder={t('auth.firstAdmin.placeholders.email')}
               {...form.register('email')}
             />
             {form.formState.errors.email ? (
               <p className="text-xs text-destructive">
-                {form.formState.errors.email.message}
+                {translateValidationMessage(form.formState.errors.email.message)}
               </p>
             ) : null}
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
+            <Label htmlFor="password">{t('auth.common.password')}</Label>
             <Input
               id="password"
               type="password"
@@ -100,13 +109,13 @@ export function FirstAdminCard() {
             />
             {form.formState.errors.password ? (
               <p className="text-xs text-destructive">
-                {form.formState.errors.password.message}
+                {translateValidationMessage(form.formState.errors.password.message)}
               </p>
             ) : null}
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="confirmPassword">Confirm password</Label>
+            <Label htmlFor="confirmPassword">{t('auth.common.confirmPassword')}</Label>
             <Input
               id="confirmPassword"
               type="password"
@@ -115,13 +124,13 @@ export function FirstAdminCard() {
             />
             {form.formState.errors.confirmPassword ? (
               <p className="text-xs text-destructive">
-                {form.formState.errors.confirmPassword.message}
+                {translateValidationMessage(form.formState.errors.confirmPassword.message)}
               </p>
             ) : null}
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="name">Name (optional)</Label>
+            <Label htmlFor="name">{t('auth.common.nameOptional')}</Label>
             <Input
               id="name"
               type="text"
@@ -130,14 +139,14 @@ export function FirstAdminCard() {
             />
             {form.formState.errors.name ? (
               <p className="text-xs text-destructive">
-                {form.formState.errors.name.message}
+                {translateValidationMessage(form.formState.errors.name.message)}
               </p>
             ) : null}
           </div>
 
           {apiErrorMessage ? (
             <Alert className="border-destructive/40 bg-destructive/5 text-destructive">
-              <AlertTitle>Bootstrap failed</AlertTitle>
+              <AlertTitle>{t('auth.firstAdmin.bootstrapFailedTitle')}</AlertTitle>
               <AlertDescription className="text-destructive/90">
                 {apiErrorMessage}
               </AlertDescription>
@@ -145,7 +154,7 @@ export function FirstAdminCard() {
           ) : null}
 
           <Button type="submit" className="w-full" disabled={mutation.isPending}>
-            {mutation.isPending ? 'Creating admin…' : 'Create first admin'}
+            {mutation.isPending ? t('auth.firstAdmin.creating') : t('auth.firstAdmin.create')}
           </Button>
 
           {alreadyInitialized ? (
@@ -153,7 +162,7 @@ export function FirstAdminCard() {
               to="/login"
               className={cn(buttonVariants({ variant: 'outline' }), 'w-full')}
             >
-              Go to sign in
+              {t('auth.common.goToSignIn')}
             </Link>
           ) : null}
         </form>
@@ -163,24 +172,23 @@ export function FirstAdminCard() {
           <div className="relative z-10">
             <span className="inline-flex items-center gap-2 rounded-full border border-slate-300/70 bg-white/80 px-3 py-1 text-xs font-medium text-slate-700">
               <UserRoundPlus className="h-4 w-4" />
-              One-time setup
+              {t('auth.firstAdmin.hero.oneTimeSetup')}
             </span>
           </div>
           <div className="relative z-10 space-y-3">
             <h2 className="text-2xl font-semibold text-slate-900">
-              First admin gets super admin access
+              {t('auth.firstAdmin.hero.title')}
             </h2>
             <p className="max-w-xs text-sm text-slate-700">
-              When initialization succeeds, you are signed in immediately and
-              redirected to dashboard.
+              {t('auth.firstAdmin.hero.description')}
             </p>
             <div className="inline-flex items-center gap-2 text-xs text-slate-600">
               <ShieldCheck className="h-4 w-4 text-emerald-600" />
-              Available only for empty systems
+              {t('auth.firstAdmin.hero.emptySystemsOnly')}
             </div>
             <div className="inline-flex items-center gap-2 text-xs text-slate-600">
               <KeyRound className="h-4 w-4 text-slate-600" />
-              Use strong credentials for production
+              {t('auth.firstAdmin.hero.strongCredentials')}
             </div>
           </div>
         </div>

@@ -34,6 +34,7 @@ export type ListAlertRulesInput = {
 export interface AlertRulesRepo {
     create<K extends AlertRuleType>(input: CreateAlertRuleInput<K>): Promise<void>;
     update<K extends AlertRuleType>(input: UpdateAlertRuleInput<K>): Promise<boolean>;
+    deleteByIdSync(id: string): boolean;
     getById(id: string): Promise<UnknownAlertRule | null>;
     list(input: ListAlertRulesInput): Promise<UnknownAlertRule[]>;
     withTx(tx: unknown): AlertRulesRepo;

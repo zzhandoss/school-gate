@@ -1,6 +1,7 @@
 import * as React from "react";
 import { Slot } from "radix-ui";
 import { PanelLeft } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -145,10 +146,12 @@ function Sidebar({
 }
 
 function SidebarTrigger({
+  children,
   className,
   onClick,
   ...props
 }: React.ComponentProps<typeof Button>) {
+  const { t } = useTranslation();
   const { toggleSidebar } = useSidebar();
   return (
     <Button
@@ -164,8 +167,8 @@ function SidebarTrigger({
       }}
       {...props}
     >
-      <PanelLeft className="h-5 w-5" aria-hidden="true" />
-      <span className="sr-only">Toggle Sidebar</span>
+      {children ?? <PanelLeft className="h-5 w-5" aria-hidden="true" />}
+      <span className="sr-only">{t('ui.toggleSidebar')}</span>
     </Button>
   );
 }

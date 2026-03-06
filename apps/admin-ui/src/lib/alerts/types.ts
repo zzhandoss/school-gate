@@ -40,6 +40,28 @@ export type AlertEvent = {
     createdAt: string
 };
 
+export type AlertsPage = {
+    limit: number
+    offset: number
+    total: number
+};
+
+export type ListAlertEventsInput = {
+    status?: AlertEventStatus
+    limit?: number
+    offset?: number
+};
+
+export type ListAlertEventsResult = {
+    events: Array<AlertEvent>
+    page: AlertsPage
+};
+
+export type DeleteAlertRuleResult = {
+    ruleId: string
+    deleted: true
+};
+
 export type CreateAlertRuleInput = {
     name: string
     type: AlertRuleType

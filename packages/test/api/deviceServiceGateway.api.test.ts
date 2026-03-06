@@ -11,6 +11,7 @@ import {
     createStubAuditLogsHandlers,
     createStubSubscriptionsHandlers
 } from "../helpers/adminAuth.js";
+import { createEmptyPersonsModule } from "../helpers/personsModule.js";
 
 function numberField(key: string, value: number) {
     return { key, env: value, effective: value };
@@ -93,9 +94,7 @@ describe("API device-service gateway routes", () => {
                 listUnmatched: async () => [],
                 mapTerminalIdentity: async () => ({ status: "already_linked", updatedEvents: 0 })
             },
-            persons: {
-                searchByIin: async () => []
-            },
+            persons: createEmptyPersonsModule(),
             subscriptionRequests: {
                 listPending: async () => ({ requests: [], page: { limit: 50, offset: 0, total: 0 } }),
                 review: async () => ({ requestId: "r1", status: "rejected", personId: null })
@@ -278,6 +277,219 @@ describe("API device-service gateway routes", () => {
             identityKey: "iin",
             identityValue: "900101000001",
             limit: 1
+        });
+    });
+
+    it("POST /api/ds/identity/export-users uses internal token and forwards payload", async () => {
+        fetchMock.mockResolvedValueOnce(
+            new Response(
+                JSON.stringify({
+                    success: true,
+                    data: {
+                        view: "grouped",
+                        devices: [
+                            {
+                                deviceId: "dev-1",
+                                exportedCount: 1,
+                                failed: false,
+                                hasMore: false,
+                                users: [
+                                    {
+                                        deviceId: "dev-1",
+                                        terminalPersonId: "T-1",
+                                        displayName: "Ivan Petrov",
+                                        citizenIdNo: "900101000001",
+                                        sourceSummary: ["accessUser"]
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                }),
+                { status: 200, headers: { "content-type": "application/json" } }
+            )
+        );
+
+        const response = await app.request("/api/ds/identity/export-users", {
+            method: "POST",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify({
+                target: { mode: "device", deviceId: "dev-1" },
+                view: "grouped",
+                limit: 100,
+                offset: 0,
+                includeCards: true
+            })
+        });
+        expect(response.status).toBe(200);
+
+        const json = (await response.json()) as any;
+        expect(json.success).toBe(true);
+        expect(json.data.devices[0].users[0].terminalPersonId).toBe("T-1");
+
+        const [url, init] = fetchMock.mock.calls[0] as [string, RequestInit];
+        expect(url).toBe("http://localhost:4010/api/identity/export-users");
+        expect((init.headers as Record<string, string>).authorization).toBe("Bearer internal-token");
+        expect(JSON.parse(String(init.body))).toEqual({
+            target: { mode: "device", deviceId: "dev-1" },
+            view: "grouped",
+            limit: 100,
+            offset: 0,
+            includeCards: true
+        });
+    });
+
+    it("POST /api/ds/identity/users/create uses internal token and forwards payload", async () => {
+        fetchMock.mockResolvedValueOnce(
+            new Response(
+                JSON.stringify({
+                    success: true,
+                    data: {
+                        results: [
+                            {
+                                deviceId: "dev-1",
+                                operation: "create",
+                                status: "success",
+                                steps: {
+                                    accessUser: "success",
+                                    accessCard: "skipped",
+                                    accessFace: "skipped"
+                                }
+                            }
+                        ]
+                    }
+                }),
+                { status: 200, headers: { "content-type": "application/json" } }
+            )
+        );
+
+        const response = await app.request("/api/ds/identity/users/create", {
+            method: "POST",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify({
+                target: { mode: "device", deviceId: "dev-1" },
+                person: {
+                    userId: "T-1",
+                    displayName: "Ivan Petrov"
+                }
+            })
+        });
+        expect(response.status).toBe(200);
+
+        const [url, init] = fetchMock.mock.calls[0] as [string, RequestInit];
+        expect(url).toBe("http://localhost:4010/api/identity/users/create");
+        expect((init.headers as Record<string, string>).authorization).toBe("Bearer internal-token");
+        expect(JSON.parse(String(init.body))).toEqual({
+            target: { mode: "device", deviceId: "dev-1" },
+            person: {
+                userId: "T-1",
+                displayName: "Ivan Petrov"
+            }
+        });
+    });
+
+    it("POST /api/ds/identity/users/bulk-create uses internal token and forwards payload", async () => {
+        fetchMock.mockResolvedValueOnce(
+            new Response(
+                JSON.stringify({
+                    success: true,
+                    data: {
+                        results: [
+                            {
+                                userId: "T-1",
+                                deviceId: "dev-1",
+                                operation: "create",
+                                status: "success",
+                                steps: {
+                                    accessUser: "success",
+                                    accessCard: "skipped",
+                                    accessFace: "skipped"
+                                }
+                            }
+                        ]
+                    }
+                }),
+                { status: 200, headers: { "content-type": "application/json" } }
+            )
+        );
+
+        const response = await app.request("/api/ds/identity/users/bulk-create", {
+            method: "POST",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify({
+                target: { mode: "devices", deviceIds: ["dev-1", "dev-2"] },
+                persons: [
+                    {
+                        userId: "T-1",
+                        displayName: "Ivan Petrov"
+                    }
+                ]
+            })
+        });
+        expect(response.status).toBe(200);
+
+        const [url, init] = fetchMock.mock.calls[0] as [string, RequestInit];
+        expect(url).toBe("http://localhost:4010/api/identity/users/bulk-create");
+        expect((init.headers as Record<string, string>).authorization).toBe("Bearer internal-token");
+        expect(JSON.parse(String(init.body))).toEqual({
+            target: { mode: "devices", deviceIds: ["dev-1", "dev-2"] },
+            persons: [
+                {
+                    userId: "T-1",
+                    displayName: "Ivan Petrov"
+                }
+            ]
+        });
+    });
+
+    it("POST /api/ds/identity/users/update uses internal token and forwards payload", async () => {
+        fetchMock.mockResolvedValueOnce(
+            new Response(
+                JSON.stringify({
+                    success: true,
+                    data: {
+                        results: [
+                            {
+                                deviceId: "dev-1",
+                                operation: "update",
+                                status: "success",
+                                steps: {
+                                    accessUser: "success",
+                                    accessCard: "skipped",
+                                    accessFace: "skipped"
+                                }
+                            }
+                        ]
+                    }
+                }),
+                { status: 200, headers: { "content-type": "application/json" } }
+            )
+        );
+
+        const response = await app.request("/api/ds/identity/users/update", {
+            method: "POST",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify({
+                target: { mode: "devices", deviceIds: ["dev-1", "dev-2"] },
+                person: {
+                    userId: "T-1",
+                    displayName: "Ivan Petrov",
+                    citizenIdNo: "900101000001"
+                }
+            })
+        });
+        expect(response.status).toBe(200);
+
+        const [url, init] = fetchMock.mock.calls[0] as [string, RequestInit];
+        expect(url).toBe("http://localhost:4010/api/identity/users/update");
+        expect((init.headers as Record<string, string>).authorization).toBe("Bearer internal-token");
+        expect(JSON.parse(String(init.body))).toEqual({
+            target: { mode: "devices", deviceIds: ["dev-1", "dev-2"] },
+            person: {
+                userId: "T-1",
+                displayName: "Ivan Petrov",
+                citizenIdNo: "900101000001"
+            }
         });
     });
 

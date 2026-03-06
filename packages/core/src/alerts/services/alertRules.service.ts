@@ -99,6 +99,10 @@ export function createAlertRulesService(deps: AlertRulesServiceDeps): AlertRules
             }
         },
 
+        deleteByIdSync(ruleId) {
+            return deps.rulesRepo.deleteByIdSync(ruleId);
+        },
+
         getById(id) {
             return deps.rulesRepo.getById(id);
         },

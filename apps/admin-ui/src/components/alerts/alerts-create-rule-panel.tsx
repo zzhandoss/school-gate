@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Plus } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 import { AlertsCreateRuleForm } from './alerts-create-rule-form'
 import { Button } from '@/components/ui/button'
@@ -24,6 +25,7 @@ type AlertsCreateRulePanelProps = {
 }
 
 export function AlertsCreateRulePanel({ onCreated, canCreate }: AlertsCreateRulePanelProps) {
+  const { t } = useTranslation()
   const [isDesktopOpen, setIsDesktopOpen] = useState(false)
   const [isMobileOpen, setIsMobileOpen] = useState(false)
 
@@ -36,7 +38,7 @@ export function AlertsCreateRulePanel({ onCreated, canCreate }: AlertsCreateRule
         onClick={() => setIsDesktopOpen(true)}
       >
         <Plus className="h-4 w-4" />
-        Create rule
+        {t('alerts.rulePanel.createRule')}
       </Button>
       <Button
         type="button"
@@ -45,15 +47,15 @@ export function AlertsCreateRulePanel({ onCreated, canCreate }: AlertsCreateRule
         onClick={() => setIsMobileOpen(true)}
       >
         <Plus className="h-4 w-4" />
-        Create
+        {t('common.actions.create')}
       </Button>
 
       <Sheet open={isDesktopOpen} onOpenChange={setIsDesktopOpen}>
         <SheetContent side="right" className="w-full sm:max-w-xl">
           <SheetHeader>
-            <SheetTitle>Create alert rule</SheetTitle>
+            <SheetTitle>{t('alerts.rulePanel.createTitle')}</SheetTitle>
             <SheetDescription>
-              Define a rule that will generate alert events from monitoring snapshots.
+              {t('alerts.rulePanel.createSheetDescription')}
             </SheetDescription>
           </SheetHeader>
           <AlertsCreateRuleForm
@@ -66,9 +68,9 @@ export function AlertsCreateRulePanel({ onCreated, canCreate }: AlertsCreateRule
       <Drawer open={isMobileOpen} onOpenChange={setIsMobileOpen}>
         <DrawerContent>
           <DrawerHeader>
-            <DrawerTitle>Create alert rule</DrawerTitle>
+            <DrawerTitle>{t('alerts.rulePanel.createTitle')}</DrawerTitle>
             <DrawerDescription>
-              Configure rule type, severity, and trigger thresholds.
+              {t('alerts.rulePanel.createDrawerDescription')}
             </DrawerDescription>
           </DrawerHeader>
           <AlertsCreateRuleForm

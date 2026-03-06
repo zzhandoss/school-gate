@@ -18,6 +18,7 @@ import {
     createStubAuditLogsHandlers,
     createStubSubscriptionsHandlers
 } from "../helpers/adminAuth.js";
+import { createEmptyPersonsModule } from "../helpers/personsModule.js";
 import { createTestDb } from "../helpers/testDb.js";
 import { createApiApp } from "../../../apps/api/src/app.js";
 
@@ -109,9 +110,7 @@ describe("API subscription requests routes", () => {
                 listUnmatched: async () => [],
                 mapTerminalIdentity: async () => ({ status: "already_linked", updatedEvents: 0 })
             },
-            persons: {
-                searchByIin: async () => []
-            },
+            persons: createEmptyPersonsModule(),
             subscriptionRequests: {
                 listPending: (input) => listPending(input),
                 review: (input) => review(input)

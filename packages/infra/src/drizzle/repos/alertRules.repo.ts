@@ -54,6 +54,11 @@ export function createAlertRulesRepo(db: Db): AlertRulesRepo {
             return res.changes > 0;
         },
 
+        deleteByIdSync(id) {
+            const res = db.delete(alertRules).where(eq(alertRules.id, id)).run();
+            return res.changes > 0;
+        },
+
         async getById(id) {
             const row = db.select().from(alertRules).where(eq(alertRules.id, id)).limit(1).get();
             return row ? mapRule(row) : null;

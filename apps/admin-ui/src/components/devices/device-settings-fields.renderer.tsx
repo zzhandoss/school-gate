@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { CircleHelp, Plus, Trash2 } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 import type {
   DeviceSettingsArrayStringNode,
@@ -38,6 +39,7 @@ function getContainer(draft: Record<string, unknown>, path: string[]) {
 }
 
 function SectionLabel({ node }: { node: DeviceSettingsSchemaNode }) {
+  const { t } = useTranslation()
   return (
     <div className="flex items-center gap-2">
       <Label className="text-sm">{node.label}</Label>
@@ -47,7 +49,7 @@ function SectionLabel({ node }: { node: DeviceSettingsSchemaNode }) {
             <button
               type="button"
               className="inline-flex h-4 w-4 items-center justify-center rounded text-muted-foreground hover:text-foreground"
-              aria-label={`Hint for ${node.label}`}
+              aria-label={t('devices.settings.hintAria', { label: node.label })}
             >
               <CircleHelp className="h-3.5 w-3.5" />
             </button>
@@ -55,18 +57,26 @@ function SectionLabel({ node }: { node: DeviceSettingsSchemaNode }) {
           <TooltipContent className="max-w-[280px]">{node.description}</TooltipContent>
         </Tooltip>
       ) : null}
-      {node.required ? <span className="text-xs font-medium text-destructive">required</span> : <span className="text-xs text-muted-foreground">optional</span>}
+      {node.required
+        ? <span className="text-xs font-medium text-destructive">{t('devices.settings.required')}</span>
+        : <span className="text-xs text-muted-foreground">{t('devices.settings.optional')}</span>}
     </div>
   )
 }
 
-function renderArray(node: DeviceSettingsArrayStringNode, value: unknown, update: (next: unknown) => void, disabled: boolean) {
+function renderArray(
+  node: DeviceSettingsArrayStringNode,
+  value: unknown,
+  update: (next: unknown) => void,
+  disabled: boolean,
+  t: (key: string, options?: Record<string, unknown>) => string
+) {
   const items = Array.isArray(value) ? value.filter((item): item is string => typeof item === 'string') : []
   const availableOptions = node.itemOptions ?? []
   const hasOptions = availableOptions.length > 0
   return (
     <div className="space-y-2 rounded-md border border-border/70 bg-background/60 p-3">
-      {items.length === 0 ? <p className="text-xs text-muted-foreground">No items yet.</p> : null}
+      {items.length === 0 ? <p className="text-xs text-muted-foreground">{t('devices.settings.noItemsYet')}</p> : null}
       {items.map((item, index) => (
         <div key={`${node.key}-${index}`} className="flex items-center gap-2">
           {hasOptions ? (
@@ -76,7 +86,7 @@ function renderArray(node: DeviceSettingsArrayStringNode, value: unknown, update
               update(next)
             }}>
               <SelectTrigger>
-                <SelectValue placeholder="Select value" />
+                <SelectValue placeholder={t('devices.settings.placeholders.selectValue')} />
               </SelectTrigger>
               <SelectContent>
                 {availableOptions.map((option) => (
@@ -89,22 +99,28 @@ function renderArray(node: DeviceSettingsArrayStringNode, value: unknown, update
               const next = [...items]
               next[index] = event.target.value
               update(next)
-            }} placeholder="Value" />
+            }} placeholder={t('devices.settings.placeholders.value')} />
           )}
-          <Button type="button" variant="outline" size="icon" disabled={disabled} onClick={() => update(items.filter((_, itemIndex) => itemIndex !== index))} aria-label="Remove item">
+          <Button type="button" variant="outline" size="icon" disabled={disabled} onClick={() => update(items.filter((_, itemIndex) => itemIndex !== index))} aria-label={t('devices.settings.removeItemAria')}>
             <Trash2 className="h-4 w-4" />
           </Button>
         </div>
       ))}
       <Button type="button" variant="outline" size="sm" disabled={disabled || (hasOptions && availableOptions.length === 0)} onClick={() => update([...items, hasOptions ? availableOptions[0] : ''])}>
         <Plus className="h-4 w-4" />
-        Add item
+        {t('devices.settings.addItem')}
       </Button>
     </div>
   )
 }
 
-function renderMapString(node: DeviceSettingsMapStringNode, value: unknown, update: (next: unknown) => void, disabled: boolean) {
+function renderMapString(
+  node: DeviceSettingsMapStringNode,
+  value: unknown,
+  update: (next: unknown) => void,
+  disabled: boolean,
+  t: (key: string, options?: Record<string, unknown>) => string
+) {
   const map = isRecord(value) ? value : {}
   const entries = Object.entries(map).filter(([, entryValue]) => typeof entryValue === 'string') as Array<[string, string]>
   const usedKeys = new Set(entries.map(([mapKey]) => mapKey))
@@ -112,7 +128,7 @@ function renderMapString(node: DeviceSettingsMapStringNode, value: unknown, upda
 
   return (
     <div className="space-y-2 rounded-md border border-border/70 bg-background/60 p-3">
-      {entries.length === 0 ? <p className="text-xs text-muted-foreground">No template fields yet.</p> : null}
+      {entries.length === 0 ? <p className="text-xs text-muted-foreground">{t('devices.settings.noTemplateFields')}</p> : null}
       {entries.map(([mapKey, mapValue]) => (
         <div key={mapKey} className="grid gap-2 sm:grid-cols-[200px_1fr_auto] sm:items-center">
           {node.keyOptions ? (
@@ -122,7 +138,7 @@ function renderMapString(node: DeviceSettingsMapStringNode, value: unknown, upda
               next[nextKeyValue] = mapValue
               update(next)
             }}>
-              <SelectTrigger><SelectValue placeholder="Field key" /></SelectTrigger>
+              <SelectTrigger><SelectValue placeholder={t('devices.settings.placeholders.fieldKey')} /></SelectTrigger>
               <SelectContent>{node.keyOptions.map((option) => <SelectItem key={option} value={option}>{option}</SelectItem>)}</SelectContent>
             </Select>
           ) : (
@@ -149,13 +165,22 @@ function renderMapString(node: DeviceSettingsMapStringNode, value: unknown, upda
         }}
       >
         <Plus className="h-4 w-4" />
-        Add template field
+        {t('devices.settings.addTemplateField')}
       </Button>
     </div>
   )
 }
 
-function renderMapObject(node: DeviceSettingsMapObjectNode, value: unknown, path: string[], isSubmitting: boolean, rootDraft: Record<string, unknown>, onChangeDraft: (next: Record<string, unknown>) => void, errors: Record<string, string>) {
+function renderMapObject(
+  node: DeviceSettingsMapObjectNode,
+  value: unknown,
+  path: string[],
+  isSubmitting: boolean,
+  rootDraft: Record<string, unknown>,
+  onChangeDraft: (next: Record<string, unknown>) => void,
+  errors: Record<string, string>,
+  t: (key: string, options?: Record<string, unknown>) => string
+) {
   const map = isRecord(value) ? value : {}
   const entries = Object.entries(map)
   return (
@@ -166,8 +191,8 @@ function renderMapObject(node: DeviceSettingsMapObjectNode, value: unknown, path
           <CardHeader className="space-y-2 pb-2">
             <div className="flex items-center justify-between gap-2">
               <div className="flex items-center mt-auto gap-2">
-                <Label className="text-sm">Property name</Label>
-                <span className="text-xs font-medium text-destructive">required</span>
+                <Label className="text-sm">{t('devices.settings.propertyName')}</Label>
+                <span className="text-xs font-medium text-destructive">{t('devices.settings.required')}</span>
               </div>
               <Button type="button" variant="outline" size="icon" disabled={isSubmitting} onClick={() => {
                 const next = cloneDraft(rootDraft)
@@ -212,7 +237,7 @@ function renderMapObject(node: DeviceSettingsMapObjectNode, value: unknown, path
         onChangeDraft(next)
       }}>
         <Plus className="h-4 w-4" />
-        Add mapping
+        {t('devices.settings.addMapping')}
       </Button>
     </div>
   )
@@ -231,6 +256,7 @@ function MappingNameInput({
   path: string[]
   onChangeDraft: (next: Record<string, unknown>) => void
 }) {
+  const { t } = useTranslation()
   const [draftName, setDraftName] = useState(entryKey)
 
   useEffect(() => {
@@ -252,7 +278,7 @@ function MappingNameInput({
       value={draftName}
       disabled={isSubmitting}
       className="h-8"
-      placeholder="iin"
+      placeholder={t('devices.settings.placeholders.mappingName')}
       onChange={(event) => setDraftName(event.target.value)}
       onBlur={commitRename}
       onKeyDown={(event) => {
@@ -283,6 +309,7 @@ export function DeviceSettingsNodeRenderer({
   isSubmitting: boolean
   onChangeDraft: (next: Record<string, unknown>) => void
 }) {
+  const { t } = useTranslation()
   const updateAtPath = (nextValue: unknown) => {
     const nextDraft = cloneDraft(rootDraft)
     const container = getContainer(nextDraft, path.slice(0, -1))
@@ -315,19 +342,21 @@ export function DeviceSettingsNodeRenderer({
 
   return (
     <div className="grid gap-2">
-      {node.kind === 'mapObject' ? renderMapObject(node, value, path, isSubmitting, rootDraft, onChangeDraft, errors) : <SectionLabel node={node} />}
-      {node.kind === 'mapString' ? renderMapString(node, value, updateAtPath, isSubmitting) : null}
-      {node.kind === 'arrayString' ? renderArray(node, value, updateAtPath, isSubmitting) : null}
+      {node.kind === 'mapObject'
+        ? renderMapObject(node, value, path, isSubmitting, rootDraft, onChangeDraft, errors, t)
+        : <SectionLabel node={node} />}
+      {node.kind === 'mapString' ? renderMapString(node, value, updateAtPath, isSubmitting, t) : null}
+      {node.kind === 'arrayString' ? renderArray(node, value, updateAtPath, isSubmitting, t) : null}
       {node.kind === 'constString' ? <Input value={node.constValue} disabled /> : null}
       {node.kind === 'enumString' ? (
         <Select value={typeof value === 'string' ? value : ''} onValueChange={updateAtPath as (value: string) => void} disabled={isSubmitting}>
-          <SelectTrigger><SelectValue placeholder="Select value" /></SelectTrigger>
+          <SelectTrigger><SelectValue placeholder={t('devices.settings.placeholders.selectValue')} /></SelectTrigger>
           <SelectContent>{node.options.map((option) => <SelectItem key={option} value={option}>{option}</SelectItem>)}</SelectContent>
         </Select>
       ) : null}
       {node.kind === 'primitive' && node.valueType === 'boolean' ? (
         <div className="flex items-center justify-between rounded-md border border-border/70 bg-background/70 px-3 py-2">
-          <span className="text-sm text-muted-foreground">Toggle value</span>
+          <span className="text-sm text-muted-foreground">{t('devices.settings.toggleValue')}</span>
           <Switch checked={Boolean(value)} disabled={isSubmitting} onCheckedChange={updateAtPath as (value: boolean) => void} />
         </div>
       ) : null}
@@ -337,7 +366,7 @@ export function DeviceSettingsNodeRenderer({
           disabled={isSubmitting}
           inputMode={node.valueType === 'string' ? undefined : 'decimal'}
           onChange={(event) => updateAtPath(event.target.value)}
-          placeholder={node.required ? 'Required value' : 'Optional value'}
+          placeholder={node.required ? t('devices.settings.placeholders.requiredValue') : t('devices.settings.placeholders.optionalValue')}
         />
       ) : null}
       {errors[toPath(path)] ? <p className="text-xs text-destructive">{errors[toPath(path)]}</p> : null}

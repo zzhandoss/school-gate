@@ -1,4 +1,12 @@
 import {
+    deviceServiceIdentityExportUsersResultSchema,
+    deviceServiceIdentityExportUsersSchema,
+    deviceServiceIdentityBulkCreateUsersResultSchema,
+    deviceServiceIdentityBulkCreateUsersSchema,
+    deviceServiceIdentityGetUserPhotoResultSchema,
+    deviceServiceIdentityGetUserPhotoSchema,
+    deviceServiceIdentityWriteUsersResultSchema,
+    deviceServiceIdentityWriteUsersSchema,
     deviceServiceIdentityFindResultSchema,
     deviceServiceIdentityFindSchema,
     deviceServiceMonitoringSchema,
@@ -10,6 +18,10 @@ import {
     updateDeviceServiceDeviceSchema,
     type GetDeviceServiceDeviceResultDto,
     type DeviceServiceIdentityFindResultDto,
+    type DeviceServiceIdentityExportUsersResultDto,
+    type DeviceServiceIdentityGetUserPhotoResultDto,
+    type DeviceServiceIdentityBulkCreateUsersResultDto,
+    type DeviceServiceIdentityWriteUsersResultDto,
     type ListDeviceServiceAdaptersResultDto,
     type ListDeviceServiceDevicesResultDto
 } from "@school-gate/contracts";
@@ -281,6 +293,61 @@ function createGatewayModule(config: GatewayFeatureConfig): DeviceServiceGateway
                 meta
             });
             return parseResult(deviceServiceIdentityFindResultSchema, data, "find_identity");
+        },
+        exportUsers: async ({ payload, ...meta }): Promise<DeviceServiceIdentityExportUsersResultDto> => {
+            const requestBody = parseResult(deviceServiceIdentityExportUsersSchema, payload, "export_users_request");
+            const data = await fetchUpstream(config, {
+                path: "/api/identity/export-users",
+                method: "POST",
+                body: requestBody,
+                authMode: "internal",
+                meta
+            });
+            return parseResult(deviceServiceIdentityExportUsersResultSchema, data, "export_users");
+        },
+        bulkCreateUsers: async ({ payload, ...meta }): Promise<DeviceServiceIdentityBulkCreateUsersResultDto> => {
+            const requestBody = parseResult(deviceServiceIdentityBulkCreateUsersSchema, payload, "bulk_create_users_request");
+            const data = await fetchUpstream(config, {
+                path: "/api/identity/users/bulk-create",
+                method: "POST",
+                body: requestBody,
+                authMode: "internal",
+                meta
+            });
+            return parseResult(deviceServiceIdentityBulkCreateUsersResultSchema, data, "bulk_create_users");
+        },
+        getUserPhoto: async ({ payload, ...meta }): Promise<DeviceServiceIdentityGetUserPhotoResultDto> => {
+            const requestBody = parseResult(deviceServiceIdentityGetUserPhotoSchema, payload, "get_user_photo_request");
+            const data = await fetchUpstream(config, {
+                path: "/api/identity/users/photo/get",
+                method: "POST",
+                body: requestBody,
+                authMode: "internal",
+                meta
+            });
+            return parseResult(deviceServiceIdentityGetUserPhotoResultSchema, data, "get_user_photo");
+        },
+        createUsers: async ({ payload, ...meta }): Promise<DeviceServiceIdentityWriteUsersResultDto> => {
+            const requestBody = parseResult(deviceServiceIdentityWriteUsersSchema, payload, "create_users_request");
+            const data = await fetchUpstream(config, {
+                path: "/api/identity/users/create",
+                method: "POST",
+                body: requestBody,
+                authMode: "internal",
+                meta
+            });
+            return parseResult(deviceServiceIdentityWriteUsersResultSchema, data, "create_users");
+        },
+        updateUsers: async ({ payload, ...meta }): Promise<DeviceServiceIdentityWriteUsersResultDto> => {
+            const requestBody = parseResult(deviceServiceIdentityWriteUsersSchema, payload, "update_users_request");
+            const data = await fetchUpstream(config, {
+                path: "/api/identity/users/update",
+                method: "POST",
+                body: requestBody,
+                authMode: "internal",
+                meta
+            });
+            return parseResult(deviceServiceIdentityWriteUsersResultSchema, data, "update_users");
         }
     };
 }

@@ -145,10 +145,18 @@ export function createStubAlertsHandlers(): AlertsModule {
     return {
         listRules: async () => [],
         createRule: async () => ({ ruleId: "rule-1" }),
+        deleteRule: async (input) => ({ ruleId: input.ruleId, deleted: true }),
         updateRule: async () => {},
         listSubscriptions: async () => [],
         setSubscription: async () => {},
-        listEvents: async () => []
+        listEvents: async (input) => ({
+            events: [],
+            page: {
+                limit: input.limit,
+                offset: input.offset,
+                total: 0
+            }
+        })
     };
 }
 

@@ -13,6 +13,10 @@ type BuildConfigInput = {
     adapterVendorKey: string
 };
 
+type BuildAlertRuleConfigResult =
+  | { config: Record<string, unknown> }
+  | { errorKey: string };
+
 export function toPositiveInteger(value: string) {
     const trimmed = value.trim();
     if (!trimmed) {
@@ -25,26 +29,28 @@ export function toPositiveInteger(value: string) {
     return parsed;
 }
 
-export function getConfigHint(type: AlertRuleType) {
+export function getConfigHintKey(type: AlertRuleType) {
     switch (type) {
         case "worker_stale":
-            return "Optionally limit by workerId.";
+            return "alerts.ruleForm.hints.workerStale";
         case "outbox_backlog":
-            return "Set at least one threshold: maxNew or maxOldestAgeMs.";
+            return "alerts.ruleForm.hints.outboxBacklog";
         case "bot_down":
-            return "No extra config is required.";
+            return "alerts.ruleForm.hints.botDown";
         case "access_event_lag":
-            return "maxOldestAgeMs is required.";
+            return "alerts.ruleForm.hints.accessEventLag";
         case "error_spike":
-            return "Source and increaseBy are required.";
+            return "alerts.ruleForm.hints.errorSpike";
         case "device_service_down":
-            return "No extra config is required.";
+            return "alerts.ruleForm.hints.deviceServiceDown";
         case "adapter_down":
-            return "Optionally scope by adapterId or vendorKey.";
+            return "alerts.ruleForm.hints.adapterDown";
     }
+
+    return "alerts.ruleForm.hints.botDown";
 }
 
-export function buildAlertRuleConfig(input: BuildConfigInput) {
+export function buildAlertRuleConfig(input: BuildConfigInput): BuildAlertRuleConfigResult {
     const { type } = input;
     switch (type) {
         case "worker_stale": {
@@ -58,12 +64,12 @@ export function buildAlertRuleConfig(input: BuildConfigInput) {
             const maxOldestAgeMs = toPositiveInteger(input.outboxMaxOldestAgeMs);
             if (maxNew === null || maxOldestAgeMs === null) {
                 return {
-                    error: "Outbox thresholds must be positive integers."
+                    errorKey: "alerts.ruleForm.errors.outboxThresholdsPositive"
                 };
             }
             if (maxNew === undefined && maxOldestAgeMs === undefined) {
                 return {
-                    error: "Provide maxNew or maxOldestAgeMs for outbox backlog."
+                    errorKey: "alerts.ruleForm.errors.outboxThresholdRequired"
                 };
             }
             return {
@@ -80,7 +86,7 @@ export function buildAlertRuleConfig(input: BuildConfigInput) {
             const maxOldestAgeMs = toPositiveInteger(input.accessEventMaxOldestAgeMs);
             if (maxOldestAgeMs === null || maxOldestAgeMs === undefined) {
                 return {
-                    error: "maxOldestAgeMs is required and must be a positive integer."
+                    errorKey: "alerts.ruleForm.errors.accessEventLagRequired"
                 };
             }
             return { config: { maxOldestAgeMs } };
@@ -89,7 +95,7 @@ export function buildAlertRuleConfig(input: BuildConfigInput) {
             const increaseBy = toPositiveInteger(input.errorSpikeIncreaseBy);
             if (increaseBy === null || increaseBy === undefined) {
                 return {
-                    error: "increaseBy is required and must be a positive integer."
+                    errorKey: "alerts.ruleForm.errors.errorSpikeIncreaseRequired"
                 };
             }
             return {
@@ -112,6 +118,10 @@ export function buildAlertRuleConfig(input: BuildConfigInput) {
             };
         }
     }
+
+    return {
+        errorKey: "alerts.ruleForm.errors.invalidConfig"
+    };
 }
 
 export function getRuleConfigDefaults(rule: AlertRule) {

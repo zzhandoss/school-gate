@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import type { AlertRuleType } from '@/lib/alerts/types'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -32,6 +33,7 @@ type AlertsCreateRuleConfigFieldsProps = {
 }
 
 export function AlertsCreateRuleConfigFields(props: AlertsCreateRuleConfigFieldsProps) {
+  const { t } = useTranslation()
   const {
     type,
     workerId,
@@ -57,12 +59,12 @@ export function AlertsCreateRuleConfigFields(props: AlertsCreateRuleConfigFields
   if (type === 'worker_stale') {
     return (
       <div className="mt-3 space-y-2">
-        <Label htmlFor="worker-id">workerId (optional)</Label>
+        <Label htmlFor="worker-id">{t('alerts.ruleForm.configFields.workerIdOptional')}</Label>
         <Input
           id="worker-id"
           value={workerId}
           onChange={(event) => setWorkerId(event.target.value)}
-          placeholder="access-events-worker"
+          placeholder={t('alerts.ruleForm.configFields.placeholders.workerId')}
         />
       </div>
     )
@@ -72,38 +74,38 @@ export function AlertsCreateRuleConfigFields(props: AlertsCreateRuleConfigFields
     return (
       <div className="mt-3 space-y-3">
         <div className="space-y-2">
-          <Label>source</Label>
+          <Label>{t('alerts.ruleForm.configFields.source')}</Label>
           <Select value={outboxSource} onValueChange={(value) => setOutboxSource(value as 'core' | 'device_service')}>
             <SelectTrigger className="w-full">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="core">core</SelectItem>
-              <SelectItem value="device_service">device_service</SelectItem>
+              <SelectItem value="core">{t('alerts.ruleForm.configFields.sources.core')}</SelectItem>
+              <SelectItem value="device_service">{t('alerts.ruleForm.configFields.sources.deviceService')}</SelectItem>
             </SelectContent>
           </Select>
         </div>
         <div className="grid gap-3 sm:grid-cols-2">
           <div className="space-y-2">
-            <Label htmlFor="outbox-max-new">maxNew</Label>
+            <Label htmlFor="outbox-max-new">{t('alerts.ruleForm.configFields.maxNew')}</Label>
             <Input
               id="outbox-max-new"
               type="number"
               min={1}
               value={outboxMaxNew}
               onChange={(event) => setOutboxMaxNew(event.target.value)}
-              placeholder="100"
+              placeholder={t('alerts.ruleForm.configFields.placeholders.maxNew')}
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="outbox-max-age">maxOldestAgeMs</Label>
+            <Label htmlFor="outbox-max-age">{t('alerts.ruleForm.configFields.maxOldestAgeMs')}</Label>
             <Input
               id="outbox-max-age"
               type="number"
               min={1}
               value={outboxMaxOldestAgeMs}
               onChange={(event) => setOutboxMaxOldestAgeMs(event.target.value)}
-              placeholder="60000"
+              placeholder={t('alerts.ruleForm.configFields.placeholders.maxOldestAgeMsOutbox')}
             />
           </div>
         </div>
@@ -114,14 +116,14 @@ export function AlertsCreateRuleConfigFields(props: AlertsCreateRuleConfigFields
   if (type === 'access_event_lag') {
     return (
       <div className="mt-3 space-y-2">
-        <Label htmlFor="access-lag-max-age">maxOldestAgeMs</Label>
+        <Label htmlFor="access-lag-max-age">{t('alerts.ruleForm.configFields.maxOldestAgeMs')}</Label>
         <Input
           id="access-lag-max-age"
           type="number"
           min={1}
           value={accessEventMaxOldestAgeMs}
           onChange={(event) => setAccessEventMaxOldestAgeMs(event.target.value)}
-          placeholder="120000"
+          placeholder={t('alerts.ruleForm.configFields.placeholders.maxOldestAgeMsAccessEvents')}
           required
         />
       </div>
@@ -132,26 +134,26 @@ export function AlertsCreateRuleConfigFields(props: AlertsCreateRuleConfigFields
     return (
       <div className="mt-3 space-y-3">
         <div className="space-y-2">
-          <Label>source</Label>
+          <Label>{t('alerts.ruleForm.configFields.source')}</Label>
           <Select value={errorSpikeSource} onValueChange={(value) => setErrorSpikeSource(value as 'access_events' | 'outbox')}>
             <SelectTrigger className="w-full">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="access_events">access_events</SelectItem>
-              <SelectItem value="outbox">outbox</SelectItem>
+              <SelectItem value="access_events">{t('alerts.ruleForm.configFields.sources.accessEvents')}</SelectItem>
+              <SelectItem value="outbox">{t('alerts.ruleForm.configFields.sources.outbox')}</SelectItem>
             </SelectContent>
           </Select>
         </div>
         <div className="space-y-2">
-          <Label htmlFor="error-spike-increase">increaseBy</Label>
+          <Label htmlFor="error-spike-increase">{t('alerts.ruleForm.configFields.increaseBy')}</Label>
           <Input
             id="error-spike-increase"
             type="number"
             min={1}
             value={errorSpikeIncreaseBy}
             onChange={(event) => setErrorSpikeIncreaseBy(event.target.value)}
-            placeholder="10"
+            placeholder={t('alerts.ruleForm.configFields.placeholders.increaseBy')}
             required
           />
         </div>
@@ -163,21 +165,21 @@ export function AlertsCreateRuleConfigFields(props: AlertsCreateRuleConfigFields
     return (
       <div className="mt-3 grid gap-3 sm:grid-cols-2">
         <div className="space-y-2">
-          <Label htmlFor="adapter-id">adapterId (optional)</Label>
+          <Label htmlFor="adapter-id">{t('alerts.ruleForm.configFields.adapterIdOptional')}</Label>
           <Input
             id="adapter-id"
             value={adapterId}
             onChange={(event) => setAdapterId(event.target.value)}
-            placeholder="mock-01"
+            placeholder={t('alerts.ruleForm.configFields.placeholders.adapterId')}
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="adapter-vendor-key">vendorKey (optional)</Label>
+          <Label htmlFor="adapter-vendor-key">{t('alerts.ruleForm.configFields.vendorKeyOptional')}</Label>
           <Input
             id="adapter-vendor-key"
             value={adapterVendorKey}
             onChange={(event) => setAdapterVendorKey(event.target.value)}
-            placeholder="dahua"
+            placeholder={t('alerts.ruleForm.configFields.placeholders.vendorKey')}
           />
         </div>
       </div>

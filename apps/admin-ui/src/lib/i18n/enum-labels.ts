@@ -6,6 +6,25 @@ import type {
     SubscriptionRequestStatus
 } from "@/lib/subscription-requests/types";
 
+export const permissionCodes = [
+    "admin.manage",
+    "devices.read",
+    "devices.write",
+    "subscriptions.read",
+    "subscriptions.review",
+    "subscriptions.manage",
+    "access_events.read",
+    "access_events.map",
+    "persons.read",
+    "persons.write",
+    "settings.read",
+    "settings.write",
+    "monitoring.read",
+    "retention.manage"
+] as const;
+
+export type PermissionCode = (typeof permissionCodes)[number];
+
 export function accessEventStatusLabel(
     t: TFunction,
     value: "all" | AccessEventStatus
@@ -37,4 +56,8 @@ export function subscriptionResolutionLabel(
 
 export function orderLabel(t: TFunction, value: "newest" | "oldest") {
     return t(`enums.order.${value}`);
+}
+
+export function permissionLabel(t: TFunction, value: PermissionCode | string) {
+    return t(`permissions.labels.${value}`);
 }

@@ -72,7 +72,7 @@ export function createAdapterRuntime(deps: AdapterRuntimeDeps) {
             baseUrl: deps.config.baseUrl,
             retentionMs: deps.config.retentionMs,
             version: deps.config.version!,
-            capabilities: ["fetchEvents"]
+            capabilities: ["fetchEvents", "exportUsers", "writeUsers"]
         });
         updateState({
             adapterId: assignments.adapterId,

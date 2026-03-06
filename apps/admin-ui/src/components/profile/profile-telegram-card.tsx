@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Link2, Mail } from 'lucide-react'
 
 import { createTelegramLinkCode, unlinkTelegram } from '@/lib/auth/service'
@@ -20,6 +21,7 @@ type ProfileTelegramCardProps = {
 }
 
 export function ProfileTelegramCard({ tgUserId }: ProfileTelegramCardProps) {
+  const { t } = useTranslation()
   const [isGeneratingLinkCode, setIsGeneratingLinkCode] = useState(false)
   const [isUnlinkingTelegram, setIsUnlinkingTelegram] = useState(false)
   const [telegramLink, setTelegramLink] = useState<TelegramLinkState | null>(null)
@@ -41,7 +43,7 @@ export function ProfileTelegramCard({ tgUserId }: ProfileTelegramCardProps) {
       if (error instanceof ApiError) {
         setTelegramError(mapAuthErrorToMessage(error.code, error.message))
       } else {
-        setTelegramError('Unexpected error while generating Telegram link code.')
+        setTelegramError(t('profile.telegram.errors.generateUnexpected'))
       }
     } finally {
       setIsGeneratingLinkCode(false)
@@ -55,12 +57,12 @@ export function ProfileTelegramCard({ tgUserId }: ProfileTelegramCardProps) {
     try {
       await unlinkTelegram()
       setTelegramLink(null)
-      setTelegramSuccess('Telegram account unlinked successfully.')
+      setTelegramSuccess(t('profile.telegram.success.unlinked'))
     } catch (error) {
       if (error instanceof ApiError) {
         setTelegramError(mapAuthErrorToMessage(error.code, error.message))
       } else {
-        setTelegramError('Unexpected error while unlinking Telegram account.')
+        setTelegramError(t('profile.telegram.errors.unlinkUnexpected'))
       }
     } finally {
       setIsUnlinkingTelegram(false)
@@ -72,31 +74,33 @@ export function ProfileTelegramCard({ tgUserId }: ProfileTelegramCardProps) {
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-base">
           <Link2 className="h-4 w-4" />
-          Telegram link
+          {t('profile.telegram.title')}
         </CardTitle>
         <CardDescription>
-          Link your Telegram account to receive admin bot features.
+          {t('profile.telegram.description')}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="rounded-lg border border-border/70 bg-background/70 p-3">
           <p className="text-[11px] font-medium tracking-wide text-muted-foreground uppercase">
-            Link status
+            {t('profile.telegram.linkStatus')}
           </p>
           {hasLinkedTelegram ? (
             <div className="mt-2 space-y-1">
               <Badge variant="outline" className="border-emerald-300 text-emerald-700">
-                Linked
+                {t('profile.telegram.linked')}
               </Badge>
               <p className="text-xs text-muted-foreground">
-                Telegram user id: {tgUserId}
+                {t('profile.telegram.userId', { value: tgUserId })}
               </p>
             </div>
           ) : (
             <div className="mt-2 space-y-1">
-              <Badge variant="outline">Not linked</Badge>
+              <Badge variant="outline">{t('profile.telegram.notLinked')}</Badge>
               <p className="text-xs text-muted-foreground">
-                Generate code and send <span className="font-mono">/link {'<code>'}</span> to bot.
+                {t('profile.telegram.notLinkedHintPrefix')}{' '}
+                <span className="font-mono">/link {'<code>'}</span>{' '}
+                {t('profile.telegram.notLinkedHintSuffix')}
               </p>
             </div>
           )}
@@ -111,7 +115,7 @@ export function ProfileTelegramCard({ tgUserId }: ProfileTelegramCardProps) {
             disabled={isUnlinkingTelegram}
           >
             <Link2 className="h-4 w-4" />
-            {isUnlinkingTelegram ? 'Unlinking...' : 'Unlink Telegram'}
+            {isUnlinkingTelegram ? t('profile.telegram.unlinking') : t('profile.telegram.unlink')}
           </Button>
         ) : (
           <Button
@@ -121,43 +125,49 @@ export function ProfileTelegramCard({ tgUserId }: ProfileTelegramCardProps) {
             disabled={isGeneratingLinkCode}
           >
             <Mail className="h-4 w-4" />
-            {isGeneratingLinkCode ? 'Generating...' : 'Generate link code'}
+            {isGeneratingLinkCode ? t('profile.telegram.generating') : t('profile.telegram.generate')}
           </Button>
         )}
 
         {!hasLinkedTelegram && telegramLink ? (
           <div className="rounded-lg border border-border/70 bg-background/70 p-3">
             <p className="text-[11px] font-medium tracking-wide text-muted-foreground uppercase">
-              Active code
+              {t('profile.telegram.activeCode')}
             </p>
             <p className="mt-2 font-mono text-lg">{telegramLink.code}</p>
             <p className="mt-1 text-xs text-muted-foreground">
-              Expires: {formatDateTime(telegramLink.expiresAt, telegramLink.expiresAt)}
+              {t('profile.telegram.expires', {
+                value: formatDateTime(telegramLink.expiresAt, telegramLink.expiresAt)
+              })}
             </p>
           </div>
         ) : null}
 
         {telegramSuccess ? (
           <Alert className="border-emerald-300/60 bg-emerald-50 text-emerald-900">
-            <AlertTitle>Telegram updated</AlertTitle>
+            <AlertTitle>{t('profile.telegram.updatedTitle')}</AlertTitle>
             <AlertDescription>{telegramSuccess}</AlertDescription>
           </Alert>
         ) : null}
 
         {telegramError ? (
           <Alert className="border-destructive/40 bg-destructive/5 text-destructive">
-            <AlertTitle>Telegram action failed</AlertTitle>
+            <AlertTitle>{t('profile.telegram.actionFailedTitle')}</AlertTitle>
             <AlertDescription>{telegramError}</AlertDescription>
           </Alert>
         ) : null}
 
         {!hasLinkedTelegram ? (
           <div className="rounded-lg border border-border/70 bg-background/70 p-3 text-xs text-muted-foreground">
-            <p className="font-medium text-foreground">How to link</p>
+            <p className="font-medium text-foreground">{t('profile.telegram.howToLink')}</p>
             <ol className="mt-2 space-y-1">
-              <li>1. Generate code above.</li>
-              <li>2. Open your Telegram bot chat.</li>
-              <li>3. Send command: <span className="font-mono">/link {'<code>'}</span>.</li>
+              <li>{t('profile.telegram.steps.generate')}</li>
+              <li>{t('profile.telegram.steps.openChat')}</li>
+              <li>
+                {t('profile.telegram.steps.sendPrefix')}{' '}
+                <span className="font-mono">/link {'<code>'}</span>
+                {t('profile.telegram.steps.sendSuffix')}
+              </li>
             </ol>
           </div>
         ) : null}

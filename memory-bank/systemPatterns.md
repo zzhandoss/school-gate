@@ -1,4 +1,4 @@
-# System Patterns *Optional*
+﻿# System Patterns *Optional*
 
 This file documents recurring patterns and standards used in the project.
 It is optional, but recommended to be updated as the project evolves.
@@ -18,7 +18,23 @@ It is optional, but recommended to be updated as the project evolves.
 
 ## Architectural Patterns
 
-- AdminUI i18n baseline pattern: use `react-i18next` with localStorage + browser-language detection (`school_gate_admin_locale`), keep RU fallback, and expose language switchers in both app-shell profile menu and settings page for fast operator access.
+- AdminUI permission-label i18n pattern: keep permission codes stable in contracts/backend, map them to localized UI labels through a single frontend helper plus locale dictionaries, and preserve the raw permission code only as secondary metadata/tooltips for operator debugging.
+- AdminUI breadcrumb override pattern: route-specific shell breadcrumbs should override broad section matchers before generic `/section/*` fallbacks, so special pages like `/persons/import` can render localized semantic labels (`Persons -> Import`) instead of inheriting unrelated detail-page labels.
+- API feature extraction pattern: when a composition feature starts mixing multiple bounded contexts, extract the unrelated slice into its own `apps/api/src/composition/features/<context>/*` modules, keep delivery contracts unchanged, and leave the old feature as a thin delegating compatibility shell until callers are migrated.
+- AdminUI contextual back-navigation pattern: route-level detail pages that previously owned their own back button should move that control into the shared AppShell header as a compact icon button, prefer `router.history.back()` when history exists, and fall back to a deterministic parent route when the page is opened directly.
+- AdminUI sidebar-boundary toggle pattern: the desktop sidebar collapse control should sit on the seam between sidebar and header/content as a circular floating trigger instead of competing with page-level header actions.
+- Persons include/exclude filter pattern: `/persons` filter state is URL-synced and should model linked terminals as two independent sets (`includeDeviceIds[]`, `excludeDeviceIds[]`) instead of a single `deviceId`; AdminUI should present these sets through shadcn-style multi-select controls and prevent the same device from living in both sets at once.
+- Persons mixed bulk terminal-create pattern: bulk add-to-terminal must allow selections that already have links on other terminals, preview per-person `create` vs `skip` pairs in the dialog, and treat only exact existing `person x targetDevice` pairs as skipped while reusing the normal terminal write flow for new pairs.
+- Persons bulk terminal-create pattern: keep `/persons` list actions in a dedicated top bar, expose advanced filters in a responsive overlay (`Sheet` desktop / `Drawer` mobile), and allow bulk terminal creation only when the selection consists entirely of unlinked persons; the bulk dialog should collect shared target devices and only validity dates, while backend reuse of single-person write orchestration preserves terminal defaults and audit behavior.
+- Persons import eligibility pattern: do not gate terminal-user import by adapter capability metadata alone; treat enabled devices plus active adapter session and actual export response as the source of truth, because adapter registration capabilities can lag or drift from real support.
+- Alerts delete-warning pattern: alert rule delete confirmations must explicitly warn that DB cascade also removes subscriptions and Recent Events history tied to the rule; the UI should not imply history preservation when `alert_events.ruleId` cascades on delete.
+- Workspace package runtime pattern: when apps consume `@school-gate/*` via package exports, behavior changes in shared packages are not live until the package `dist` is rebuilt and the consuming process is restarted.
+- Person hard-delete pattern: deleting a canonical person removes local person-terminal identity links, deactivates related subscriptions, and clears `subscription_requests.personId` references while resetting pending review-ready requests back to `needs_person`; terminal snapshot/history data remains untouched so import reconciliation can surface the same terminal users again later.
+- AdminUI page-scoped bulk-action pattern: registry tables that do not yet justify TanStack selection keep row selection local to the currently loaded page, reset selection on reload/filter changes, and require explicit shadcn destructive confirmation before executing bulk delete.
+- Device-driven persons import pattern: persist terminal-directory snapshots per `(deviceId, terminalPersonId)`, classify review groups by IIN/status server-side, and drive AdminUI bulk actions from grouped TanStack Table rows instead of manual device identity entry forms.
+
+- AdminUI kz-locale generation pattern: when adding a new locale at scale, generate translations from a canonical locale by key, preserving i18n placeholders (`{{...}}`) and inline code tokens (`` `...` ``), then validate through typecheck/test/build to catch syntax or interpolation regressions.
+- AdminUI i18n baseline pattern: use `react-i18next` with localStorage + browser-language detection (`school_gate_admin_locale`), keep RU fallback, and expose language switchers in both the app-shell header and settings page for fast operator access.
 - Notification freshness guard pattern: worker outbox handlers must compute event age from payload timestamp and runtime-configured max age (`notifications.parentMaxAgeMs` / `notifications.alertMaxAgeMs`), skip stale sends, and emit auditable `notification_skipped_stale` events.
 - AdminUI persons pagination pattern: keep persons list state in route search (`limit`, `offset`, `iin`, `query`), request backend `page.total`, and drive pagination controls from server metadata instead of client-side full-list loading.
 
@@ -47,7 +63,7 @@ It is optional, but recommended to be updated as the project evolves.
 - Auth token pattern: IAM auth service issues access JWTs and opaque refresh tokens; refresh tokens are argon2-hashed, one-time, and rotated on use with device/ip/userAgent metadata stored.
 - Telegram code pattern: admin telegram codes carry explicit purpose (`link` vs `login`) and flows/strategies enforce purpose matching.
 - Settings BC pattern: runtime settings are owned by SettingsService; DB overrides are applied and snapshot includes env/db/effective values via RuntimeConfigProvider.
-- Settings pipeline pattern: runtime settings use a registry of keys and a parseРІвЂ вЂ™overridesРІвЂ вЂ™snapshot pipeline; new settings are added by registry entry without changing pipeline logic.
+- Settings pipeline pattern: runtime settings use a registry of keys and a parseР Р†РІР‚В РІР‚в„ўoverridesР Р†РІР‚В РІР‚в„ўsnapshot pipeline; new settings are added by registry entry without changing pipeline logic.
 - Registry organization pattern: when a registry grows, split registrations into per-domain files and keep a thin aggregator index.
 - Registry typing pattern: derive group unions from registry keys and bind entry value types to config selectors via helper functions.
 - Pipeline typing pattern: keep pipeline functions generic and map to concrete domain shapes in the service layer.
@@ -100,16 +116,16 @@ It is optional, but recommended to be updated as the project evolves.
 - Retention schedule admin pattern: OS scheduling logic lives in an infra ops service and is reused by both CLI scripts and thin admin routes (`/admin/retention/schedule/apply`).
 - Retention lifecycle admin pattern: `/admin/retention/run-once` and `/admin/retention/schedule/remove` remain thin over the same infra ops service and return typed DTOs with ISO timestamps.
 - Monitoring snapshot pattern: `/admin/monitoring` is a thin route over a core monitoring usecase and an infra monitoring repo that aggregates counts and lag markers directly from SQLite.
-- Monitoring collector pattern: monitoring snapshot РЎРѓР В±Р С•РЎР‚Р С”Р В° Р С‘Р Т‘РЎвЂРЎвЂљ РЎвЂЎР ВµРЎР‚Р ВµР В· pipeline + registry Р С”Р С•Р В»Р В»Р ВµР С”РЎвЂљР С•РЎР‚Р С•Р Р† Р Р† `monitoring/collectors`, Р Т‘Р С•Р В±Р В°Р Р†Р В»Р ВµР Р…Р С‘Р Вµ Р Р…Р С•Р Р†Р С•Р в„– РЎРѓР ВµР С”РЎвЂ Р С‘Р С‘ = Р Р…Р С•Р Р†РЎвЂ№Р в„– collector + РЎР‚Р ВµР С–Р С‘РЎРѓРЎвЂљРЎР‚Р В°РЎвЂ Р С‘РЎРЏ.
-- Alerts rule pattern: Р С•РЎвЂ Р ВµР Р…Р С”Р В° Р С—РЎР‚Р В°Р Р†Р С‘Р В» Р Р†РЎвЂ№Р Р…Р ВµРЎРѓР ВµР Р…Р В° Р Р† strategy registry (evaluator per rule type) РЎРѓ Р ВµР Т‘Р С‘Р Р…РЎвЂ№Р С parser Р Т‘Р В»РЎРЏ config.
-- Alerts registry-first typing: `AlertRuleType` Р С‘ `AlertRuleConfig<T>` Р Р†РЎвЂ№Р Р†Р С•Р Т‘РЎРЏРЎвЂљРЎРѓРЎРЏ Р С‘Р В· `alertRuleRegistry` (parse Р Р†Р С•Р В·Р Р†РЎР‚Р В°РЎвЂ°Р В°Р ВµР СРЎвЂ№Р Вµ РЎвЂљР С‘Р С—РЎвЂ№).
+- Monitoring collector pattern: monitoring snapshot Р РЋР С“Р В Р’В±Р В РЎвЂўР РЋР вЂљР В РЎвЂќР В Р’В° Р В РЎвЂР В РўвЂР РЋРІР‚ВР РЋРІР‚С™ Р РЋРІР‚РЋР В Р’ВµР РЋР вЂљР В Р’ВµР В Р’В· pipeline + registry Р В РЎвЂќР В РЎвЂўР В Р’В»Р В Р’В»Р В Р’ВµР В РЎвЂќР РЋРІР‚С™Р В РЎвЂўР РЋР вЂљР В РЎвЂўР В Р вЂ  Р В Р вЂ  `monitoring/collectors`, Р В РўвЂР В РЎвЂўР В Р’В±Р В Р’В°Р В Р вЂ Р В Р’В»Р В Р’ВµР В Р вЂ¦Р В РЎвЂР В Р’Вµ Р В Р вЂ¦Р В РЎвЂўР В Р вЂ Р В РЎвЂўР В РІвЂћвЂ“ Р РЋР С“Р В Р’ВµР В РЎвЂќР РЋРІР‚В Р В РЎвЂР В РЎвЂ = Р В Р вЂ¦Р В РЎвЂўР В Р вЂ Р РЋРІР‚в„–Р В РІвЂћвЂ“ collector + Р РЋР вЂљР В Р’ВµР В РЎвЂ“Р В РЎвЂР РЋР С“Р РЋРІР‚С™Р РЋР вЂљР В Р’В°Р РЋРІР‚В Р В РЎвЂР РЋР РЏ.
+- Alerts rule pattern: Р В РЎвЂўР РЋРІР‚В Р В Р’ВµР В Р вЂ¦Р В РЎвЂќР В Р’В° Р В РЎвЂ”Р РЋР вЂљР В Р’В°Р В Р вЂ Р В РЎвЂР В Р’В» Р В Р вЂ Р РЋРІР‚в„–Р В Р вЂ¦Р В Р’ВµР РЋР С“Р В Р’ВµР В Р вЂ¦Р В Р’В° Р В Р вЂ  strategy registry (evaluator per rule type) Р РЋР С“ Р В Р’ВµР В РўвЂР В РЎвЂР В Р вЂ¦Р РЋРІР‚в„–Р В РЎВ parser Р В РўвЂР В Р’В»Р РЋР РЏ config.
+- Alerts registry-first typing: `AlertRuleType` Р В РЎвЂ `AlertRuleConfig<T>` Р В Р вЂ Р РЋРІР‚в„–Р В Р вЂ Р В РЎвЂўР В РўвЂР РЋР РЏР РЋРІР‚С™Р РЋР С“Р РЋР РЏ Р В РЎвЂР В Р’В· `alertRuleRegistry` (parse Р В Р вЂ Р В РЎвЂўР В Р’В·Р В Р вЂ Р РЋР вЂљР В Р’В°Р РЋРІР‚В°Р В Р’В°Р В Р’ВµР В РЎВР РЋРІР‚в„–Р В Р’Вµ Р РЋРІР‚С™Р В РЎвЂР В РЎвЂ”Р РЋРІР‚в„–).
 - Worker heartbeat pattern: workers write start/success/error signals into `worker_heartbeats`, and monitoring aggregates heartbeats plus top errors for prod-style operational visibility.
 - Monitoring TTL pattern: heartbeat staleness is computed using a runtime-configured TTL (`monitoring.worker_ttl_ms`) and exposed as ok/stale status per worker.
 - Adapter integration pattern: vendor adapters run as separate services, register with DeviceService, push realtime events, and support `fetchEvents(sinceEventId, limit)` for backfill; DS is passive and owns cursor/ack and retry policy for Core delivery.
 - Device cursor pattern: DS stores per-device lastAckedEventId/lastAckedAt and advances cursor only after Core accepts events; backfill reads from cursor and relies on adapter retention for recovery.
 - DeviceService adapter API pattern: adapters authenticate to DS, register/heartbeat for assignments, and push normalized events to DS, which records and enqueues for Core delivery.
 - Backfill runner pattern: DS triggers adapter backfill on register/heartbeat with throttling and uses adapter HTTP client to fetch events since cursor.
-- Mock adapter pattern: a standalone adapter app stores raw events in SQLite, exposes /events/backfill, registers/heartbeats with DS, and pushes batches to validate the DS РІвЂ вЂќ Core pipeline.
+- Mock adapter pattern: a standalone adapter app stores raw events in SQLite, exposes /events/backfill, registers/heartbeats with DS, and pushes batches to validate the DS Р Р†РІР‚В РІР‚Сњ Core pipeline.
 - Response envelope pattern: delivery returns `{ success: true, data }` or `{ success: false, error: { code, message, data? } }`, with shared helpers in `apps/api/src/delivery/http/response.ts`.
 - HTTP delivery servers should use Hono (except adapter, which can remain minimal node http).
 - Bot delivery pattern: outbox worker checks bot health before claiming notifications and sends rendered templates via internal bot HTTP API; bot service holds Telegram token and enforces shared internal auth.
@@ -138,6 +154,8 @@ It is optional, but recommended to be updated as the project evolves.
 - Telegram dual-role bot pattern: when user can be both parent and admin, keep a lightweight session mode (`parent`/`admin`) with explicit keyboard switchers; admin mode availability is derived from IAM link (`admins.tgUserId`) and `/link <code>` is handled as an in-bot command mapped to domain link flow/errors.
 - AdminUI TanStack Start auth pattern: resolve session via createServerFn in root beforeLoad, forward incoming cookie header to backend auth endpoints, forward Set-Cookie back to response, and hydrate client session-store from root route context to keep SSR/CSR auth state consistent.
 - AdminUI shell interaction pattern: keep mobile drawer and desktop collapse as separate states; header profile control contains avatar, role metadata, and account actions in a compact dropdown aligned to top-right.
+- AdminUI shell composition refinement pattern: keep `AppShell` as a stateful layout composer only, move branding/navigation/breadcrumb/language/profile blocks into extracted `components/app/*` subcomponents, and prefer shadcn primitives (`Avatar`, `Breadcrumb`, `DropdownMenu`, `ToggleGroup`, `ScrollArea`) over bespoke shell interactions.
+- AdminUI collapsed sidebar icon pattern: when the shell is collapsed, navigation should render explicit icon-only items with tooltip labels instead of relying on shrinking the expanded text layout to zero width; this keeps icons stable and predictable in shadcn-style sidebar collapse mode.
 - AdminUI profile management pattern: expose protected /profile route with account form + Telegram link-code generation; when backend profile update endpoint is unavailable, surface explicit API-contract guidance in UI instead of silent failure.
 - AdminUI role display pattern: when session provides both roleName and roleId, UI should render roleName for user-facing text and keep roleId only as fallback/debug metadata.
 
@@ -169,6 +187,16 @@ It is optional, but recommended to be updated as the project evolves.
 - Telegram OTP auth pattern: admin-ui login offers password + telegram modes; telegram mode requests code by email, backend verifies linked tgUserId, sends 6-digit OTP through internal bot notification endpoint, and completes login via /api/auth/telegram/login with standard HttpOnly access/refresh cookie issuance and root session hydration.
 
 - Persons device-identity pattern: keep person profile data and device-specific terminal identities separated; manage identities in dedicated UI section (/persons/:id) and API sub-routes (/:personId/identities) with conflict checks for (deviceId, terminalPersonId) and one-identity-per-person-per-device.
+- Persons terminal sync pattern: use terminal-directory snapshot as the primary reconciliation source in person details, with attach/reassign actions driven by import candidates instead of raw deviceId/terminalPersonId entry.
+- Terminal write-back pattern: person-level terminal create/update flows proxy through `/api/persons/:personId/terminal-users/*`, group target devices by terminal `userId`, and fan out through DS `/api/ds/identity/users/create|update` to respect adapter write contracts while keeping local identity mappings consistent.
+- Terminal write confirmation pattern: AdminUI must treat terminal create/update as explicit operator write actions, visually differentiate add vs update buttons, and require a shadcn confirmation dialog that lists the exact fields and target terminals before submitting terminal write-back requests.
+- Terminal write step-1 form pattern: use one shared terminal write form for create and update; create is prefilled from canonical person data, update is prefilled from terminal snapshot/import data for linked devices, and any missing or mismatched snapshot values must surface as explicit warnings instead of being silently overwritten with defaults.
+- Terminal face-write pattern: face upload is a dedicated operator flow separate from the general terminal write form; it targets only linked terminals, requires image preview plus explicit terminal selection/confirmation, and reuses snapshot-preloaded current terminal fields during update so uploading a face does not silently overwrite unrelated user/card settings with defaults.
+- Terminal face-preview pattern: terminal photo preview should be fetched on demand through the DS/API contracts using the linked terminal `userId`, opened in a dedicated preview dialog per device, and treat missing previewable data as an explicit operator-visible error instead of silently showing an empty modal.
+- Terminal dialog layout pattern: long terminal write dialogs in AdminUI must use a viewport-bounded dialog shell (`max-h` + internal scroll area + persistent footer actions) instead of allowing the modal body to grow past the window.
+- Terminal write feedback pattern: for terminal face/write actions with per-device results, keep the operator inside the dialog after submit when useful and render a device-level result breakdown in the modal rather than collapsing everything into a single success/error message.
+- Terminal toast/result-close pattern: terminal write dialogs should close only when every targeted device succeeds; otherwise they stay open with per-device result details, while Sonner toasts provide the high-level success/error summary for the operator.
+- Persons import resilience pattern: treat missing `terminal_directory_*` tables as an uninitialized import storage state, return an empty candidate list for workspace bootstrap, raise an explicit `persons_import_storage_not_initialized` error for sync/apply actions, and load devices independently from import candidates in AdminUI so enabled devices remain visible during snapshot-storage failures.
 
 
 
@@ -213,6 +241,7 @@ It is optional, but recommended to be updated as the project evolves.
 - Device-scoped identity lookup pattern: DS /api/identity/find accepts optional deviceId to narrow lookup for Add Identity UX while preserving default cross-device scan behavior.
 
 - Person link-status list pattern: persons list API exposes hasDeviceIdentities computed from person-device identity mappings on the current page, and AdminUI table renders operational status (Linked/Not linked) instead of raw terminal IDs.
+- Persons admin-list query pattern: keep Persons list/read-model as a dedicated query port + thin usecase backed by an infra query adapter that returns page data and `hasDeviceIdentities` in one query path; do not rebuild this projection inside API composition features with per-person identity lookups.
 - Shared person hover-card pattern: use a single PersonHoverCard component with Open profile action across Access Events and Subscription Requests to keep person context UI consistent.
 
 - Device operations list-controls pattern: standardize large DS lists with in-page query filters, status/mode filters, sort selects, page-size selects, and explicit pagination summary for predictable operator workflows.
@@ -234,3 +263,19 @@ It is optional, but recommended to be updated as the project evolves.
 - HTTP response normalization pattern: delivery handler should normalize Date values to ISO strings before response-schema validation, so module/flow outputs with Date objects remain compatible with strict DTO schemas without duplicating per-route mappers.
 - Legacy route-compat pattern: routes may accept historical module return forms (array/boolean) and normalize to current envelope DTO shape to prevent runtime 500s during migration windows.
 [2026-02-23 02:35:56] - Pattern update: documented response normalization and legacy route-compat behavior used for production-readiness stabilization.
+- AdminUI standalone monitoring page pattern: keep global platform monitoring on dedicated `/monitoring` route (not only dashboard widget), gate by `monitoring.read`, render monitoring sections with shadcn cards/tables, and keep DS-specific diagnostics linked via `/devices/monitoring`.
+[2026-02-23 20:58:07] - Pattern update: documented standalone AdminUI monitoring overview route and navigation rule.
+
+- AdminUI i18n completion pattern: finish page-local hardcoded strings by localizing route-level views and primary table/cards together, then validate with targeted eslint + typecheck + test + build to avoid partial-language regressions.
+
+- AdminUI settings i18n completeness pattern: runtime settings forms should resolve settings.groups.<group>.fields.<field>.{label,hint} and validation messages from locale keys (no hardcoded English fallback in UI-visible errors).
+[2026-02-24 00:13:06] - Pattern update: documented settings-form i18n keying for labels/hints/validation and localized shell branding accessibility label usage.
+
+[2026-03-02 03:07:29] - Pattern update: documented snapshot-based persons import/reconciliation flow for terminal users and grouped bulk actions in AdminUI.
+
+- Migration history pattern: never retrofit new tables or columns into an already-applied migration file; preserve historical migration SQL, add a new incremental migration, and verify both fresh databases and existing local/runtime databases reach the same schema after `drizzle-kit migrate`.
+- Persons import device-selection pattern: use a compact metadata-rich checkbox table for device picking in AdminUI import flows, showing `name`, `deviceId`, `adapterKey`, direction, enabled state, and a footer selection summary instead of chip-only toggles.
+- Persons import diagnostics pattern: surface backend error messages directly in the import workspace and always emit a scoped `console.error` record (`loadData`, `sync`, `apply`) with request context so operator-reported sync issues can be debugged from the browser immediately.
+- Persons import sync-summary pattern: keep `run.summary.errorCount` as the aggregate metric, but return stable per-device diagnostics in `run.summary.errors[]` with `deviceId`, `errorCode`, and `errorMessage` so AdminUI can render exact sync failures without reverse-engineering partial DS responses.
+- Persons import IIN-derivation pattern: derive the import IIN source from `settingsJson.identityQueryMappings.iin.paramsTemplate` by finding the `{{identityValue}}` entry and extracting the field name after `Condition.`, then read that field from the matching raw export payload; only if that derivation fails should import fall back to `UserID`, `citizenIdNo`, and finally `terminalPersonId`.
+

@@ -1,9 +1,10 @@
 import type {
-    AlertEvent,
-    AlertEventStatus,
     AlertRule,
     AlertSubscription,
     CreateAlertRuleInput,
+    DeleteAlertRuleResult,
+    ListAlertEventsInput,
+    ListAlertEventsResult,
     UpdateAlertRuleInput
 } from "./types";
 import { requestApi } from "@/lib/api/client";
@@ -12,9 +13,7 @@ type ListRulesResponse = {
     rules: Array<AlertRule>
 };
 
-type ListEventsResponse = {
-    events: Array<AlertEvent>
-};
+type ListEventsResponse = ListAlertEventsResult;
 
 type ListSubscriptionsResponse = {
     subscriptions: Array<AlertSubscription>
@@ -36,20 +35,17 @@ export async function getAlertRules(params?: {
     return response.rules;
 }
 
-export async function getAlertEvents(params?: {
-    status?: AlertEventStatus
-    limit?: number
-}) {
+export async function getAlertEvents(params?: ListAlertEventsInput) {
     const query = new URLSearchParams({
         limit: String(params?.limit ?? 30),
-        offset: "0"
+        offset: String(params?.offset ?? 0)
     });
     if (params?.status) {
         query.set("status", params.status);
     }
 
     const response = await requestApi<ListEventsResponse>(`/api/alerts/events?${query.toString()}`);
-    return response.events;
+    return response;
 }
 
 export async function getMyAlertSubscriptions(adminId: string) {
@@ -86,5 +82,11 @@ export async function updateAlertRule(ruleId: string, input: UpdateAlertRuleInpu
     await requestApi(`/api/alerts/rules/${ruleId}`, {
         method: "PATCH",
         body: input
+    });
+}
+
+export async function deleteAlertRule(ruleId: string) {
+    return requestApi<DeleteAlertRuleResult>(`/api/alerts/rules/${ruleId}`, {
+        method: "DELETE"
     });
 }

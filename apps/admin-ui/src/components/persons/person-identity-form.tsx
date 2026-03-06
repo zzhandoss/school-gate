@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import type { FormEvent } from 'react'
+import { useTranslation } from 'react-i18next'
 
 import { findIdentityInDevice } from '@/lib/persons/service'
 import type { PersonIdentityItem, UpsertPersonIdentityInput } from '@/lib/persons/types'
@@ -25,6 +26,7 @@ type PersonIdentityFormProps = {
 }
 
 export function PersonIdentityForm({ mode, identity, personIin, devices, canWrite, onSubmit, onClose }: PersonIdentityFormProps) {
+  const { t } = useTranslation()
   const [deviceId, setDeviceId] = useState(identity?.deviceId ?? '')
   const [terminalPersonId, setTerminalPersonId] = useState(identity?.terminalPersonId ?? '')
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -65,14 +67,16 @@ export function PersonIdentityForm({ mode, identity, personIin, devices, canWrit
       })
       const first = result.matches[0]
       if (!first) {
-        setAutoMessage('No match found in selected device.')
+        setAutoMessage(t('persons.identityForm.autoNoMatch'))
         return
       }
       setTerminalPersonId(first.terminalPersonId)
       const details = [first.displayName, first.source].filter(Boolean).join(', ')
-      setAutoMessage(details ? `Found: ${first.terminalPersonId} (${details})` : `Found: ${first.terminalPersonId}`)
+      setAutoMessage(details
+        ? t('persons.identityForm.autoFoundWithDetails', { id: first.terminalPersonId, details })
+        : t('persons.identityForm.autoFound', { id: first.terminalPersonId }))
     } catch (value) {
-      setError(value instanceof Error ? value.message : 'Auto find failed')
+      setError(value instanceof Error ? value.message : t('persons.identityForm.autoFindFailed'))
     } finally {
       setIsAutoLoading(false)
     }
@@ -93,7 +97,7 @@ export function PersonIdentityForm({ mode, identity, personIin, devices, canWrit
       })
       onClose()
     } catch (value) {
-      setError(value instanceof Error ? value.message : 'Operation failed')
+      setError(value instanceof Error ? value.message : t('persons.identityForm.operationFailed'))
     } finally {
       setIsSubmitting(false)
     }
@@ -103,20 +107,23 @@ export function PersonIdentityForm({ mode, identity, personIin, devices, canWrit
     <form className="space-y-4 px-4 pb-4" onSubmit={handleSubmit}>
       {error ? (
         <Alert className="border-destructive/40 bg-destructive/5 text-destructive">
-          <AlertTitle>Cannot save identity</AlertTitle>
+          <AlertTitle>{t('persons.identityForm.cannotSaveTitle')}</AlertTitle>
           <AlertDescription>{error}</AlertDescription>
         </Alert>
       ) : null}
 
       <div className="grid gap-2">
-        <Label>Device</Label>
+        <Label>{t('common.labels.device')}</Label>
         <Select
           value={deviceId}
           onValueChange={setDeviceId}
           disabled={isSubmitting}
         >
           <SelectTrigger className="w-full">
-            <SelectValue placeholder={deviceOptions.length > 0 ? 'Select device' : 'No devices available'} />
+            <SelectValue placeholder={deviceOptions.length > 0
+              ? t('persons.identityForm.placeholders.selectDevice')
+              : t('persons.identityForm.placeholders.noDevicesAvailable')}
+            />
           </SelectTrigger>
           <SelectContent>
             {deviceOptions.map((device) => (
@@ -128,24 +135,24 @@ export function PersonIdentityForm({ mode, identity, personIin, devices, canWrit
         </Select>
         {deviceOptions.length === 0 ? (
           <p className="text-xs text-muted-foreground">
-            No devices found. Create a device first in Device Operations.
+            {t('persons.identityForm.noDevicesHint')}
           </p>
         ) : null}
       </div>
 
       <div className="grid gap-2">
-        <Label htmlFor="identity-terminal-id">Terminal Person ID</Label>
+        <Label htmlFor="identity-terminal-id">{t('persons.terminalPersonId')}</Label>
         <Input
           id="identity-terminal-id"
           value={terminalPersonId}
           disabled={isSubmitting}
           onChange={(event) => setTerminalPersonId(event.target.value)}
-          placeholder="T-10001"
+          placeholder={t('persons.identityForm.placeholders.terminalPersonId')}
         />
         {mode === 'create' ? (
           <div className="flex items-center gap-2">
             <Button type="button" variant="outline" disabled={!canAutoFind} onClick={() => void handleAutoFind()}>
-              {isAutoLoading ? 'Auto finding...' : 'Auto find in selected device'}
+              {isAutoLoading ? t('persons.identityForm.autoFinding') : t('persons.identityForm.autoFindInDevice')}
             </Button>
             {autoMessage ? <span className="text-xs text-muted-foreground">{autoMessage}</span> : null}
           </div>
@@ -154,10 +161,14 @@ export function PersonIdentityForm({ mode, identity, personIin, devices, canWrit
 
       <div className="flex justify-end gap-2">
         <Button type="button" variant="outline" onClick={onClose} disabled={isSubmitting}>
-          Cancel
+          {t('common.actions.cancel')}
         </Button>
         <Button type="submit" disabled={!canSubmit}>
-          {isSubmitting ? 'Saving...' : mode === 'create' ? 'Add identity' : 'Save changes'}
+          {isSubmitting
+            ? t('settings.saving')
+            : mode === 'create'
+              ? t('persons.identityForm.addIdentity')
+              : t('profile.saveChanges')}
         </Button>
       </div>
     </form>

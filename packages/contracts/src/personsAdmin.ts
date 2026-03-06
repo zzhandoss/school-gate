@@ -13,6 +13,10 @@ export const personAdminSchema = z.object({
 export const listPersonsQuerySchema = z.object({
     iin: z.string().regex(/^\d{0,12}$/).optional(),
     query: z.string().trim().min(1).max(128).optional(),
+    linkedStatus: z.enum(["all", "linked", "unlinked"]).optional(),
+    deviceId: z.string().trim().min(1).max(128).optional(),
+    includeDeviceIds: z.string().trim().min(1).max(2048).optional(),
+    excludeDeviceIds: z.string().trim().min(1).max(2048).optional(),
     limit: z.coerce.number().int().positive().max(200).default(50),
     offset: z.coerce.number().int().nonnegative().default(0)
 });
@@ -44,6 +48,37 @@ export const updatePersonSchema = z.object({
     iin: z.string().regex(/^\d{12}$/).optional(),
     firstName: z.string().trim().min(1).max(128).nullable().optional(),
     lastName: z.string().trim().min(1).max(128).nullable().optional()
+});
+
+export const deletePersonResultSchema = z.object({
+    personId: z.string().min(1),
+    deleted: z.literal(true),
+    detachedIdentities: z.number().int().nonnegative(),
+    deactivatedSubscriptions: z.number().int().nonnegative(),
+    unlinkedRequests: z.number().int().nonnegative(),
+    resetRequestsToNeedsPerson: z.number().int().nonnegative()
+});
+
+export const bulkDeletePersonsSchema = z.object({
+    personIds: z.array(z.string().min(1)).min(1).max(200)
+});
+
+export const bulkDeletePersonsResultSchema = z.object({
+    total: z.number().int().nonnegative(),
+    deleted: z.number().int().nonnegative(),
+    notFound: z.number().int().nonnegative(),
+    errors: z.number().int().nonnegative(),
+    results: z.array(
+        z.object({
+            personId: z.string().min(1),
+            status: z.enum(["deleted", "not_found", "error"]),
+            detachedIdentities: z.number().int().nonnegative().optional(),
+            deactivatedSubscriptions: z.number().int().nonnegative().optional(),
+            unlinkedRequests: z.number().int().nonnegative().optional(),
+            resetRequestsToNeedsPerson: z.number().int().nonnegative().optional(),
+            message: z.string().min(1).nullable().optional()
+        })
+    )
 });
 
 export const personIdentityAdminSchema = z.object({
@@ -153,6 +188,9 @@ export type ListPersonsResultDto = z.infer<typeof listPersonsResultSchema>;
 export type GetPersonResultDto = z.infer<typeof getPersonResultSchema>;
 export type CreatePersonDto = z.infer<typeof createPersonSchema>;
 export type UpdatePersonDto = z.infer<typeof updatePersonSchema>;
+export type DeletePersonResultDto = z.infer<typeof deletePersonResultSchema>;
+export type BulkDeletePersonsDto = z.infer<typeof bulkDeletePersonsSchema>;
+export type BulkDeletePersonsResultDto = z.infer<typeof bulkDeletePersonsResultSchema>;
 export type PersonIdentityAdminDto = z.infer<typeof personIdentityAdminSchema>;
 export type ListPersonIdentitiesResultDto = z.infer<typeof listPersonIdentitiesResultSchema>;
 export type CreatePersonIdentityDto = z.infer<typeof createPersonIdentitySchema>;

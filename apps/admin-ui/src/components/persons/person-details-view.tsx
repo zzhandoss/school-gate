@@ -1,13 +1,18 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useRouter } from '@tanstack/react-router'
+import { Trash2, Upload } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
-import { PersonIdentityPanel } from './person-identity-panel'
-import { PersonIdentityAutoDialog } from './person-identity-auto-dialog'
+import { PersonDeleteDialog } from './person-delete-dialog'
+import { PersonIdentitiesSection } from './person-identities-section'
+import { PersonTerminalSyncPanel } from './person-terminal-sync-panel'
 import { PersonsUpsertPanel } from './persons-upsert-panel'
+import { getPersonsImportStrings } from './persons-import-strings'
 import type { PersonIdentityItem, PersonItem, UpdatePersonInput, UpsertPersonIdentityInput } from '@/lib/persons/types'
 import type { DeviceItem } from '@/lib/devices/types'
 import {
   createPersonIdentity,
+  deletePerson,
   deletePersonIdentity,
   getPerson,
   listPersonIdentities,
@@ -21,14 +26,6 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow
-} from '@/components/ui/table'
 
 type PersonDetailsViewProps = {
   personId: string
@@ -36,10 +33,12 @@ type PersonDetailsViewProps = {
 
 function formatPersonName(person: PersonItem) {
   const chunks = [person.firstName, person.lastName].filter(Boolean)
-  return chunks.length > 0 ? chunks.join(' ') : 'Unknown name'
+  return chunks.length > 0 ? chunks.join(' ') : ''
 }
 
 export function PersonDetailsView({ personId }: PersonDetailsViewProps) {
+  const { t, i18n } = useTranslation()
+  const importStrings = getPersonsImportStrings(i18n.language)
   const router = useRouter()
   const session = useSession()
   const canRead = session?.admin.permissions.includes('persons.read') ?? false
@@ -53,6 +52,8 @@ export function PersonDetailsView({ personId }: PersonDetailsViewProps) {
   const [error, setError] = useState<string | null>(null)
   const [mutationError, setMutationError] = useState<string | null>(null)
   const [deletingIdentityId, setDeletingIdentityId] = useState<string | null>(null)
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+  const [deletingPerson, setDeletingPerson] = useState(false)
 
   const personName = useMemo(() => (person ? formatPersonName(person) : ''), [person])
 
@@ -77,7 +78,7 @@ export function PersonDetailsView({ personId }: PersonDetailsViewProps) {
         await router.navigate({ to: '/unavailable' })
         return
       }
-      setError(value instanceof Error ? value.message : 'Failed to load person')
+      setError(value instanceof Error ? value.message : t('persons.loadPersonFailed'))
     }
   }
 
@@ -102,7 +103,7 @@ export function PersonDetailsView({ personId }: PersonDetailsViewProps) {
       await updatePerson(personId, patch)
       await load()
     } catch (value) {
-      setMutationError(value instanceof Error ? value.message : 'Failed to update person')
+      setMutationError(value instanceof Error ? value.message : t('persons.updateFailed'))
       throw value
     }
   }
@@ -113,7 +114,7 @@ export function PersonDetailsView({ personId }: PersonDetailsViewProps) {
       await createPersonIdentity(personId, input)
       await load()
     } catch (value) {
-      setMutationError(value instanceof Error ? value.message : 'Failed to create identity')
+      setMutationError(value instanceof Error ? value.message : t('persons.createIdentityFailed'))
       throw value
     }
   }
@@ -124,7 +125,7 @@ export function PersonDetailsView({ personId }: PersonDetailsViewProps) {
       await updatePersonIdentity(personId, identityId, input)
       await load()
     } catch (value) {
-      setMutationError(value instanceof Error ? value.message : 'Failed to update identity')
+      setMutationError(value instanceof Error ? value.message : t('persons.updateIdentityFailed'))
       throw value
     }
   }
@@ -133,7 +134,7 @@ export function PersonDetailsView({ personId }: PersonDetailsViewProps) {
     if (!canWriteIdentities || deletingIdentityId) {
       return
     }
-    if (!window.confirm('Delete this identity mapping?')) {
+    if (!window.confirm(t('persons.confirmDeleteIdentity'))) {
       return
     }
 
@@ -143,17 +144,43 @@ export function PersonDetailsView({ personId }: PersonDetailsViewProps) {
       await deletePersonIdentity(personId, identityId)
       await load()
     } catch (value) {
-      setMutationError(value instanceof Error ? value.message : 'Failed to delete identity')
+      setMutationError(value instanceof Error ? value.message : t('persons.deleteIdentityFailed'))
     } finally {
       setDeletingIdentityId(null)
+    }
+  }
+
+  async function onDeletePerson() {
+    setMutationError(null)
+    setDeletingPerson(true)
+
+    try {
+      await deletePerson(personId)
+      await router.navigate({
+        to: '/persons',
+        search: {
+          limit: 20,
+          offset: 0,
+          iin: '',
+          query: '',
+          linkedStatus: 'all',
+          includeDeviceIds: '',
+          excludeDeviceIds: ''
+        }
+      })
+    } catch (value) {
+      setMutationError(value instanceof Error ? value.message : t('persons.deleteFailed'))
+    } finally {
+      setDeletingPerson(false)
+      setDeleteDialogOpen(false)
     }
   }
 
   if (!canRead) {
     return (
       <Alert className="border-amber-300/60 bg-amber-50 text-amber-900">
-        <AlertTitle>Access denied</AlertTitle>
-        <AlertDescription>Your account does not have `persons.read` permission.</AlertDescription>
+        <AlertTitle>{t('settings.accessDeniedTitle')}</AlertTitle>
+        <AlertDescription>{t('persons.accessDeniedDescription')}</AlertDescription>
       </Alert>
     )
   }
@@ -170,8 +197,8 @@ export function PersonDetailsView({ personId }: PersonDetailsViewProps) {
   if (error || !person) {
     return (
       <Alert className="border-destructive/40 bg-destructive/5 text-destructive">
-        <AlertTitle>Person page failed to load</AlertTitle>
-        <AlertDescription>{error ?? 'Person was not found'}</AlertDescription>
+        <AlertTitle>{t('persons.personPageLoadFailedTitle')}</AlertTitle>
+        <AlertDescription>{error ?? t('persons.personNotFound')}</AlertDescription>
       </Alert>
     )
   }
@@ -181,13 +208,14 @@ export function PersonDetailsView({ personId }: PersonDetailsViewProps) {
       <div className="rounded-xl border border-border/70 bg-card/70 p-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h1 className="text-lg font-semibold">{personName}</h1>
-            <p className="text-sm text-muted-foreground">IIN: {person.iin}</p>
+            <h1 className="text-lg font-semibold">{personName || t('persons.unknownName')}</h1>
+            <p className="text-sm text-muted-foreground">{t('common.labels.iin')}: {person.iin}</p>
           </div>
           <div className="flex items-center gap-2">
-            <Link to="/persons" search={{ limit: 20, offset: 0, iin: '', query: '' }}>
+            <Link to="/persons/import">
               <Button type="button" variant="outline">
-                Back
+                <Upload className="h-4 w-4" />
+                {importStrings.title}
               </Button>
             </Link>
             <PersonsUpsertPanel
@@ -196,92 +224,60 @@ export function PersonDetailsView({ personId }: PersonDetailsViewProps) {
               canWrite={canWrite}
               onSubmit={(input) => onUpdatePerson(input as UpdatePersonInput)}
             />
+            <Button
+              type="button"
+              size="sm"
+              variant="destructive"
+              disabled={!canWrite || deletingPerson}
+              onClick={() => setDeleteDialogOpen(true)}
+            >
+              <Trash2 className="h-4 w-4" />
+              {deletingPerson ? t('persons.deleting') : t('persons.delete')}
+            </Button>
           </div>
         </div>
         <div className="mt-3 flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
-          <Badge variant="outline">{person.terminalPersonId ?? 'no global terminal id'}</Badge>
-          <span>Created: {new Date(person.createdAt).toLocaleString()}</span>
+          <Badge variant="outline">{person.terminalPersonId ?? t('persons.noGlobalTerminalId')}</Badge>
+          <span>{t('common.labels.created')}: {new Date(person.createdAt).toLocaleString(i18n.language === 'ru' ? 'ru-RU' : 'en-GB')}</span>
         </div>
       </div>
 
       {mutationError ? (
         <Alert className="border-destructive/40 bg-destructive/5 text-destructive">
-          <AlertTitle>Mutation failed</AlertTitle>
+          <AlertTitle>{t('persons.mutationFailedTitle')}</AlertTitle>
           <AlertDescription>{mutationError}</AlertDescription>
         </Alert>
       ) : null}
 
-      <div className="overflow-hidden rounded-xl border border-border/70">
-        <div className="flex items-center justify-between border-b border-border/70 bg-muted/30 px-4 py-3">
-          <div>
-            <h2 className="text-sm font-semibold">Device identities</h2>
-            <p className="text-xs text-muted-foreground">
-              Terminal IDs are scoped by device.
-            </p>
-          </div>
-          <PersonIdentityPanel
-            mode="create"
-            personIin={person.iin}
-            devices={devices}
-            canWrite={canWriteIdentities}
-            onSubmit={onCreateIdentity}
-          />
-          <PersonIdentityAutoDialog personId={personId} canWrite={canWriteIdentities} onApplied={load} />
-        </div>
-        <div className="overflow-x-auto">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Device ID</TableHead>
-                <TableHead>Terminal Person ID</TableHead>
-                <TableHead>Created</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {identities.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={4} className="py-10 text-center text-sm text-muted-foreground">
-                    No identities for this person.
-                  </TableCell>
-                </TableRow>
-              ) : (
-                identities.map((identity) => (
-                  <TableRow key={identity.id}>
-                    <TableCell className="font-medium">{identity.deviceId}</TableCell>
-                    <TableCell>
-                      <Badge variant="outline" className="font-mono">
-                        {identity.terminalPersonId}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>{new Date(identity.createdAt).toLocaleString()}</TableCell>
-                    <TableCell className="text-right">
-                      <div className="flex justify-end gap-2">
-                        <PersonIdentityPanel
-                          mode="edit"
-                          identity={identity}
-                          devices={devices}
-                          canWrite={canWriteIdentities}
-                          onSubmit={(input) => onUpdateIdentity(identity.id, input)}
-                        />
-                        <Button
-                          type="button"
-                          size="sm"
-                          variant="outline"
-                          disabled={!canWriteIdentities || deletingIdentityId === identity.id}
-                          onClick={() => void onDeleteIdentity(identity.id)}
-                        >
-                          {deletingIdentityId === identity.id ? 'Deleting...' : 'Delete'}
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
-        </div>
-      </div>
+      <PersonTerminalSyncPanel
+        person={person}
+        devices={devices}
+        identities={identities}
+        canWrite={canWriteIdentities}
+        onApplied={load}
+      />
+
+      <PersonIdentitiesSection
+        personId={personId}
+        personIin={person.iin}
+        devices={devices}
+        identities={identities}
+        canWrite={canWriteIdentities}
+        deletingIdentityId={deletingIdentityId}
+        onCreateIdentity={onCreateIdentity}
+        onUpdateIdentity={onUpdateIdentity}
+        onDeleteIdentity={onDeleteIdentity}
+        onApplied={load}
+      />
+
+      <PersonDeleteDialog
+        open={deleteDialogOpen}
+        onOpenChange={setDeleteDialogOpen}
+        deleting={deletingPerson}
+        count={1}
+        personName={personName || t('persons.unknownName')}
+        onConfirm={() => void onDeletePerson()}
+      />
     </div>
   )
 }

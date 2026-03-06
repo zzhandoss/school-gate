@@ -15,6 +15,7 @@ export interface PersonTerminalIdentitiesRepo {
     updateById(input: { id: string; deviceId: string; terminalPersonId: string }): Promise<void>;
     deleteById(input: { id: string }): Promise<void>;
     listByPersonId(input: { personId: string }): Promise<PersonTerminalIdentity[]>;
+    deleteByPersonIdSync(input: { personId: string }): number;
     withTx(tx: unknown): PersonTerminalIdentitiesRepo;
 }
 

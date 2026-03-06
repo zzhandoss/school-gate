@@ -1,7 +1,7 @@
 {
   "name": "school-gate",
   "private": true,
-  "version": "1.0.0",
+  "version": "1.1.0",
   "main": "index.js",
   "scripts": {
     "dev": "pnpm exec concurrently -n api,device-service,bot,workers,admin-ui -c blue,green,magenta,yellow,cyan \"pnpm --filter @school-gate/api dev\" \"pnpm dev:device-service\" \"pnpm --filter @school-gate/bot dev\" \"pnpm dev:workers\" \"pnpm --filter admin-ui dev\"",

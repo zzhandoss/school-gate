@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import type { FormEvent } from 'react'
+import { useTranslation } from 'react-i18next'
 
 import { previewAutoIdentitiesByIin } from '@/lib/persons/service'
 import type {
@@ -28,6 +29,7 @@ function toMatchKey(deviceId: string, terminalPersonId: string) {
 }
 
 export function PersonsUpsertForm({ mode, person, canWrite, onSubmit, onClose }: PersonsUpsertFormProps) {
+  const { t } = useTranslation()
   const [iin, setIin] = useState(person?.iin ?? '')
   const [firstName, setFirstName] = useState(person?.firstName ?? '')
   const [lastName, setLastName] = useState(person?.lastName ?? '')
@@ -88,7 +90,7 @@ export function PersonsUpsertForm({ mode, person, canWrite, onSubmit, onClose }:
           }
           setPreview(null)
           setSelected({})
-          setPreviewError(value instanceof Error ? value.message : 'Failed to load auto mappings')
+          setPreviewError(value instanceof Error ? value.message : t('persons.form.autoMappingsLoadFailed'))
         })
         .finally(() => {
           if (requestIdRef.current === currentRequestId) {
@@ -135,7 +137,7 @@ export function PersonsUpsertForm({ mode, person, canWrite, onSubmit, onClose }:
       }
       onClose()
     } catch (value) {
-      setError(value instanceof Error ? value.message : 'Operation failed')
+      setError(value instanceof Error ? value.message : t('persons.form.operationFailed'))
     } finally {
       setIsSubmitting(false)
     }
@@ -145,68 +147,72 @@ export function PersonsUpsertForm({ mode, person, canWrite, onSubmit, onClose }:
     <form className="space-y-4 px-4 pb-4" onSubmit={handleSubmit}>
       {error ? (
         <Alert className="border-destructive/40 bg-destructive/5 text-destructive">
-          <AlertTitle>Cannot save person</AlertTitle>
+          <AlertTitle>{t('persons.form.cannotSaveTitle')}</AlertTitle>
           <AlertDescription>{error}</AlertDescription>
         </Alert>
       ) : null}
 
       <div className="grid gap-2">
-        <Label htmlFor="person-iin">IIN</Label>
+        <Label htmlFor="person-iin">{t('common.labels.iin')}</Label>
         <Input
           id="person-iin"
           value={iin}
           disabled={isSubmitting}
           onChange={(event) => setIin(event.target.value)}
-          placeholder="030512550123"
+          placeholder={t('persons.form.placeholders.iin')}
         />
         {mode === 'create' ? (
           <p className="text-xs text-muted-foreground">
-            {isIinValid ? 'IIN is valid.' : 'Enter exactly 12 digits.'}
+            {isIinValid ? t('persons.form.iinValid') : t('persons.form.iinInvalid')}
           </p>
         ) : null}
       </div>
 
       <div className="grid gap-2">
-        <Label htmlFor="person-first-name">First name</Label>
+        <Label htmlFor="person-first-name">{t('common.labels.firstName')}</Label>
         <Input
           id="person-first-name"
           value={firstName}
           disabled={isSubmitting}
           onChange={(event) => setFirstName(event.target.value)}
-          placeholder="Alihan"
+          placeholder={t('persons.form.placeholders.firstName')}
         />
       </div>
 
       <div className="grid gap-2">
-        <Label htmlFor="person-last-name">Last name</Label>
+        <Label htmlFor="person-last-name">{t('common.labels.lastName')}</Label>
         <Input
           id="person-last-name"
           value={lastName}
           disabled={isSubmitting}
           onChange={(event) => setLastName(event.target.value)}
-          placeholder="Erzhanov"
+          placeholder={t('persons.form.placeholders.lastName')}
         />
       </div>
 
       {mode === 'create' ? (
         <div className="space-y-2 rounded-lg border border-border/70 p-3">
           <div className="space-y-1">
-            <p className="text-sm font-medium">Auto identity suggestions</p>
+            <p className="text-sm font-medium">{t('persons.form.autoIdentitySuggestionsTitle')}</p>
             <p className="text-xs text-muted-foreground">
-              Suggestions are loaded automatically when IIN is valid. Selected entries will be applied after person creation.
+              {t('persons.form.autoIdentitySuggestionsDescription')}
             </p>
           </div>
 
-          {previewLoading ? <p className="text-xs text-muted-foreground">Searching devices...</p> : null}
+          {previewLoading ? <p className="text-xs text-muted-foreground">{t('persons.form.searchingDevices')}</p> : null}
           {previewError ? <p className="text-xs text-destructive">{previewError}</p> : null}
 
           {preview ? (
             <>
               <p className="text-xs text-muted-foreground">
-                eligible {preview.diagnostics.devicesEligible}, requests {preview.diagnostics.requestsSent}, errors {preview.diagnostics.errors}
+                {t('persons.form.previewDiagnostics', {
+                  eligible: preview.diagnostics.devicesEligible,
+                  requests: preview.diagnostics.requestsSent,
+                  errors: preview.diagnostics.errors
+                })}
               </p>
               {preview.matches.length === 0 ? (
-                <p className="text-xs text-muted-foreground">No matches found.</p>
+                <p className="text-xs text-muted-foreground">{t('common.empty.noMatches')}</p>
               ) : (
                 <div className="max-h-52 space-y-2 overflow-y-auto pr-1">
                   {preview.matches.map((item) => {
@@ -217,9 +223,9 @@ export function PersonsUpsertForm({ mode, person, canWrite, onSubmit, onClose }:
                           <p className="text-xs font-medium">
                             {item.deviceId} <span className="text-muted-foreground">({item.adapterKey})</span>
                           </p>
-                          <p className="text-xs text-muted-foreground">terminal: {item.terminalPersonId}</p>
-                          {item.displayName ? <p className="text-xs text-muted-foreground">name: {item.displayName}</p> : null}
-                          {item.alreadyLinked ? <Badge variant="outline">already linked</Badge> : null}
+                          <p className="text-xs text-muted-foreground">{t('persons.form.terminalValue', { value: item.terminalPersonId })}</p>
+                          {item.displayName ? <p className="text-xs text-muted-foreground">{t('persons.form.nameValue', { value: item.displayName })}</p> : null}
+                          {item.alreadyLinked ? <Badge variant="outline">{t('persons.form.alreadyLinked')}</Badge> : null}
                         </div>
                         <Switch
                           checked={Boolean(selected[key])}
@@ -240,10 +246,14 @@ export function PersonsUpsertForm({ mode, person, canWrite, onSubmit, onClose }:
 
       <div className="flex justify-end gap-2">
         <Button type="button" variant="outline" onClick={onClose} disabled={isSubmitting}>
-          Cancel
+          {t('common.actions.cancel')}
         </Button>
         <Button type="submit" disabled={!canSubmit}>
-          {isSubmitting ? 'Saving...' : mode === 'create' ? 'Create person' : 'Save changes'}
+          {isSubmitting
+            ? t('settings.saving')
+            : mode === 'create'
+              ? t('persons.form.createPerson')
+              : t('profile.saveChanges')}
         </Button>
       </div>
     </form>

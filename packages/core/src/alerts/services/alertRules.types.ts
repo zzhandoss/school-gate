@@ -27,6 +27,7 @@ export type UpdateAlertRuleInput = {
 export type AlertRulesService = {
     create(input: CreateAlertRuleInput): Promise<CreateAlertRuleResult>;
     update(input: UpdateAlertRuleInput): Promise<void>;
+    deleteByIdSync(ruleId: string): boolean;
     getById(id: string): Promise<UnknownAlertRule | null>;
     list(input: ListAlertRulesInput): Promise<UnknownAlertRule[]>;
     withTx(tx: unknown): AlertRulesService;

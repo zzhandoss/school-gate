@@ -3,10 +3,12 @@ import LanguageDetector from "i18next-browser-languagedetector";
 import { initReactI18next } from "react-i18next";
 
 import { enCommon } from "./locales/en";
+import { kzCommon } from "./locales/kz";
 import { ruCommon } from "./locales/ru";
 
 const resources = {
     en: { common: enCommon },
+    kz: { common: kzCommon },
     ru: { common: ruCommon }
 } as const;
 
@@ -16,7 +18,7 @@ if (!i18n.isInitialized) {
         .use(initReactI18next)
         .init({
             resources,
-            supportedLngs: ["en", "ru"],
+            supportedLngs: ["en", "ru", "kz"],
             fallbackLng: "ru",
             defaultNS: "common",
             ns: ["common"],

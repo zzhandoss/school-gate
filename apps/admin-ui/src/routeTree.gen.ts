@@ -14,6 +14,7 @@ import { Route as SubscriptionRequestsRouteImport } from './routes/subscription-
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as PersonsRouteImport } from './routes/persons'
+import { Route as MonitoringRouteImport } from './routes/monitoring'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as InviteRouteImport } from './routes/invite'
 import { Route as DevicesRouteImport } from './routes/devices'
@@ -26,6 +27,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as PersonsIndexRouteImport } from './routes/persons.index'
 import { Route as DevicesIndexRouteImport } from './routes/devices.index'
 import { Route as AdminsIndexRouteImport } from './routes/admins.index'
+import { Route as PersonsImportRouteImport } from './routes/persons.import'
 import { Route as PersonsPersonIdRouteImport } from './routes/persons.$personId'
 import { Route as PasswordResetRequestRouteImport } from './routes/password-reset.request'
 import { Route as PasswordResetConfirmRouteImport } from './routes/password-reset.confirm'
@@ -57,6 +59,11 @@ const ProfileRoute = ProfileRouteImport.update({
 const PersonsRoute = PersonsRouteImport.update({
   id: '/persons',
   path: '/persons',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MonitoringRoute = MonitoringRouteImport.update({
+  id: '/monitoring',
+  path: '/monitoring',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -119,6 +126,11 @@ const AdminsIndexRoute = AdminsIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AdminsRoute,
 } as any)
+const PersonsImportRoute = PersonsImportRouteImport.update({
+  id: '/import',
+  path: '/import',
+  getParentRoute: () => PersonsRoute,
+} as any)
 const PersonsPersonIdRoute = PersonsPersonIdRouteImport.update({
   id: '/$personId',
   path: '/$personId',
@@ -165,6 +177,7 @@ export interface FileRoutesByFullPath {
   '/devices': typeof DevicesRouteWithChildren
   '/invite': typeof InviteRoute
   '/login': typeof LoginRoute
+  '/monitoring': typeof MonitoringRoute
   '/persons': typeof PersonsRouteWithChildren
   '/profile': typeof ProfileRoute
   '/settings': typeof SettingsRoute
@@ -177,6 +190,7 @@ export interface FileRoutesByFullPath {
   '/password-reset/confirm': typeof PasswordResetConfirmRoute
   '/password-reset/request': typeof PasswordResetRequestRoute
   '/persons/$personId': typeof PersonsPersonIdRoute
+  '/persons/import': typeof PersonsImportRoute
   '/admins/': typeof AdminsIndexRoute
   '/devices/': typeof DevicesIndexRoute
   '/persons/': typeof PersonsIndexRoute
@@ -189,6 +203,7 @@ export interface FileRoutesByTo {
   '/dashboard': typeof DashboardRoute
   '/invite': typeof InviteRoute
   '/login': typeof LoginRoute
+  '/monitoring': typeof MonitoringRoute
   '/profile': typeof ProfileRoute
   '/settings': typeof SettingsRoute
   '/subscription-requests': typeof SubscriptionRequestsRoute
@@ -200,6 +215,7 @@ export interface FileRoutesByTo {
   '/password-reset/confirm': typeof PasswordResetConfirmRoute
   '/password-reset/request': typeof PasswordResetRequestRoute
   '/persons/$personId': typeof PersonsPersonIdRoute
+  '/persons/import': typeof PersonsImportRoute
   '/admins': typeof AdminsIndexRoute
   '/devices': typeof DevicesIndexRoute
   '/persons': typeof PersonsIndexRoute
@@ -215,6 +231,7 @@ export interface FileRoutesById {
   '/devices': typeof DevicesRouteWithChildren
   '/invite': typeof InviteRoute
   '/login': typeof LoginRoute
+  '/monitoring': typeof MonitoringRoute
   '/persons': typeof PersonsRouteWithChildren
   '/profile': typeof ProfileRoute
   '/settings': typeof SettingsRoute
@@ -227,6 +244,7 @@ export interface FileRoutesById {
   '/password-reset/confirm': typeof PasswordResetConfirmRoute
   '/password-reset/request': typeof PasswordResetRequestRoute
   '/persons/$personId': typeof PersonsPersonIdRoute
+  '/persons/import': typeof PersonsImportRoute
   '/admins/': typeof AdminsIndexRoute
   '/devices/': typeof DevicesIndexRoute
   '/persons/': typeof PersonsIndexRoute
@@ -243,6 +261,7 @@ export interface FileRouteTypes {
     | '/devices'
     | '/invite'
     | '/login'
+    | '/monitoring'
     | '/persons'
     | '/profile'
     | '/settings'
@@ -255,6 +274,7 @@ export interface FileRouteTypes {
     | '/password-reset/confirm'
     | '/password-reset/request'
     | '/persons/$personId'
+    | '/persons/import'
     | '/admins/'
     | '/devices/'
     | '/persons/'
@@ -267,6 +287,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/invite'
     | '/login'
+    | '/monitoring'
     | '/profile'
     | '/settings'
     | '/subscription-requests'
@@ -278,6 +299,7 @@ export interface FileRouteTypes {
     | '/password-reset/confirm'
     | '/password-reset/request'
     | '/persons/$personId'
+    | '/persons/import'
     | '/admins'
     | '/devices'
     | '/persons'
@@ -292,6 +314,7 @@ export interface FileRouteTypes {
     | '/devices'
     | '/invite'
     | '/login'
+    | '/monitoring'
     | '/persons'
     | '/profile'
     | '/settings'
@@ -304,6 +327,7 @@ export interface FileRouteTypes {
     | '/password-reset/confirm'
     | '/password-reset/request'
     | '/persons/$personId'
+    | '/persons/import'
     | '/admins/'
     | '/devices/'
     | '/persons/'
@@ -319,6 +343,7 @@ export interface RootRouteChildren {
   DevicesRoute: typeof DevicesRouteWithChildren
   InviteRoute: typeof InviteRoute
   LoginRoute: typeof LoginRoute
+  MonitoringRoute: typeof MonitoringRoute
   PersonsRoute: typeof PersonsRouteWithChildren
   ProfileRoute: typeof ProfileRoute
   SettingsRoute: typeof SettingsRoute
@@ -364,6 +389,13 @@ declare module '@tanstack/react-router' {
       path: '/persons'
       fullPath: '/persons'
       preLoaderRoute: typeof PersonsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/monitoring': {
+      id: '/monitoring'
+      path: '/monitoring'
+      fullPath: '/monitoring'
+      preLoaderRoute: typeof MonitoringRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -450,6 +482,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminsIndexRouteImport
       parentRoute: typeof AdminsRoute
     }
+    '/persons/import': {
+      id: '/persons/import'
+      path: '/import'
+      fullPath: '/persons/import'
+      preLoaderRoute: typeof PersonsImportRouteImport
+      parentRoute: typeof PersonsRoute
+    }
     '/persons/$personId': {
       id: '/persons/$personId'
       path: '/$personId'
@@ -532,11 +571,13 @@ const DevicesRouteWithChildren =
 
 interface PersonsRouteChildren {
   PersonsPersonIdRoute: typeof PersonsPersonIdRoute
+  PersonsImportRoute: typeof PersonsImportRoute
   PersonsIndexRoute: typeof PersonsIndexRoute
 }
 
 const PersonsRouteChildren: PersonsRouteChildren = {
   PersonsPersonIdRoute: PersonsPersonIdRoute,
+  PersonsImportRoute: PersonsImportRoute,
   PersonsIndexRoute: PersonsIndexRoute,
 }
 
@@ -553,6 +594,7 @@ const rootRouteChildren: RootRouteChildren = {
   DevicesRoute: DevicesRouteWithChildren,
   InviteRoute: InviteRoute,
   LoginRoute: LoginRoute,
+  MonitoringRoute: MonitoringRoute,
   PersonsRoute: PersonsRouteWithChildren,
   ProfileRoute: ProfileRoute,
   SettingsRoute: SettingsRoute,

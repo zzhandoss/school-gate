@@ -16,10 +16,16 @@ export interface PersonsRepo {
         offset: number;
         iin?: string;
         query?: string;
+        linkedStatus?: "all" | "linked" | "unlinked";
+        includeDeviceIds?: string[];
+        excludeDeviceIds?: string[];
     }): Promise<Person[]>;
     count(input: {
         iin?: string;
         query?: string;
+        linkedStatus?: "all" | "linked" | "unlinked";
+        includeDeviceIds?: string[];
+        excludeDeviceIds?: string[];
     }): Promise<number>;
     searchByIinPrefix(input: { iinPrefix: string; limit: number }): Promise<Person[]>;
 
@@ -32,6 +38,7 @@ export interface PersonsRepo {
         firstName?: string | null;
         lastName?: string | null;
     }): Promise<void>;
+    deleteByIdSync(input: { id: string }): boolean;
     withTx(tx: unknown): PersonsRepo;
 }
 

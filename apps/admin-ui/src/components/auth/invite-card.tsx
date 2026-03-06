@@ -1,8 +1,9 @@
-import { Link, useRouter } from '@tanstack/react-router'
+﻿import { Link, useRouter } from '@tanstack/react-router'
 import { useMutation } from '@tanstack/react-query'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { CheckCircle2, KeyRound, UserRoundPlus } from 'lucide-react'
 import { useForm } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
 
 import type { InviteRegistrationValues } from '@/lib/auth/invite-schema'
 import { mapAuthErrorToMessage } from '@/lib/auth/error-messages'
@@ -21,6 +22,7 @@ type InviteCardProps = {
 }
 
 export function InviteCard({ token }: InviteCardProps) {
+  const { t } = useTranslation()
   const router = useRouter()
   const form = useForm<InviteRegistrationValues>({
     resolver: zodResolver(inviteRegistrationSchema),
@@ -68,6 +70,13 @@ export function InviteCard({ token }: InviteCardProps) {
         ? mutation.error.message
         : null
 
+  function translateValidationMessage(message: string | undefined) {
+    if (!message) {
+      return ''
+    }
+    return t(message, { defaultValue: message })
+  }
+
   if (!token) {
     return (
       <Card className="border-border/80 shadow-lg shadow-slate-900/10">
@@ -76,17 +85,16 @@ export function InviteCard({ token }: InviteCardProps) {
             <KeyRound className="h-5 w-5" />
           </span>
           <div>
-            <h1 className="text-2xl font-semibold">Invite link is missing</h1>
+            <h1 className="text-2xl font-semibold">{t('auth.invite.missingTitle')}</h1>
             <p className="mt-2 text-sm text-muted-foreground">
-              The invite token was not found in this URL. Ask your administrator
-              for a new invite link.
+              {t('auth.invite.missingDescription')}
             </p>
           </div>
           <Link
             to="/login"
             className={cn(buttonVariants({ variant: 'default' }), 'w-full')}
           >
-            Go to sign in
+            {t('auth.common.goToSignIn')}
           </Link>
         </CardContent>
       </Card>
@@ -99,32 +107,32 @@ export function InviteCard({ token }: InviteCardProps) {
         <form className="space-y-4 p-6 md:p-8" onSubmit={form.handleSubmit(onSubmit)}>
           <div className="space-y-2">
             <p className="text-xs font-semibold tracking-[0.24em] text-muted-foreground uppercase">
-              School Gate
+              {t('app.brand.schoolGate')}
             </p>
-            <h1 className="text-2xl font-semibold">Complete invite registration</h1>
+            <h1 className="text-2xl font-semibold">{t('auth.invite.title')}</h1>
             <p className="text-sm text-muted-foreground">
-              Finish account setup and continue directly to the dashboard.
+              {t('auth.invite.subtitle')}
             </p>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email">{t('profile.email')}</Label>
             <Input
               id="email"
               type="email"
               autoComplete="email"
-              placeholder="admin@example.com…"
+              placeholder={t('common.placeholders.email')}
               {...form.register('email')}
             />
             {form.formState.errors.email ? (
               <p className="text-xs text-destructive">
-                {form.formState.errors.email.message}
+                {translateValidationMessage(form.formState.errors.email.message)}
               </p>
             ) : null}
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
+            <Label htmlFor="password">{t('auth.common.password')}</Label>
             <Input
               id="password"
               type="password"
@@ -133,13 +141,13 @@ export function InviteCard({ token }: InviteCardProps) {
             />
             {form.formState.errors.password ? (
               <p className="text-xs text-destructive">
-                {form.formState.errors.password.message}
+                {translateValidationMessage(form.formState.errors.password.message)}
               </p>
             ) : null}
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="confirmPassword">Confirm password</Label>
+            <Label htmlFor="confirmPassword">{t('auth.common.confirmPassword')}</Label>
             <Input
               id="confirmPassword"
               type="password"
@@ -148,13 +156,13 @@ export function InviteCard({ token }: InviteCardProps) {
             />
             {form.formState.errors.confirmPassword ? (
               <p className="text-xs text-destructive">
-                {form.formState.errors.confirmPassword.message}
+                {translateValidationMessage(form.formState.errors.confirmPassword.message)}
               </p>
             ) : null}
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="name">Name (optional)</Label>
+            <Label htmlFor="name">{t('auth.common.nameOptional')}</Label>
             <Input
               id="name"
               type="text"
@@ -163,14 +171,14 @@ export function InviteCard({ token }: InviteCardProps) {
             />
             {form.formState.errors.name ? (
               <p className="text-xs text-destructive">
-                {form.formState.errors.name.message}
+                {translateValidationMessage(form.formState.errors.name.message)}
               </p>
             ) : null}
           </div>
 
           {apiErrorMessage ? (
             <Alert className="border-destructive/40 bg-destructive/5 text-destructive">
-              <AlertTitle>Registration failed</AlertTitle>
+              <AlertTitle>{t('auth.invite.registrationFailedTitle')}</AlertTitle>
               <AlertDescription className="text-destructive/90">
                 {apiErrorMessage}
               </AlertDescription>
@@ -178,7 +186,7 @@ export function InviteCard({ token }: InviteCardProps) {
           ) : null}
 
           <Button type="submit" className="w-full" disabled={mutation.isPending}>
-            {mutation.isPending ? 'Completing registration…' : 'Complete registration'}
+            {mutation.isPending ? t('auth.invite.completing') : t('auth.invite.complete')}
           </Button>
         </form>
         <div className="relative hidden overflow-hidden bg-gradient-to-br from-teal-100 via-white to-amber-100 p-8 md:flex md:flex-col md:justify-between">
@@ -187,20 +195,19 @@ export function InviteCard({ token }: InviteCardProps) {
           <div className="relative z-10">
             <span className="inline-flex items-center gap-2 rounded-full border border-slate-300/70 bg-white/80 px-3 py-1 text-xs font-medium text-slate-700">
               <UserRoundPlus className="h-4 w-4" />
-              Invite onboarding
+              {t('auth.invite.hero.onboarding')}
             </span>
           </div>
           <div className="relative z-10 space-y-3">
             <h2 className="text-2xl font-semibold text-slate-900">
-              One step left to access the admin console
+              {t('auth.invite.hero.title')}
             </h2>
             <p className="max-w-xs text-sm text-slate-700">
-              After registration, the system signs you in automatically and opens
-              the dashboard.
+              {t('auth.invite.hero.description')}
             </p>
             <div className="inline-flex items-center gap-2 text-xs text-slate-600">
               <CheckCircle2 className="h-4 w-4 text-emerald-600" />
-              Invite token already validated on submit
+              {t('auth.invite.hero.validated')}
             </div>
           </div>
         </div>

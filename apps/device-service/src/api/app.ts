@@ -11,12 +11,17 @@ import type { DeviceServiceDevicesHandlers } from "./routes/devices.routes.js";
 import type { DeviceServiceAdaptersHandlers } from "./routes/adapters.routes.js";
 import type { DeviceServiceMonitoringHandlers } from "./routes/internalMonitoring.routes.js";
 import { createDeviceAdapterHttpClient } from "@school-gate/device/infra/http/deviceAdapterHttpClient";
+import { createIdentityExportUsersResolver } from "@school-gate/device/infra/identity/identityExportUsersResolver";
 import { createIdentityFindResolver } from "@school-gate/device/infra/identity/identityFindResolver";
+import { createIdentityGetUserPhotoResolver } from "@school-gate/device/infra/identity/identityGetUserPhotoResolver";
+import { createIdentityBulkCreateUsersResolver } from "@school-gate/device/infra/identity/identityBulkCreateUsersResolver";
+import { createIdentityWriteUsersResolver } from "@school-gate/device/infra/identity/identityWriteUsersResolver";
 import { createHttpApp } from "./delivery/http/createHttpApp.js";
 import { createAdapterIngressModule } from "./composition/features/adapters/adapterIngress.feature.js";
 import { createAdaptersAdminModule } from "./composition/features/adapters/adaptersAdmin.feature.js";
 import { createDevicesModule } from "./composition/features/devices/devices.feature.js";
 import { createIdentityModule } from "./composition/features/identity/identity.feature.js";
+import { toIdentityWriteUserPerson } from "./composition/features/identity/identityWriteUsersPayload.js";
 import { ensureDeviceSettingsMatchSchema } from "./json-schema/deviceSettingsSchema.js";
 
 export type DeviceServiceConfig = {
@@ -104,12 +109,121 @@ export function createDeviceServiceApp(input: DeviceServiceAppInput) {
                 token: input.config.token
             })
     });
+    const writeUsers = createIdentityWriteUsersResolver({
+        listDevices: async () => {
+            const result = await input.devices.list();
+            return result.devices.map((device) => ({
+                deviceId: device.id,
+                adapterKey: device.adapterKey,
+                enabled: device.enabled
+            }));
+        },
+        listAdapters: () =>
+            input.registry.list().map((session) => ({
+                adapterKey: session.vendorKey,
+                baseUrl: session.baseUrl,
+                mode: session.mode,
+                capabilities: session.capabilities
+            })),
+        createAdapterClient: (baseUrl) =>
+            createDeviceAdapterHttpClient({
+                baseUrl,
+                token: input.config.token
+            })
+    });
+    const getUserPhoto = createIdentityGetUserPhotoResolver({
+        listDevices: async () => {
+            const result = await input.devices.list();
+            return result.devices.map((device) => ({
+                deviceId: device.id,
+                adapterKey: device.adapterKey,
+                enabled: device.enabled
+            }));
+        },
+        listAdapters: () =>
+            input.registry.list().map((session) => ({
+                adapterKey: session.vendorKey,
+                baseUrl: session.baseUrl,
+                mode: session.mode
+            })),
+        createAdapterClient: (baseUrl) =>
+            createDeviceAdapterHttpClient({
+                baseUrl,
+                token: input.config.token
+            })
+    });
+    const bulkCreateUsers = createIdentityBulkCreateUsersResolver({
+        listDevices: async () => {
+            const result = await input.devices.list();
+            return result.devices.map((device) => ({
+                deviceId: device.id,
+                adapterKey: device.adapterKey,
+                enabled: device.enabled
+            }));
+        },
+        listAdapters: () =>
+            input.registry.list().map((session) => ({
+                adapterKey: session.vendorKey,
+                baseUrl: session.baseUrl,
+                mode: session.mode
+            })),
+        createAdapterClient: (baseUrl) =>
+            createDeviceAdapterHttpClient({
+                baseUrl,
+                token: input.config.token
+            })
+    });
     const identity = createIdentityModule({
         find: (payload) =>
             resolveIdentity({
                 identityKey: payload.identityKey,
                 identityValue: payload.identityValue,
+                ...(payload.deviceId ? { deviceId: payload.deviceId } : {}),
                 ...(payload.limit !== undefined ? { limit: payload.limit } : {})
+            }),
+        exportUsers: createIdentityExportUsersResolver({
+            listDevices: async () => {
+                const result = await input.devices.list();
+                return result.devices.map((device) => ({
+                    deviceId: device.id,
+                    adapterKey: device.adapterKey,
+                    enabled: device.enabled
+                }));
+            },
+            listAdapters: () =>
+                input.registry.list().map((session) => ({
+                    adapterKey: session.vendorKey,
+                    baseUrl: session.baseUrl,
+                    mode: session.mode,
+                    capabilities: session.capabilities
+                })),
+            createAdapterClient: (baseUrl) =>
+                createDeviceAdapterHttpClient({
+                    baseUrl,
+                    token: input.config.token
+                })
+        }),
+        getUserPhoto: (payload) =>
+            getUserPhoto({
+                target: payload.target,
+                userId: payload.userId
+            }),
+        bulkCreateUsers: (payload) =>
+            bulkCreateUsers({
+                target: payload.target,
+                persons: payload.persons.map((person) => toIdentityWriteUserPerson(person))
+            }),
+        createUsers: (payload) =>
+            writeUsers({
+                operation: "create",
+                target: payload.target,
+                person: toIdentityWriteUserPerson(payload.person)
+            }),
+        updateUsers: (payload) =>
+            writeUsers({
+                operation: "update",
+                target: payload.target,
+                person: toIdentityWriteUserPerson(payload.person)
             })
     });
 

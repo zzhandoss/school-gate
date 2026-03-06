@@ -9,6 +9,10 @@ export type SectionState = {
     success: string | null
     error: string | null
 };
+export type GroupValidationError = {
+    key: "settings.validation.positiveInteger" | "settings.validation.required";
+    fieldKey: string;
+};
 
 type FieldDef = {
     key: string
@@ -101,18 +105,18 @@ export function createGroupDraft(group: GroupDef, groupSnapshot: GroupSnapshot) 
     return next;
 }
 
-export function validateGroup(group: GroupDef, draft: GroupDraft) {
+export function validateGroup(group: GroupDef, draft: GroupDraft): GroupValidationError | null {
     for (const field of group.fields) {
         const value = draft[field.key];
         if (field.kind === "number") {
             const parsed = Number.parseInt(String(value), 10);
             if (!Number.isInteger(parsed) || parsed <= 0) {
-                return `${field.label} must be a positive integer.`;
+                return { key: "settings.validation.positiveInteger", fieldKey: field.key };
             }
         }
         if (field.kind === "string") {
             if (String(value).trim().length === 0) {
-                return `${field.label} cannot be empty.`;
+                return { key: "settings.validation.required", fieldKey: field.key };
             }
         }
     }

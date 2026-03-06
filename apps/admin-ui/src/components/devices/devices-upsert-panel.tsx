@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Pencil, Plus } from 'lucide-react'
 
 import { DevicesUpsertForm } from './devices-upsert-form'
@@ -28,13 +29,14 @@ type DevicesUpsertPanelProps = {
 }
 
 export function DevicesUpsertPanel({ mode, device, adapters, canWrite, onSubmit }: DevicesUpsertPanelProps) {
+  const { t } = useTranslation()
   const [isDesktopOpen, setIsDesktopOpen] = useState(false)
   const [isMobileOpen, setIsMobileOpen] = useState(false)
 
-  const title = mode === 'create' ? 'Create device' : 'Edit device'
+  const title = mode === 'create' ? t('devices.panel.createTitle') : t('devices.panel.editTitle')
   const description = mode === 'create'
-    ? 'Register a device and link it to an adapter.'
-    : 'Update device metadata and operational settings.'
+    ? t('devices.panel.createDescription')
+    : t('devices.panel.editDescription')
 
   return (
     <>
@@ -47,7 +49,7 @@ export function DevicesUpsertPanel({ mode, device, adapters, canWrite, onSubmit 
             onClick={() => setIsDesktopOpen(true)}
           >
             <Plus className="h-4 w-4" />
-            Add device
+            {t('devices.panel.addDevice')}
           </Button>
           <Button
             type="button"
@@ -56,7 +58,7 @@ export function DevicesUpsertPanel({ mode, device, adapters, canWrite, onSubmit 
             onClick={() => setIsMobileOpen(true)}
           >
             <Plus className="h-4 w-4" />
-            Add
+            {t('devices.panel.add')}
           </Button>
         </>
       ) : (
@@ -70,14 +72,14 @@ export function DevicesUpsertPanel({ mode, device, adapters, canWrite, onSubmit 
             onClick={() => setIsDesktopOpen(true)}
           >
             <Pencil className="h-3.5 w-3.5" />
-            Edit
+            {t('devices.panel.edit')}
           </Button>
           <Button
             type="button"
             size="icon"
             variant="outline"
             className="sm:hidden"
-            aria-label={`Edit ${device?.name ?? 'device'}`}
+            aria-label={t('devices.panel.editAria', { value: device?.name ?? t('common.labels.device') })}
             disabled={!canWrite}
             onClick={() => setIsMobileOpen(true)}
           >

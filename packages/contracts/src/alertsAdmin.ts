@@ -166,7 +166,17 @@ export const listAlertEventsQuerySchema = z.object({
 });
 
 export const listAlertEventsResultSchema = z.object({
-    events: z.array(alertEventSchema)
+    events: z.array(alertEventSchema),
+    page: z.object({
+        limit: z.number().int().positive(),
+        offset: z.number().int().nonnegative(),
+        total: z.number().int().nonnegative()
+    })
+});
+
+export const deleteAlertRuleResultSchema = z.object({
+    ruleId: z.string().min(1),
+    deleted: z.literal(true)
 });
 
 export type CreateAlertRuleDto = z.infer<typeof createAlertRuleSchema>;
@@ -181,3 +191,4 @@ export type ListAlertSubscriptionsResultDto = z.infer<typeof listAlertSubscripti
 export type AlertEventDto = z.infer<typeof alertEventSchema>;
 export type ListAlertEventsQueryDto = z.infer<typeof listAlertEventsQuerySchema>;
 export type ListAlertEventsResultDto = z.infer<typeof listAlertEventsResultSchema>;
+export type DeleteAlertRuleResultDto = z.infer<typeof deleteAlertRuleResultSchema>;

@@ -1,4 +1,5 @@
 import { ChevronDown, ChevronUp } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import type { FormEvent } from 'react'
 
 import type { AuditLogsFilterDraft } from './audit-logs-view.helpers'
@@ -32,31 +33,33 @@ export function AuditLogsFilters({
   onApplyFilters,
   onResetFilters
 }: AuditLogsFiltersProps) {
+  const { t } = useTranslation()
+
   return (
     <Card>
       <Collapsible open={filtersOpen} onOpenChange={onFiltersOpenChange}>
         <CardHeader className="gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="space-y-1">
             <CardTitle className="flex items-center gap-2">
-              Filters
+              {t('common.filters.title')}
               {appliedFiltersCount > 0 ? (
-                <Badge variant="default">Applied: {appliedFiltersCount}</Badge>
+                <Badge variant="default">{t('common.filters.appliedCount', { count: appliedFiltersCount })}</Badge>
               ) : (
-                <Badge variant="outline">No filters</Badge>
+                <Badge variant="outline">{t('common.filters.noFilters')}</Badge>
               )}
             </CardTitle>
-            <CardDescription>Filter by actor, action, entity and time range.</CardDescription>
+            <CardDescription>{t('auditLogs.filtersDescription')}</CardDescription>
           </div>
           <CollapsibleTrigger asChild>
             <Button type="button" variant="outline">
               {filtersOpen ? (
                 <>
-                  Hide filters
+                  {t('common.actions.hideFilters')}
                   <ChevronUp className="h-4 w-4" />
                 </>
               ) : (
                 <>
-                  Show filters
+                  {t('common.actions.showFilters')}
                   <ChevronDown className="h-4 w-4" />
                 </>
               )}
@@ -66,38 +69,38 @@ export function AuditLogsFilters({
         <CollapsibleContent>
           <CardContent>
             <form className="grid gap-3 md:grid-cols-3" onSubmit={(event) => void onApplyFilters(event)}>
-              <Input
-                value={draftFilters.actorId}
-                onChange={(event) => onDraftFiltersChange((prev) => ({ ...prev, actorId: event.target.value }))}
-                placeholder="Actor ID"
-              />
+                <Input
+                  value={draftFilters.actorId}
+                  onChange={(event) => onDraftFiltersChange((prev) => ({ ...prev, actorId: event.target.value }))}
+                  placeholder={t('common.placeholders.actorId')}
+                />
 
-              <Input
-                value={draftFilters.action}
-                onChange={(event) => onDraftFiltersChange((prev) => ({ ...prev, action: event.target.value }))}
-                placeholder="Action"
-              />
+                <Input
+                  value={draftFilters.action}
+                  onChange={(event) => onDraftFiltersChange((prev) => ({ ...prev, action: event.target.value }))}
+                  placeholder={t('common.placeholders.auditAction')}
+                />
 
-              <Input
-                value={draftFilters.entityType}
-                onChange={(event) => onDraftFiltersChange((prev) => ({ ...prev, entityType: event.target.value }))}
-                placeholder="Entity type"
-              />
+                <Input
+                  value={draftFilters.entityType}
+                  onChange={(event) => onDraftFiltersChange((prev) => ({ ...prev, entityType: event.target.value }))}
+                  placeholder={t('common.placeholders.entityType')}
+                />
 
-              <Input
-                value={draftFilters.entityId}
-                onChange={(event) => onDraftFiltersChange((prev) => ({ ...prev, entityId: event.target.value }))}
-                placeholder="Entity ID"
-              />
+                <Input
+                  value={draftFilters.entityId}
+                  onChange={(event) => onDraftFiltersChange((prev) => ({ ...prev, entityId: event.target.value }))}
+                  placeholder={t('common.placeholders.entityId')}
+                />
 
               <Select value={String(draftLimit)} onValueChange={(value) => onDraftLimitChange(Number(value))}>
                 <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Page size" />
+                  <SelectValue placeholder={t('common.filters.pageSize')} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="20">20 per page</SelectItem>
-                  <SelectItem value="50">50 per page</SelectItem>
-                  <SelectItem value="100">100 per page</SelectItem>
+                  <SelectItem value="20">{t('common.pagination.perPage', { count: 20 })}</SelectItem>
+                  <SelectItem value="50">{t('common.pagination.perPage', { count: 50 })}</SelectItem>
+                  <SelectItem value="100">{t('common.pagination.perPage', { count: 100 })}</SelectItem>
                 </SelectContent>
               </Select>
 
@@ -117,9 +120,9 @@ export function AuditLogsFilters({
 
               <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-end md:col-span-3">
                 <Button type="button" variant="outline" onClick={() => void onResetFilters()}>
-                  Reset
+                  {t('common.actions.reset')}
                 </Button>
-                <Button type="submit">Apply filters</Button>
+                <Button type="submit">{t('common.actions.applyFilters')}</Button>
               </div>
             </form>
           </CardContent>

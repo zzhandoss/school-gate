@@ -1,4 +1,5 @@
 import { KeyRound } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 import type { AdminItem, AdminRole, AdminStatus } from '@/lib/admins/types'
 import { Badge } from '@/components/ui/badge'
@@ -48,12 +49,13 @@ export function AdminsTable({
   onRoleChange,
   onCreatePasswordReset
 }: AdminsTableProps) {
+  const { t } = useTranslation()
   const roleNameById = new Map(roles.map((role) => [role.id, role.name]))
 
   if (admins.length === 0) {
     return (
-      <div className="rounded-lg border border-dashed border-border/70 p-8 text-center text-sm text-muted-foreground">
-        No admins found.
+        <div className="rounded-lg border border-dashed border-border/70 p-8 text-center text-sm text-muted-foreground">
+        {t('admins.noAdminsFound')}
       </div>
     )
   }
@@ -62,12 +64,12 @@ export function AdminsTable({
     <Table>
       <TableHeader>
         <TableRow>
-          <TableHead>Admin</TableHead>
-          <TableHead>Status</TableHead>
-          <TableHead>Role</TableHead>
-          <TableHead>Telegram</TableHead>
-          <TableHead>Created</TableHead>
-          <TableHead className="text-right">Actions</TableHead>
+          <TableHead>{t('admins.table.admin')}</TableHead>
+          <TableHead>{t('common.labels.status')}</TableHead>
+          <TableHead>{t('app.shell.role')}</TableHead>
+          <TableHead>{t('common.labels.telegram')}</TableHead>
+          <TableHead>{t('common.labels.created')}</TableHead>
+          <TableHead className="text-right">{t('common.labels.actions')}</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -81,14 +83,16 @@ export function AdminsTable({
             <TableRow key={admin.id}>
               <TableCell>
                 <div className="min-w-[180px]">
-                  <p className="truncate text-sm font-medium text-foreground">{admin.name ?? 'Unnamed admin'}</p>
+                  <p className="truncate text-sm font-medium text-foreground">{admin.name ?? t('admins.table.unnamedAdmin')}</p>
                   <p className="truncate text-xs text-muted-foreground">{admin.email}</p>
                 </div>
               </TableCell>
 
               <TableCell>
                 <div className="flex flex-col gap-2">
-                  <Badge variant={STATUS_VARIANT[admin.status]}>{admin.status}</Badge>
+                  <Badge variant={STATUS_VARIANT[admin.status]}>
+                    {t(`enums.adminStatus.${admin.status}`)}
+                  </Badge>
                   <Select
                     value={admin.status}
                     disabled={statusDisabled}
@@ -103,9 +107,9 @@ export function AdminsTable({
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="pending">pending</SelectItem>
-                      <SelectItem value="active">active</SelectItem>
-                      <SelectItem value="disabled">disabled</SelectItem>
+                      <SelectItem value="pending">{t('enums.adminStatus.pending')}</SelectItem>
+                      <SelectItem value="active">{t('enums.adminStatus.active')}</SelectItem>
+                      <SelectItem value="disabled">{t('enums.adminStatus.disabled')}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -118,7 +122,7 @@ export function AdminsTable({
                   onValueChange={(value) => onRoleChange(admin.id, value)}
                 >
                   <SelectTrigger className="h-8 w-[180px]">
-                    <SelectValue placeholder="Select role" />
+                    <SelectValue placeholder={t('admins.table.selectRole')} />
                   </SelectTrigger>
                   <SelectContent>
                     {roles.map((role) => (
@@ -133,19 +137,19 @@ export function AdminsTable({
                 </p>
                 {isSelf ? (
                   <p className="mt-1 text-xs text-muted-foreground">
-                    You cannot change your own role.
+                    {t('admins.cannotChangeOwnRole')}
                   </p>
                 ) : null}
                 {isLastActiveSuperAdmin ? (
                   <p className="mt-1 text-xs text-muted-foreground">
-                    Last active super_admin cannot be disabled.
+                    {t('admins.cannotDisableLastSuperAdmin')}
                   </p>
                 ) : null}
               </TableCell>
 
               <TableCell>
                 <span className="text-sm text-muted-foreground">
-                  {admin.tgUserId ?? 'not linked'}
+                  {admin.tgUserId ?? t('admins.table.notLinked')}
                 </span>
               </TableCell>
 
@@ -164,7 +168,7 @@ export function AdminsTable({
                   onClick={() => onCreatePasswordReset(admin.id)}
                 >
                   <KeyRound className="h-3.5 w-3.5" />
-                  Reset password
+                  {t('admins.table.resetPassword')}
                 </Button>
               </TableCell>
             </TableRow>

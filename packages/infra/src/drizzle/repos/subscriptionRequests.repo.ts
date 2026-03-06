@@ -1,4 +1,4 @@
-import { and, asc, desc, eq, ne, sql } from "drizzle-orm";
+import { and, asc, desc, eq, inArray, ne, sql } from "drizzle-orm";
 import type { Db } from "@school-gate/db/drizzle";
 import { subscriptionRequests } from "@school-gate/db/schema";
 import type {
@@ -221,6 +221,49 @@ export function createSubscriptionRequestsRepo(db: Db): SubscriptionRequestsRepo
                 .offset(offset);
 
             return rows.map(mapRow);
+        },
+
+        unlinkPersonByPersonIdSync({ personId, message, resolvedAt }) {
+            const rows = db
+                .select({
+                    id: subscriptionRequests.id,
+                    status: subscriptionRequests.status,
+                    resolutionStatus: subscriptionRequests.resolutionStatus
+                })
+                .from(subscriptionRequests)
+                .where(eq(subscriptionRequests.personId, personId))
+                .all();
+
+            if (rows.length === 0) {
+                return { updated: 0, resetToNeedsPerson: 0 };
+            }
+
+            db
+                .update(subscriptionRequests)
+                .set({ personId: null })
+                .where(eq(subscriptionRequests.personId, personId))
+                .run();
+
+            const resetRows = rows.filter(
+                (row) => row.status === "pending" && row.resolutionStatus === "ready_for_review"
+            );
+
+            if (resetRows.length > 0) {
+                db
+                    .update(subscriptionRequests)
+                    .set({
+                        resolutionStatus: "needs_person",
+                        resolutionMessage: message,
+                        resolvedAt
+                    })
+                    .where(inArray(subscriptionRequests.id, resetRows.map((row) => row.id)))
+                    .run();
+            }
+
+            return {
+                updated: rows.length,
+                resetToNeedsPerson: resetRows.length
+            };
         },
 
         withTx(tx) {

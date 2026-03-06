@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Pencil, Plus } from 'lucide-react'
 
 import { AdminRoleForm } from './admin-role-form'
@@ -36,13 +37,16 @@ export function AdminRolePanel({
   canManage,
   onSubmit
 }: AdminRolePanelProps) {
+  const { t } = useTranslation()
   const [isDesktopOpen, setIsDesktopOpen] = useState(false)
   const [isMobileOpen, setIsMobileOpen] = useState(false)
 
-  const title = mode === 'create' ? 'Create role' : `Edit ${role?.name ?? 'role'}`
+  const title = mode === 'create'
+    ? t('admins.rolePanel.createTitle')
+    : t('admins.rolePanel.editTitle', { roleName: role?.name ?? t('admins.rolePanel.roleFallback') })
   const description = mode === 'create'
-    ? 'Define a new role and attach permissions.'
-    : 'Adjust permission scope for selected role.'
+    ? t('admins.rolePanel.createDescription')
+    : t('admins.rolePanel.editDescription')
 
   return (
     <>
@@ -55,7 +59,7 @@ export function AdminRolePanel({
             onClick={() => setIsDesktopOpen(true)}
           >
             <Plus className="h-4 w-4" />
-            Create role
+            {t('admins.rolePanel.createRole')}
           </Button>
           <Button
             type="button"
@@ -64,7 +68,7 @@ export function AdminRolePanel({
             onClick={() => setIsMobileOpen(true)}
           >
             <Plus className="h-4 w-4" />
-            Role
+            {t('admins.rolePanel.role')}
           </Button>
         </>
       ) : (
@@ -78,14 +82,14 @@ export function AdminRolePanel({
             onClick={() => setIsDesktopOpen(true)}
           >
             <Pencil className="h-3.5 w-3.5" />
-            Edit
+            {t('admins.rolePanel.edit')}
           </Button>
           <Button
             type="button"
             size="icon"
             variant="outline"
             className="sm:hidden"
-            aria-label={`Edit ${role?.name ?? 'role'}`}
+            aria-label={t('admins.rolePanel.editAria', { roleName: role?.name ?? t('admins.rolePanel.roleFallback') })}
             disabled={!canManage}
             onClick={() => setIsMobileOpen(true)}
           >

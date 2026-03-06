@@ -7,6 +7,7 @@ export interface SubscriptionsRepo {
     listActiveByPersonId(personId: string): Promise<Subscription[]>;
 
     deactivate(input: { tgUserId: string; personId: string }): Promise<void>;
+    deactivateByPersonIdSync(input: { personId: string }): number;
 
     listByTgUserId(input: { tgUserId: string; onlyActive?: boolean }): Promise<Subscription[]>;
 

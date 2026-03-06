@@ -35,6 +35,11 @@ export interface SubscriptionRequestsRepo {
         offset?: number;
         order?: "oldest" | "newest";
     }): Promise<SubscriptionRequest[]>;
+    unlinkPersonByPersonIdSync(input: {
+        personId: string;
+        message: string;
+        resolvedAt: Date;
+    }): { updated: number; resetToNeedsPerson: number };
     withTx(tx: unknown): SubscriptionRequestsRepo;
 }
 

@@ -153,9 +153,17 @@ export function SettingsView() {
 
     const validationError = validateGroup(group, groupDraft)
     if (validationError) {
+      const fieldDefinition = group.fields.find((field) => field.key === validationError.fieldKey)
+      const fieldLabel = t(`settings.groups.${group.key}.fields.${validationError.fieldKey}.label`, {
+        defaultValue: fieldDefinition?.label ?? validationError.fieldKey
+      })
       setSectionStates((current) => ({
         ...current,
-        [groupKey]: { saving: false, success: null, error: validationError }
+        [groupKey]: {
+          saving: false,
+          success: null,
+          error: t(validationError.key, { field: fieldLabel })
+        }
       }))
       return
     }
@@ -256,13 +264,14 @@ export function SettingsView() {
           <p className="text-sm text-muted-foreground">{t('app.language.description')}</p>
         </div>
         <div className="max-w-[260px]">
-          <Select value={i18n.resolvedLanguage === 'ru' ? 'ru' : 'en'} onValueChange={(value) => { void i18n.changeLanguage(value) }}>
+          <Select value={i18n.resolvedLanguage === 'kz' ? 'kz' : i18n.resolvedLanguage === 'ru' ? 'ru' : 'en'} onValueChange={(value) => { void i18n.changeLanguage(value) }}>
             <SelectTrigger>
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="ru">{t('app.language.ru')}</SelectItem>
               <SelectItem value="en">{t('app.language.en')}</SelectItem>
+              <SelectItem value="kz">{t('app.language.kz')}</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -272,7 +281,7 @@ export function SettingsView() {
         <TabsList className="h-auto w-full justify-start overflow-x-auto rounded-xl bg-muted/70 p-1">
           {GROUP_DEFS.map((group) => (
             <TabsTrigger key={group.key} value={group.key} className="cursor-pointer px-3 py-2 capitalize">
-              {group.title}
+              {t(`settings.groups.${group.key}.title`, { defaultValue: group.title })}
             </TabsTrigger>
           ))}
         </TabsList>

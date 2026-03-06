@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useRouter } from '@tanstack/react-router'
 import { RefreshCw } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 import { AuditLogsFilters } from './audit-logs-filters'
 import { AuditLogsTable } from './audit-logs-table'
@@ -35,6 +36,7 @@ type AuditLogsViewProps = {
 }
 
 export function AuditLogsView({ initialData }: AuditLogsViewProps) {
+  const { t } = useTranslation()
   const router = useRouter()
   const navigate = Route.useNavigate()
   const search = Route.useSearch()
@@ -97,7 +99,7 @@ export function AuditLogsView({ initialData }: AuditLogsViewProps) {
         await router.navigate({ to: '/unavailable' })
         return
       }
-      setError(value instanceof Error ? value.message : 'Failed to load audit logs')
+      setError(value instanceof Error ? value.message : t('auditLogs.loadFailed'))
     } finally {
       setTableLoading(false)
     }
@@ -177,8 +179,8 @@ export function AuditLogsView({ initialData }: AuditLogsViewProps) {
   if (!canRead) {
     return (
       <Alert className="border-amber-300/60 bg-amber-50 text-amber-900">
-        <AlertTitle>Access denied</AlertTitle>
-        <AlertDescription>Your account does not have `monitoring.read` permission.</AlertDescription>
+        <AlertTitle>{t('settings.accessDeniedTitle')}</AlertTitle>
+        <AlertDescription>{t('auditLogs.accessDeniedDescription')}</AlertDescription>
       </Alert>
     )
   }
@@ -187,14 +189,14 @@ export function AuditLogsView({ initialData }: AuditLogsViewProps) {
     <div className="space-y-5">
       <div className="flex flex-col gap-3 rounded-xl border border-border/70 bg-card/70 p-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-lg font-semibold">Audit logs</h1>
+          <h1 className="text-lg font-semibold">{t('app.nav.auditLogs')}</h1>
           <p className="text-sm text-muted-foreground">
-            Operational history with URL-persisted filters and server pagination.
+            {t('auditLogs.subtitle')}
           </p>
         </div>
         <Button type="button" variant="outline" disabled={refreshing || tableLoading} onClick={() => void onRefresh()}>
           <RefreshCw className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} />
-          {refreshing ? 'Refreshing...' : 'Refresh'}
+          {refreshing ? t('common.actions.refreshing') : t('common.actions.refresh')}
         </Button>
       </div>
 
@@ -216,15 +218,15 @@ export function AuditLogsView({ initialData }: AuditLogsViewProps) {
       <div id="audit-logs-table" ref={tableSectionRef}>
         <Card>
           <CardHeader>
-            <CardTitle>History stream</CardTitle>
+            <CardTitle>{t('auditLogs.historyStream')}</CardTitle>
             <CardDescription>
-              {rangeStart}-{rangeEnd} of {total} logs.
+              {t('auditLogs.historyRange', { from: rangeStart, to: rangeEnd, total })}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             {error ? (
               <Alert className="border-destructive/40 bg-destructive/5 text-destructive">
-                <AlertTitle>Audit logs failed to load</AlertTitle>
+                <AlertTitle>{t('auditLogs.pageLoadFailedTitle')}</AlertTitle>
                 <AlertDescription>{error}</AlertDescription>
               </Alert>
             ) : null}

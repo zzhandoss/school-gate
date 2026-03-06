@@ -5,22 +5,35 @@ This file records architectural and implementation decisions using a list format
 
 ## Decision
 
+- 2026-03-06: Split the API Persons composition out of `events.feature.ts` into dedicated composition modules while keeping `createEventsFeature(...).persons` as the compatibility entrypoint for existing tests and callers.
+- 2026-03-06: Align device-service bulk identity create to the adapter spec with flat per `userId x deviceId` results and a dedicated bulk resolver over adapter sessions.
 - 2026-01-25: Use a combined worker runner for development to start both workers with one command.
 - 2026-01-25: Use `tsx` as the dev-time TS runner for worker entrypoints.
 - 2026-01-26: Use sync UnitOfWork for transactional review and enqueue audit events to outbox.
+- 2026-03-02: Keep alert rule delete explicit about DB cascade side effects and rely on rebuilt package dist outputs for runtime package consumers.
+- 2026-03-02: Never append new schema objects to an already-applied migration file; create a follow-up migration and keep old migration SQL aligned with the historical snapshot.
 
 ## Rationale 
 
+- `events.feature.ts` had become a mixed composition file for unrelated bounded contexts. Extracting Persons handlers into dedicated modules keeps access-events wiring readable, makes further Persons changes local, and preserves compatibility because existing tests still consume `feature.persons` from `createEventsFeature`.
+- The updated adapter spec defines bulk create as flat per-pair rows with `skipped` semantics; keeping nested-by-user DS results would leave docs, contracts, and runtime inconsistent.
 - Keep a single command for local development and production-style operation.
 - Avoid manual compilation during development while keeping TypeScript entrypoints.
 - Ensure review changes and outbox enqueue are atomic with better-sqlite3 sync transactions.
+- Alert rule deletion currently cascades through DB relations into alert subscriptions and alert events, so operators must see an explicit destructive warning before confirmation.
+- Apps importing workspace packages via package exports may continue using stale compiled JS until the package `dist` is rebuilt and the running process is restarted.
+- Existing databases record migration execution once; changing SQL inside an already-applied migration leaves live databases permanently behind and creates drift between fresh and existing environments.
 
 ## Implementation Details
 
+- New files under `apps/api/src/composition/features/persons/` now own Persons CRUD, identity, import review/apply, import run, and terminal-user composition wiring. `apps/api/src/composition/features/events.feature.ts` now assembles only access-events concerns and delegates `persons` to `createPersonsFeature(runtime, deviceServiceGateway)`.
+- `packages/contracts/src/deviceServiceIdentityWriteUsers.ts` now models bulk create as flat `results[]` and allows `skipped` plus skip codes/messages.
+- `packages/device/infra/src/identity/identityBulkCreateUsersResolver.ts` groups target devices by adapter and calls the adapter bulk endpoint instead of looping through single-create calls.
 - `pnpm dev` runs `tsx apps/worker/src/runAll.ts`, which spawns the worker entrypoints.
 - `tsx` added as a devDependency.
 - `review` usecase runs inside sync UnitOfWork and emits `audit.requested` to outbox.
 - Outbox supports lease reclaim (processing_at/by) and audit logs deduplicate by `event_id` (migration 0007).
+- Persons import storage fix required restoring `packages/db/src/migrations/0000_whole_senator_kelly.sql` to the pre-terminal-directory state and adding `packages/db/src/migrations/0001_greedy_vengeance.sql` for `terminal_directory_entries` and `terminal_directory_sync_runs`, then applying migrations to `data/app.db`.
 
 ---
 ### Decision Record
@@ -1314,3 +1327,22 @@ SSR and client auth checks used direct frontend API calls, which failed to carry
 - Maintainability Impact: Single auth gate and session source simplifies reasoning.
 - Scalability Impact: Supports future protected layout expansion with consistent SSR/CSR behavior.
 - [2026-02-10 05:38:19] Decision: make logout deterministic by awaiting server-side /api/auth/logout via TanStack Start server function with cookie forwarding, then clear client session and navigate.
+
+---
+### Decision Record
+[2026-03-02 03:07:29] - Use snapshot-based terminal user import as the primary persons onboarding flow, with exact-IIN matching as the only automatic reconciliation rule.
+
+**Decision Background:**
+Manual person creation plus per-device identity binding proved too slow and error-prone for non-technical operators, especially when the same user exists on multiple terminals with possible drift.
+
+**Available Options:**
+- Option 1: Keep manual person-first flow and add more helpers around device identity lookup.
+  - Pros: smaller UI/backend change set.
+  - Cons: still operator-heavy and poor for multi-device reconciliation.
+- Option 2: Introduce terminal-directory snapshot sync plus grouped review/apply workspace, while keeping manual identity editing as an advanced fallback.
+  - Pros: bulk-friendly, safer conflict review, better fit for non-technical operators, and future-compatible with terminal write-back.
+  - Cons: adds snapshot storage, classification logic, and a larger AdminUI surface.
+
+**Final Decision:**
+Use Option 2. Terminal users are imported from devices into a persistent snapshot, grouped and classified by IIN/status, and operators apply safe bulk actions (create_person_and_link, link_existing, eassign_identity, skip). Automatic reconciliation is limited to exact IIN matches only.
+

@@ -3,6 +3,7 @@ import { z } from "zod";
 import {
     createAlertRuleResultSchema,
     createAlertRuleSchema,
+    deleteAlertRuleResultSchema,
     listAlertEventsQuerySchema,
     listAlertEventsResultSchema,
     listAlertRulesQuerySchema,
@@ -12,6 +13,7 @@ import {
     setAlertSubscriptionSchema,
     updateAlertRuleSchema,
     type CreateAlertRuleDto,
+    type DeleteAlertRuleResultDto,
     type ListAlertEventsQueryDto,
     type ListAlertEventsResultDto,
     type ListAlertRulesQueryDto,
@@ -32,6 +34,7 @@ import { defineRoute, okSchema } from "../openapi/defineRoute.js";
 export type AlertsModule = {
     listRules: (input: ListAlertRulesQueryDto) => Promise<ListAlertRulesResultDto | ListAlertRulesResultDto["rules"]>;
     createRule: (input: CreateAlertRuleDto, adminId?: string | undefined) => Promise<{ ruleId: string }>;
+    deleteRule: (input: { ruleId: string }, adminId?: string | undefined) => Promise<DeleteAlertRuleResultDto>;
     updateRule: (input: { ruleId: string } & UpdateAlertRuleDto, adminId?: string | undefined) => Promise<void>;
     listSubscriptions: (input: ListAlertSubscriptionsQueryDto) => Promise<ListAlertSubscriptionsResultDto | ListAlertSubscriptionsResultDto["subscriptions"]>;
     setSubscription: (input: SetAlertSubscriptionDto) => Promise<void>;
@@ -89,6 +92,22 @@ export function createAlertsRoutes(input: { module: AlertsModule; auth: AdminAut
         }),
         handler<CreateAlertRuleDto>(({ c, body }) =>
             input.module.createRule(body as CreateAlertRuleDto, c.get("admin")?.adminId)
+        )
+    );
+
+    app.openapi(
+        defineRoute({
+            method: "delete",
+            path: "/rules/:ruleId",
+            tags: ["Alerts"],
+            summary: "Delete alert rule",
+            middleware: [input.auth.requirePermissions(["admin.manage"]), useResponse(deleteAlertRuleResultSchema)],
+            request: { params: ruleIdParamsSchema },
+            success: { schema: deleteAlertRuleResultSchema },
+            security: [{ adminBearerAuth: [] }]
+        }),
+        handler<unknown, unknown, { ruleId: string }>(({ c, params }) =>
+            input.module.deleteRule({ ruleId: params.ruleId }, c.get("admin")?.adminId)
         )
     );
 
@@ -182,7 +201,14 @@ export function createAlertsRoutes(input: { module: AlertsModule; auth: AdminAut
         handler<unknown, ListAlertEventsQueryDto>(async ({ query }) => {
             const result = await input.module.listEvents(query);
             if (Array.isArray(result)) {
-                return { events: result };
+                return {
+                    events: result,
+                    page: {
+                        limit: query.limit,
+                        offset: query.offset,
+                        total: result.length
+                    }
+                };
             }
             return result;
         })
