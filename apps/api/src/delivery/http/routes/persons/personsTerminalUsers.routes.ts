@@ -43,11 +43,13 @@ export function registerPersonsTerminalUserRoutes(
                 security: [{ adminBearerAuth: [] }]
             }),
             handler<BulkCreatePersonTerminalUsersDto>(({ c, body }) => {
+                const admin = c.get("admin");
                 const adminId = c.get("admin")?.adminId;
                 const authorizationHeader = c.req.header("authorization");
                 return input.module.bulkCreateTerminalUsers!({
                     body: body as BulkCreatePersonTerminalUsersDto,
                     ...(adminId ? { adminId } : {}),
+                    ...(admin ? { admin } : {}),
                     ...(authorizationHeader ? { authorizationHeader } : {})
                 });
             })
@@ -71,12 +73,14 @@ export function registerPersonsTerminalUserRoutes(
                 security: [{ adminBearerAuth: [] }]
             }),
             handler<CreatePersonTerminalUsersDto, unknown, z.infer<typeof personParamsSchema>>(({ c, body, params }) => {
+                const admin = c.get("admin");
                 const adminId = c.get("admin")?.adminId;
                 const authorizationHeader = c.req.header("authorization");
                 return input.module.createTerminalUsers!({
                     personId: params.personId,
                     body: body as CreatePersonTerminalUsersDto,
                     ...(adminId ? { adminId } : {}),
+                    ...(admin ? { admin } : {}),
                     ...(authorizationHeader ? { authorizationHeader } : {})
                 });
             })
@@ -100,12 +104,14 @@ export function registerPersonsTerminalUserRoutes(
                 security: [{ adminBearerAuth: [] }]
             }),
             handler<UpdatePersonTerminalUsersDto, unknown, z.infer<typeof personParamsSchema>>(({ c, body, params }) => {
+                const admin = c.get("admin");
                 const adminId = c.get("admin")?.adminId;
                 const authorizationHeader = c.req.header("authorization");
                 return input.module.updateTerminalUsers!({
                     personId: params.personId,
                     body: body as UpdatePersonTerminalUsersDto,
                     ...(adminId ? { adminId } : {}),
+                    ...(admin ? { admin } : {}),
                     ...(authorizationHeader ? { authorizationHeader } : {})
                 });
             })

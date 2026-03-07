@@ -46,7 +46,48 @@ describe("API persons terminal sync routes", () => {
                 }
             } as any,
             {
-                listDevices: async () => ({ devices: [] }),
+                listDevices: async () => ({
+                    devices: [
+                        {
+                            deviceId: "dev-1",
+                            name: "Device 1",
+                            direction: "IN",
+                            adapterKey: "dahua",
+                            enabled: true,
+                            settingsJson: JSON.stringify({
+                                identityQueryMappings: {
+                                    iin: {
+                                        provider: "dahua.accessControlIdentity",
+                                        paramsTemplate: {
+                                            "accessUser.Condition.UserID": "{{identityValue}}"
+                                        }
+                                    }
+                                }
+                            }),
+                            createdAt: "2026-03-02T00:00:00.000Z",
+                            updatedAt: "2026-03-02T00:00:00.000Z"
+                        },
+                        {
+                            deviceId: "dev-2",
+                            name: "Device 2",
+                            direction: "IN",
+                            adapterKey: "dahua",
+                            enabled: true,
+                            settingsJson: JSON.stringify({
+                                identityQueryMappings: {
+                                    iin: {
+                                        provider: "dahua.accessControlIdentity",
+                                        paramsTemplate: {
+                                            "accessUser.Condition.UserID": "{{identityValue}}"
+                                        }
+                                    }
+                                }
+                            }),
+                            createdAt: "2026-03-02T00:00:00.000Z",
+                            updatedAt: "2026-03-02T00:00:00.000Z"
+                        }
+                    ]
+                }),
                 getDevice: async () => ({ device: {} as never }),
                 upsertDevice: async () => ({ ok: true }),
                 updateDevice: async () => ({ ok: true }),
@@ -249,5 +290,42 @@ describe("API persons terminal sync routes", () => {
         expect(json.data.total).toBe(2);
         expect(updateCalls).toHaveLength(2);
         expect(updateCalls.map((item) => item.person.userId).sort()).toEqual(["T-1", "T-2"]);
+    });
+
+    it("bulk creates terminal users with iin fallback when no terminal identity exists yet", async () => {
+        const createResponse = await app.request("/api/persons", {
+            method: "POST",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify({
+                iin: "900101000001",
+                firstName: "Ivan",
+                lastName: "Petrov"
+            })
+        });
+        const createJson = (await createResponse.json()) as any;
+        const personId = createJson.data.person.id as string;
+
+        const response = await app.request("/api/persons/terminal-users/bulk-create", {
+            method: "POST",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify({
+                personIds: [personId],
+                deviceIds: ["dev-1"],
+                validFrom: "2026-03-06 08:00:00",
+                validTo: "2027-03-06 08:00:00"
+            })
+        });
+        expect(response.status).toBe(200);
+
+        const json = (await response.json()) as any;
+        expect(json.data.totalPersons).toBe(1);
+        expect(json.data.success).toBe(1);
+        expect(createCalls).toHaveLength(1);
+        expect(createCalls[0].person.userId).toBe("900101000001");
+
+        const identitiesResponse = await app.request(`/api/persons/${personId}/identities`);
+        const identitiesJson = (await identitiesResponse.json()) as any;
+        expect(identitiesJson.data.identities).toHaveLength(1);
+        expect(identitiesJson.data.identities[0].terminalPersonId).toBe("900101000001");
     });
 });

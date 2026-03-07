@@ -1,7 +1,7 @@
 {
   "name": "school-gate",
   "private": true,
-  "version": "1.1.0",
+  "version": "1.2.0",
   "main": "index.js",
   "scripts": {
     "dev": "pnpm exec concurrently -n api,device-service,bot,workers,admin-ui -c blue,green,magenta,yellow,cyan \"pnpm --filter @school-gate/api dev\" \"pnpm dev:device-service\" \"pnpm --filter @school-gate/bot dev\" \"pnpm dev:workers\" \"pnpm --filter admin-ui dev\"",
@@ -30,6 +30,10 @@
     "retention:run-once": "pnpm exec tsx apps/worker/src/retention/runOnce.ts",
     "retention:schedule:apply": "pnpm exec tsx apps/worker/src/retention/applySchedule.ts",
     "retention:schedule:remove": "pnpm exec tsx apps/worker/src/retention/removeSchedule.ts",
+    "backup:create": "node packages/ops/dist/cli.js create",
+    "backup:verify": "node packages/ops/dist/cli.js verify",
+    "backup:prune": "node packages/ops/dist/cli.js prune",
+    "backup:restore": "node packages/ops/dist/cli.js restore",
     "changeset": "changeset",
     "changeset:version": "changeset version",
     "changeset:publish": "changeset publish"

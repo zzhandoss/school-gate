@@ -12,8 +12,10 @@ import type {
     PersonsService
 } from "@school-gate/core";
 import { PersonNotFoundError, TerminalIdentityAlreadyMappedError } from "@school-gate/core";
+import type { AdminContext } from "../../delivery/http/middleware/adminAuth.js";
 import { HttpError } from "../../delivery/http/errors/httpError.js";
 import type { DeviceServiceGatewayModule } from "../../delivery/http/routes/deviceServiceGateway.routes.js";
+import { resolveTerminalSyncMappedUserId } from "./persons/personsTerminalSync.shared.js";
 
 type TerminalSyncDeps = {
     personsService: PersonsService;
@@ -124,6 +126,9 @@ async function resolveTargets(
         deviceIds?: string[] | undefined;
         terminalPersonId?: string | undefined;
         fallbackToLinkedDevices: boolean;
+        allowPersonIinFallback: boolean;
+        admin?: AdminContext | undefined;
+        authorizationHeader?: string | undefined;
     }
 ) {
     const person = await deps.personsService.getById(input.personId);
@@ -148,10 +153,33 @@ async function resolveTargets(
         });
     }
 
+    const deviceSettingsById = input.allowPersonIinFallback
+        ? new Map(
+            (
+                await deps.deviceServiceGateway.listDevices({
+                    admin: input.admin,
+                    authorizationHeader: input.authorizationHeader
+                })
+            ).devices.map((device) => [device.deviceId, device.settingsJson])
+        )
+        : null;
+
     const targets: TargetDevice[] = [];
     for (const deviceId of targetDeviceIds) {
         const existing = linkedByDevice.get(deviceId) ?? null;
-        const userId = input.terminalPersonId ?? existing?.terminalPersonId ?? person.terminalPersonId ?? fallbackLinkedTerminalPersonId ?? null;
+        const mappedUserId = input.allowPersonIinFallback
+            ? resolveTerminalSyncMappedUserId({
+                settingsJson: deviceSettingsById?.get(deviceId),
+                personIin: person.iin
+            })
+            : null;
+        const userId =
+            input.terminalPersonId ??
+            existing?.terminalPersonId ??
+            person.terminalPersonId ??
+            fallbackLinkedTerminalPersonId ??
+            mappedUserId ??
+            (input.allowPersonIinFallback ? person.iin : null);
         if (!userId) {
             throw new HttpError({
                 status: 400,
@@ -186,6 +214,7 @@ async function runWrite(
     input: {
         personId: string;
         adminId?: string | undefined;
+        admin?: AdminContext | undefined;
         authorizationHeader?: string | undefined;
         operation: "create" | "update";
         body: (CreatePersonTerminalUsersDto | UpdatePersonTerminalUsersDto) & {
@@ -200,7 +229,12 @@ async function runWrite(
         ...(input.body.terminalPersonId !== undefined
             ? { terminalPersonId: input.body.terminalPersonId }
             : {}),
-        fallbackToLinkedDevices: input.operation === "update"
+        fallbackToLinkedDevices: input.operation === "update",
+        allowPersonIinFallback: input.operation === "create",
+        ...(input.admin !== undefined ? { admin: input.admin } : {}),
+        ...(input.authorizationHeader !== undefined
+            ? { authorizationHeader: input.authorizationHeader }
+            : {})
     });
     const groupedTargets = buildGroupedTargets(targets);
     const displayName = input.body.displayName?.trim() || formatDisplayName({
@@ -299,6 +333,7 @@ async function runBulkCreate(
     input: {
         body: BulkCreatePersonTerminalUsersDto;
         adminId?: string | undefined;
+        admin?: AdminContext | undefined;
         authorizationHeader?: string | undefined;
     }
 ): Promise<BulkPersonTerminalSyncResultDto> {
@@ -343,11 +378,11 @@ async function runBulkCreate(
                     personId,
                     body: {
                         deviceIds: createDeviceIds,
-                        terminalPersonId: person.terminalPersonId ?? linkedIdentities[0]?.terminalPersonId,
                         ...(input.body.validFrom !== undefined ? { validFrom: input.body.validFrom } : {}),
                         ...(input.body.validTo !== undefined ? { validTo: input.body.validTo } : {})
                     },
                     ...(input.adminId !== undefined ? { adminId: input.adminId } : {}),
+                    ...(input.admin !== undefined ? { admin: input.admin } : {}),
                     ...(input.authorizationHeader !== undefined
                         ? { authorizationHeader: input.authorizationHeader }
                         : {}),
@@ -427,11 +462,13 @@ export function createPersonsTerminalSyncModule(deps: TerminalSyncDeps) {
         bulkCreateTerminalUsers: (input: {
             body: BulkCreatePersonTerminalUsersDto;
             adminId?: string | undefined;
+            admin?: AdminContext | undefined;
             authorizationHeader?: string | undefined;
         }) =>
             runBulkCreate(deps, {
                 body: input.body,
                 ...(input.adminId !== undefined ? { adminId: input.adminId } : {}),
+                ...(input.admin !== undefined ? { admin: input.admin } : {}),
                 ...(input.authorizationHeader !== undefined
                     ? { authorizationHeader: input.authorizationHeader }
                     : {})
@@ -440,12 +477,14 @@ export function createPersonsTerminalSyncModule(deps: TerminalSyncDeps) {
             personId: string;
             body: CreatePersonTerminalUsersDto;
             adminId?: string | undefined;
+            admin?: AdminContext | undefined;
             authorizationHeader?: string | undefined;
         }) =>
             runWrite(deps, {
                 personId: input.personId,
                 body: input.body,
                 ...(input.adminId !== undefined ? { adminId: input.adminId } : {}),
+                ...(input.admin !== undefined ? { admin: input.admin } : {}),
                 ...(input.authorizationHeader !== undefined
                     ? { authorizationHeader: input.authorizationHeader }
                     : {}),
@@ -455,12 +494,14 @@ export function createPersonsTerminalSyncModule(deps: TerminalSyncDeps) {
             personId: string;
             body: UpdatePersonTerminalUsersDto;
             adminId?: string | undefined;
+            admin?: AdminContext | undefined;
             authorizationHeader?: string | undefined;
         }) =>
             runWrite(deps, {
                 personId: input.personId,
                 body: input.body,
                 ...(input.adminId !== undefined ? { adminId: input.adminId } : {}),
+                ...(input.admin !== undefined ? { admin: input.admin } : {}),
                 ...(input.authorizationHeader !== undefined
                     ? { authorizationHeader: input.authorizationHeader }
                     : {}),

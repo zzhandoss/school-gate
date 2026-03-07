@@ -87,9 +87,9 @@ export type PersonsImportModule = {
 };
 
 export type PersonsTerminalUsersModule = {
-    bulkCreateTerminalUsers?: (input: { body: BulkCreatePersonTerminalUsersDto; adminId?: string; authorizationHeader?: string }) => Promise<BulkPersonTerminalSyncResultDto>;
-    createTerminalUsers?: (input: { personId: string; body: CreatePersonTerminalUsersDto; adminId?: string; authorizationHeader?: string }) => Promise<PersonTerminalSyncResultDto>;
-    updateTerminalUsers?: (input: { personId: string; body: UpdatePersonTerminalUsersDto; adminId?: string; authorizationHeader?: string }) => Promise<PersonTerminalSyncResultDto>;
+    bulkCreateTerminalUsers?: (input: { body: BulkCreatePersonTerminalUsersDto; adminId?: string; admin?: AdminContext; authorizationHeader?: string }) => Promise<BulkPersonTerminalSyncResultDto>;
+    createTerminalUsers?: (input: { personId: string; body: CreatePersonTerminalUsersDto; adminId?: string; admin?: AdminContext; authorizationHeader?: string }) => Promise<PersonTerminalSyncResultDto>;
+    updateTerminalUsers?: (input: { personId: string; body: UpdatePersonTerminalUsersDto; adminId?: string; admin?: AdminContext; authorizationHeader?: string }) => Promise<PersonTerminalSyncResultDto>;
     getTerminalUserPhoto?: (input: { personId: string; body: GetPersonTerminalUserPhotoDto; authorizationHeader?: string }) => Promise<PersonTerminalUserPhotoResultDto>;
 };
 

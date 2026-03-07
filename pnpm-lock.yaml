@@ -377,6 +377,12 @@ importers:
         specifier: ^0.45.1
         version: 0.45.1(@types/better-sqlite3@7.6.13)(better-sqlite3@12.6.2)
 
+  packages/ops:
+    dependencies:
+      '@school-gate/config':
+        specifier: workspace:*
+        version: link:../config
+
   packages/test:
     dependencies:
       '@school-gate/config':
