@@ -7,6 +7,7 @@ import {
 import { mapSessionPayload } from "./session-mapper";
 import type { AuthSessionPayload } from "./session-mapper";
 import type { SessionState } from "./types";
+import { buildApiUrl, resolveApiBaseUrlFromRequest } from "@/lib/api/base-url";
 import { parseEnvelope } from "@/lib/api/envelope";
 import { ApiError } from "@/lib/api/types";
 
@@ -17,14 +18,17 @@ type ResolveSessionResult = {
 
 const API_BASE_URL =
     process.env.VITE_API_BASE_URL ??
-  process.env.API_BASE_URL ??
-  "http://localhost:3000";
+    process.env.API_BASE_URL ??
+    null;
 
-function buildApiUrl(path: string) {
-    if (path.startsWith("http://") || path.startsWith("https://")) {
-        return path;
-    }
-    return `${API_BASE_URL}${path}`;
+function getRequestApiBaseUrl() {
+    return resolveApiBaseUrlFromRequest({
+        apiBaseUrl: API_BASE_URL,
+        origin: getRequestHeader("origin"),
+        forwardedHost: getRequestHeader("x-forwarded-host"),
+        forwardedProto: getRequestHeader("x-forwarded-proto"),
+        host: getRequestHeader("host")
+    });
 }
 
 function forwardSetCookieHeaders(response: Response) {
@@ -68,7 +72,7 @@ async function requestBackend<T>(
 
     let response: Response;
     try {
-        response = await fetch(buildApiUrl(path), {
+        response = await fetch(buildApiUrl(path, getRequestApiBaseUrl()), {
             method: options.method,
             headers,
             body: options.body === undefined ? undefined : JSON.stringify(options.body)

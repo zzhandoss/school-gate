@@ -1,15 +1,9 @@
+import { buildApiUrl } from "./base-url";
 import { parseEnvelope } from "./envelope";
 import { ApiError } from "./types";
 import type { RequestOptions } from "./types";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "http://localhost:3000";
-
-function buildUrl(path: string) {
-    if (path.startsWith("http://") || path.startsWith("https://")) {
-        return path;
-    }
-    return `${API_BASE_URL}${path}`;
-}
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? null;
 
 function isAuthSessionTracePath(path: string) {
     return path === "/api/auth/session" || path === "/api/auth/refresh";
@@ -21,7 +15,7 @@ export async function requestApi<T>(
 ): Promise<T> {
     const { method = "GET", body, headers = {} } = options;
     const shouldTrace = import.meta.env.DEV && isAuthSessionTracePath(path);
-    const url = buildUrl(path);
+    const url = buildApiUrl(path, API_BASE_URL);
     const requestHeaders = new Headers(headers);
     requestHeaders.set("Content-Type", "application/json");
 
