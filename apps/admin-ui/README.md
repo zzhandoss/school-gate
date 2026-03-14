@@ -9,8 +9,10 @@ pnpm install
 pnpm dev
 ```
 
-API backend target is configurable via `VITE_API_BASE_URL`.
-Default is `http://localhost:3000`.
+API backend target is required via `VITE_API_BASE_URL`.
+Examples:
+- `VITE_API_BASE_URL=http://localhost:3000` (direct API host)
+- `VITE_API_BASE_URL=/api` (nginx reverse proxy; host is taken from incoming request)
 
 # Building For Production
 

@@ -1,9 +1,9 @@
-import { buildApiUrl } from "./base-url";
+import { buildApiUrl, requireApiBaseUrl } from "./base-url";
 import { parseEnvelope } from "./envelope";
 import { ApiError } from "./types";
 import type { RequestOptions } from "./types";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? null;
+const API_BASE_URL = requireApiBaseUrl(import.meta.env.VITE_API_BASE_URL);
 
 function isAuthSessionTracePath(path: string) {
     return path === "/api/auth/session" || path === "/api/auth/refresh";

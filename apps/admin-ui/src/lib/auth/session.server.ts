@@ -16,14 +16,11 @@ type ResolveSessionResult = {
     unavailable: boolean
 };
 
-const API_BASE_URL =
-    process.env.VITE_API_BASE_URL ??
-    process.env.API_BASE_URL ??
-    null;
+const API_BASE_URL = process.env.VITE_API_BASE_URL;
 
 function getRequestApiBaseUrl() {
     return resolveApiBaseUrlFromRequest({
-        apiBaseUrl: API_BASE_URL,
+        apiBaseUrl: API_BASE_URL ?? "",
         origin: getRequestHeader("origin"),
         forwardedHost: getRequestHeader("x-forwarded-host"),
         forwardedProto: getRequestHeader("x-forwarded-proto"),
